@@ -18,6 +18,8 @@ Use this reference when research, rights, or high-stakes guidance is involved.
 - Use conditional wording and decision criteria.
 - State when to stop, step back, or consult a qualified professional.
 - Put limitations beside the relevant recommendation, not only on the final sources slide.
+- For an exercise plan with an injury history, ask whether pain is currently present before production. If pain is present or status is unknown, do not present the plan as cleared for execution; show a stop condition and recommend qualified medical assessment.
+- Do not add remembered numeric rules, pace predictions, progression percentages, exercise prescriptions, or return-to-running thresholds without an authoritative source that directly supports them.
 
 ## Assets and rights
 

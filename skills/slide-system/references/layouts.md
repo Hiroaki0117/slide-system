@@ -14,6 +14,7 @@ Choose a layout from the slide's narrative job and primary material. Do not inve
 | `process` | Sequence or roadmap | Three to six ordered steps |
 | `data_focus` | Key metrics or chart | One dominant metric group or chart and interpretation |
 | `table` | Exact repeated fields | A small table with units and source |
+| `decision_flow` | Safety or go/no-go judgment | One question, two branches, and a shared follow-up |
 | `exercise` | Learner action | Prompt, conditions, time if useful, completion state |
 | `summary_action` | Conclusion and next step | Final synthesis and one to three actions |
 | `sources_appendix` | Source traceability | Compact source records |

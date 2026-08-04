@@ -1,5 +1,7 @@
 {
   "deck_title": "資料タイトル",
+  "audience": "この資料を読む主な対象者",
+  "purpose": "読み終えた後に理解・判断・実行できること",
   "mode": "standalone",
   "slides": [
     {
@@ -10,7 +12,17 @@
       "date": "2026-08-04"
     },
     {
+      "layout": "single_message",
+      "job": "claim",
+      "visual_role": "explain",
+      "title": "最初に結論をつかむ",
+      "headline": "1つ",
+      "body": "このページでは、最も重要な数字や言葉を大きく見せ、その意味を隣で説明します。"
+    },
+    {
       "layout": "data_focus",
+      "job": "evidence",
+      "visual_role": "evidence",
       "title": "数字から現在地が分かる",
       "lead": "重要な数字は、意味と次の判断を添えて示します。",
       "stats": [
@@ -21,6 +33,8 @@
     },
     {
       "layout": "process",
+      "job": "explain",
+      "visual_role": "explain",
       "title": "段階を踏むことで無理なく進める",
       "steps": [
         { "label": "01", "title": "整える", "body": "前提と安全条件を確認する" },
@@ -29,10 +43,26 @@
       ]
     },
     {
-      "layout": "summary_action",
+      "layout": "bar_chart",
+      "job": "evidence",
+      "visual_role": "evidence",
+      "title": "変化はグラフで見せる",
+      "max_value": 30,
+      "bars": [
+        { "label": "第1期", "value": 18, "display": "18 km" },
+        { "label": "第2期", "value": 24, "display": "24 km" },
+        { "label": "第3期", "value": 30, "display": "30 km" }
+      ],
+      "note": "数値、単位、期間、出典を確認してから使用します。"
+    },
+    {
+      "layout": "text_focus",
+      "job": "instruction",
+      "visual_role": "none",
+      "visual_reason": "短い判断基準を読み取ることが目的で、追加図解が理解を改善しないため",
       "title": "次の一歩を明確にする",
-      "headline": "小さく始め、結果を見て調整する",
-      "actions": ["今週の行動を1つ決める", "確認日を決める", "中止・見直し条件を共有する"]
+      "lead": "結論の後に、実行条件と見直し条件を示します。",
+      "bullets": ["今週の行動を1つ決める", "確認日を決める", "中止・見直し条件を共有する"]
     },
     {
       "layout": "sources_appendix",

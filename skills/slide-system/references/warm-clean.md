@@ -22,7 +22,7 @@ Use `text primary` for ordinary titles and body. Never use the soft colors as bo
 
 ## Typography
 
-Use one Japanese sans-serif family available in the environment. Prefer a system stack such as `Noto Sans JP`, `Yu Gothic`, `Hiragino Sans`, and sans-serif.
+Use the bundled `assets/fonts/NotoSansJP-Variable.ttf` for final HTML/PDF output. Embed it in the self-contained HTML and confirm that the browser loaded `Slide Noto Sans JP` before rendering. Do not treat a system-font fallback as a final result. System fonts may be used only for a temporary diagnostic preview, with the limitation recorded.
 
 Minimum sizes:
 
@@ -42,6 +42,8 @@ Prefer 18–22 pt body text for self-contained slides and 22–26 pt for present
 - Use typography first, color second, and a background shape last.
 - Use one or two large soft circles or curves mainly on covers, dividers, or single-message slides.
 - In content slides, use small lines, circles, or pale areas sparingly.
+- Do not repeat the same corner circles mechanically on every slide.
+- Prefer editorial bands, timelines, charts, callouts, and asymmetric text-visual compositions over grids of UI-like cards.
 - Avoid shadows, gradients, 3D, glossy effects, repeated outer frames, and making every group a card.
 - Put short sources at the common lower-left position.
 - Number every page from the cover as `01`, `02`, and so on at the common lower-right position.

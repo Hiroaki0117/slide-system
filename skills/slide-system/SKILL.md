@@ -13,7 +13,7 @@ Create a usable slide deck from ordinary language without requiring the user to 
 - Infer safe defaults and ask only questions that materially change the result or are necessary for safety, rights, or factual accuracy.
 - Combine confirmation into one compact message. Use an interactive question UI when available.
 - Do not expose labels such as `standalone`, `how_to`, `warm_clean`, or `html_pdf` unless the user asks about the system.
-- Do not narrate routine production steps. Suppress messages such as “Good, continuing,” per-page inspection updates, code changes, and raw QA logs.
+- Do not narrate routine production steps. Suppress messages such as “Good, continuing,” static-validation success, render starts, per-page inspection updates, code changes, and raw QA logs. Tool activity may still appear in the interface; do not duplicate it in prose.
 - Do not paste generated HTML, CSS, scripts, or detailed QA records into chat.
 - Show the user only a necessary question, a decision request, a material blocker, or the final deliverables and concise QA result.
 
@@ -30,6 +30,7 @@ Apply explicit user instructions first. Otherwise use these defaults.
 - Length: normally 8–12 slides; use 5–7 for a short overview and 13–20 only when the content genuinely requires detail.
 - Cover: title and date are required. Add a subtitle only when useful. Never invent an author or organization.
 
+Read each needed reference once per task, record its decisions in `work-state.json`, and do not repeatedly reopen the same reference unless the file changed or a validation failure points back to it.
 Read `references/content.md` when selecting the narrative, audience level, deck type, density, cover, or ending.
 Read `references/layouts.md` before assigning layouts.
 Read `references/warm-clean.md` whenever the default theme is used or adapted.
@@ -40,15 +41,15 @@ Read `references/html-pdf.md` before building the default HTML/PDF output.
 
 ## Workflow
 
-### 1. Inspect and route
+### 1. Inspect and preflight
 
 1. Open every supplied file that is needed for the task.
 2. Identify audience, purpose, central takeaway, content mode, deck type, output format, and source constraints.
-3. Verify unstable or high-stakes facts before writing them.
-4. Check that the required output, conversion, and inspection tools are available.
+3. Check that the required output, conversion, and inspection tools are available without beginning content production.
+4. Identify missing information that materially changes safety, rights, scope, or factual accuracy.
 5. If a required input, right, or capability is missing, recommend the safest practical option and at most two alternatives before production.
 
-### 2. Confirm once
+### 2. Confirm once and stop
 
 Present one plain-language production confirmation containing:
 
@@ -57,10 +58,13 @@ Present one plain-language production confirmation containing:
 - the deliverable formats;
 - important assumptions, corrections, or safety questions.
 
-Do not ask about inferred design or internal settings. Continue after the user confirms.
+For a new deck or full restructuring, this confirmation is a hard gate. Send exactly one compact confirmation, then stop the turn and wait for the user's reply. Do not search the web, draft the content model, build HTML, render, or export in the same turn. Do not ask about inferred design or internal settings. Skip this gate only for a minor edit, conversion, evaluation, or when the user explicitly says confirmation is unnecessary.
+
+When health or safety can change the recommendation, include one concise question about the missing condition. For an injury history, ask whether pain is currently present before creating an individualized plan.
 
 ### 3. Plan internally
 
+After confirmation, verify unstable and high-stakes facts before writing them.
 Define one communication job for the deck. Give every slide one narrative job and one primary claim. Choose a cumulative story rather than an agenda-shaped list. End with the conclusion, action, application, or understanding appropriate to the deck type.
 
 Create a compact internal content model before implementation. Validate factual claims, title lengths, text density, minimum type sizes, citations, and source coverage before rendering or exporting PDF.
@@ -82,7 +86,7 @@ If resuming a prior task, read `work-state.json` and existing artifacts first. D
 
 ### 5. Build efficiently
 
-For HTML/PDF, use the bundled template and scripts described in `references/html-pdf.md`. Generate deck data, not a new site framework. Reuse the existing CSS, navigation, print rules, page numbering, and layout classes.
+For HTML/PDF, use the bundled template and scripts described in `references/html-pdf.md`. Generate deck data, not a new site framework. Reuse the existing CSS, bundled Japanese font, navigation, print rules, page numbering, and layout classes. Assign every content slide both `job` and `visual_role`; use `visual_reason` when the role is `none`.
 
 For PowerPoint, follow `references/pptx.md` and use the available presentation-generation capability. Do not convert the HTML into a flattened PowerPoint unless the user explicitly accepts a non-editable result.
 

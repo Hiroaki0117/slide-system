@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>下関海響マラソン2026 サブ4ロードマップ</title>
+  <style>
+    :root {
+      --bg: #FFF8F4;
+      --surface: #FFFFFF;
+      --text: #3F3639;
+      --muted: #665B5E;
+      --coral-text: #B94D48;
+      --coral: #E96E68;
+      --coral-soft: #FFD2C7;
+      --mint: #C5E7E1;
+      --divider: #E8DFDC;
+      --dark: #3F3639;
+      --inverse: #FFF8F4;
+      --font: "Noto Sans JP", "Yu Gothic", "Hiragino Sans", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #F1F3F5; color: var(--text); font-family: var(--font); }
+    body { display: grid; place-items: center; }
+    .viewport { position: relative; width: 1600px; height: 900px; transform-origin: center center; }
+    .slide {
+      position: absolute; inset: 0; display: none; overflow: hidden; contain: size layout paint;
+      width: 1600px; height: 900px; padding: 64px 88px 66px;
+      background: var(--bg); color: var(--text);
+    }
+    .slide.active { display: block; }
+    .slide::before { content: ""; position: absolute; width: 250px; height: 250px; border-radius: 50%; right: -135px; top: -145px; background: var(--coral-soft); opacity: .62; pointer-events: none; }
+    .slide::after { content: ""; position: absolute; width: 180px; height: 180px; border-radius: 50%; left: -110px; bottom: -115px; background: var(--mint); opacity: .42; pointer-events: none; }
+    .slide.cover::before { width: 470px; height: 470px; right: -115px; top: -215px; opacity: .92; }
+    .slide.cover::after { width: 300px; height: 300px; left: auto; right: 175px; bottom: -175px; opacity: .92; }
+    .slide.no-decor::before, .slide.no-decor::after { display: none; }
+    .content { position: relative; z-index: 1; height: 100%; }
+    .eyebrow { margin: 10px 0 42px; color: var(--coral); font-size: 24px; line-height: 1.25; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+    h1 { max-width: 1050px; margin: 0; font-size: 72px; line-height: 1.14; letter-spacing: -.035em; font-weight: 800; }
+    h2 { margin: 0 0 36px; font-size: 48px; line-height: 1.18; letter-spacing: -.025em; font-weight: 800; }
+    h3 { margin: 0 0 14px; font-size: 32px; line-height: 1.25; font-weight: 700; }
+    p, li, td, th { font-size: 24px; line-height: 1.55; }
+    p { margin: 0; }
+    .subtitle { max-width: 900px; margin-top: 28px; color: var(--muted); font-size: 28px; line-height: 1.5; }
+    .date { position: absolute; left: 0; bottom: 26px; color: var(--muted); font-size: 20px; font-weight: 600; }
+    .accent-line { width: 110px; height: 8px; margin-top: 44px; border-radius: 999px; background: var(--coral); }
+    .lead { max-width: 1160px; margin: -8px 0 32px; color: var(--muted); font-size: 28px; line-height: 1.5; }
+    .headline { max-width: 1240px; margin: 112px auto 0; text-align: center; font-size: 58px; line-height: 1.28; letter-spacing: -.03em; font-weight: 800; }
+    .headline-support { max-width: 980px; margin: 34px auto 0; text-align: center; color: var(--muted); font-size: 26px; line-height: 1.55; }
+    ul { margin: 18px 0 0; padding-left: 1.35em; }
+    li { margin: 12px 0; padding-left: .15em; }
+    li::marker { color: var(--coral); }
+    .callout { margin-top: 32px; padding: 22px 28px; border-left: 8px solid var(--coral); background: rgba(255,255,255,.72); border-radius: 0 18px 18px 0; font-size: 24px; line-height: 1.5; }
+    .columns { display: grid; gap: 28px; align-items: stretch; }
+    .columns.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .columns.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel { min-width: 0; padding: 30px 32px; border-top: 7px solid var(--coral); border-radius: 18px; background: rgba(255,255,255,.84); }
+    .panel.mint { border-top-color: #7CC7BA; }
+    .panel.neutral { border-top-color: var(--divider); }
+    .panel p { color: var(--muted); }
+    .process-grid { display: grid; grid-template-columns: repeat(var(--step-count), minmax(0, 1fr)); gap: 24px; margin-top: 70px; }
+    .step { position: relative; min-width: 0; padding: 26px 22px 28px; border-top: 7px solid var(--coral); background: rgba(255,255,255,.76); border-radius: 18px; }
+    .step:not(:last-child)::after { content: ""; position: absolute; top: 50%; right: -18px; width: 12px; height: 3px; background: var(--coral); transform: translateY(-50%); }
+    .step-label { display: inline-grid; place-items: center; min-width: 46px; height: 46px; padding: 0 12px; margin-bottom: 22px; border-radius: 999px; background: var(--coral-soft); color: var(--coral-text); font-size: 20px; font-weight: 800; }
+    .step p { color: var(--muted); font-size: 22px; line-height: 1.5; }
+    .stats { display: grid; grid-template-columns: repeat(var(--stat-count), minmax(0, 1fr)); gap: 26px; margin-top: 52px; }
+    .stat { min-width: 0; padding: 28px 30px 30px; border-bottom: 7px solid var(--coral); background: rgba(255,255,255,.84); border-radius: 18px; }
+    .stat:nth-child(even) { border-bottom-color: #7CC7BA; }
+    .stat-value { color: var(--coral-text); font-size: 54px; line-height: 1.12; font-weight: 800; letter-spacing: -.035em; }
+    .stat-label { margin-top: 16px; font-size: 26px; font-weight: 700; }
+    .stat-note { margin-top: 7px; color: var(--muted); font-size: 20px; }
+    .table-wrap { max-height: 590px; overflow: hidden; border-radius: 16px; background: rgba(255,255,255,.86); }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th { padding: 18px 20px; text-align: left; color: var(--coral-text); background: var(--coral-soft); font-size: 21px; font-weight: 800; }
+    td { padding: 17px 20px; border-top: 1px solid var(--divider); vertical-align: top; font-size: 22px; line-height: 1.42; }
+    tr:nth-child(even) td { background: rgba(197,231,225,.18); }
+    .note { margin-top: 22px; color: var(--muted); font-size: 20px; line-height: 1.5; }
+    .actions { display: grid; gap: 18px; margin-top: 42px; }
+    .action { display: grid; grid-template-columns: 52px 1fr; gap: 20px; align-items: center; padding: 20px 26px; border-bottom: 1px solid var(--divider); font-size: 24px; line-height: 1.45; }
+    .action-number { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--coral-soft); color: var(--coral-text); font-size: 20px; font-weight: 800; }
+    .sources-list { display: grid; gap: 15px; margin-top: 12px; }
+    .source-item { display: grid; grid-template-columns: 72px 1fr; gap: 18px; padding-bottom: 13px; border-bottom: 1px solid var(--divider); }
+    .source-id { color: var(--coral-text); font-size: 18px; font-weight: 800; }
+    .source-main { font-size: 17px; line-height: 1.38; overflow-wrap: anywhere; }
+    .source-meta { margin-top: 3px; color: var(--muted); font-size: 14px; line-height: 1.35; }
+    .slide-source { position: absolute; left: 88px; bottom: 27px; z-index: 2; max-width: 1180px; color: var(--muted); font-size: 14px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .page-number { position: absolute; right: 88px; bottom: 23px; z-index: 2; font-size: 17px; font-weight: 800; }
+    .image-layout { display: grid; grid-template-columns: 1.05fr .95fr; gap: 42px; align-items: center; }
+    .image-layout.reverse { grid-template-columns: .95fr 1.05fr; }
+    .image-frame { width: 100%; height: 500px; overflow: hidden; border-radius: 28px; background: var(--surface); }
+    .image-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .slide:not(.active) { display: none; }
+    .slide.active { display: block; }
+    .controls { position: fixed; z-index: 99; left: 50%; bottom: 18px; display: flex; gap: 10px; align-items: center; transform: translateX(-50%); padding: 8px 12px; border-radius: 999px; background: rgba(63,54,57,.9); color: #fff; font: 600 14px/1 var(--font); }
+    .controls button { width: 34px; height: 30px; border: 0; border-radius: 999px; color: #fff; background: rgba(255,255,255,.15); cursor: pointer; font-size: 17px; }
+    .controls button:hover { background: rgba(255,255,255,.28); }
+    @media print {
+      @page { size: 1600px 900px; margin: 0; }
+      html, body { width: auto; height: auto; overflow: visible; background: #fff; }
+      body { display: block; }
+      .viewport { width: auto; height: auto; transform: none !important; }
+      .slide { position: relative; display: block !important; width: 1600px; height: 900px; padding: 64px 88px 66px; overflow: hidden; page-break-inside: avoid; break-inside: avoid-page; page-break-after: always; break-after: page; }
+      .slide:last-child { page-break-after: auto; break-after: auto; }
+      .slide-source { left: 88px; bottom: 27px; }
+      .page-number { right: 88px; bottom: 23px; }
+      .controls { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="viewport" id="viewport">
+    <section class="slide cover active" data-slide="1" aria-label="1 / 11">
+      <div class="content"><div class="eyebrow">サブ4ロードマップ</div><h1>下関海響マラソン サブ4への道</h1><p class="subtitle">本番 2026年11月1日（日）まで、今日からの13週間</p><div class="accent-line"></div><div class="date">2026.8.4</div></div>
+      <div class="page-number">01</div>
+    </section>
+    <section class="slide single_message" data-slide="2" aria-label="2 / 11">
+      <div class="content"><h2>目標はサブ4を達成すること</h2><div class="headline">4:00:00</div><p class="headline-support">平均ペース5:41/km。ハーフ1:51:19（2/1）からの理論値は約3時間52分で、土台と故障予防を整えれば十分狙える目標です。</p></div>
+      <div class="page-number">02</div>
+    </section>
+    <section class="slide data_focus" data-slide="3" aria-label="3 / 11">
+      <div class="content"><h2>現状データで立ち位置を確認する</h2><p class="lead">この9か月の実績が土台になります。</p><div class="stats" style="--stat-count:4"><article class="stat"><div class="stat-value">1:51:19</div><div class="stat-label">ハーフPB</div><div class="stat-note">2/1・ネットタイム</div></article><article class="stat"><div class="stat-value">週3回</div><div class="stat-label">現在の頻度</div><div class="stat-note">火・木・土</div></article><article class="stat"><div class="stat-value">17.5km</div><div class="stat-label">直近のロング走</div><div class="stat-note">2時間・6:51/km</div></article><article class="stat"><div class="stat-value">9か月</div><div class="stat-label">ランニング歴</div><div class="stat-note">昨年11月〜</div></article></div></div>
+      <div class="page-number">03</div>
+    </section>
+    <section class="slide text_focus" data-slide="4" aria-label="4 / 11">
+      <div class="content"><h2>最大のリスクは脛のケガの再発</h2><p class="lead">脛の内側を痛めやすく、2月のハーフ後は3週間走れませんでした。今回は安全な積み上げを最優先します。</p><ul><li>週の走行距離は前週比1割増を目安にする</li><li>カーフレイズやすね周りのストレッチを習慣にする</li><li>違和感が出たら早めに休み、長引く場合は専門家に相談する</li></ul></div>
+      <div class="page-number">04</div>
+    </section>
+    <section class="slide process" data-slide="5" aria-label="5 / 11">
+      <div class="content"><h2>本番まで4つのフェーズで積み上げる</h2><p class="lead">8/4から11/1まで約13週間。</p><div class="process-grid" style="--step-count:4"><article class="step"><div class="step-label">Phase1</div><h3>基礎固め</h3><p>8/4〜8/30 故障予防をしながら土台を作る</p></article><article class="step"><div class="step-label">Phase2</div><h3>走り込み</h3><p>8/31〜9/27 ロング走とペース走を伸ばす</p></article><article class="step"><div class="step-label">Phase3</div><h3>仕上げ</h3><p>9/28〜10/18 ピーク走行とペース確認</p></article><article class="step"><div class="step-label">Phase4</div><h3>テーパー</h3><p>10/19〜11/1 疲労を抜いて本番へ</p></article></div></div>
+      <div class="page-number">05</div>
+    </section>
+    <section class="slide table" data-slide="6" aria-label="6 / 11">
+      <div class="content"><h2>ロング走は段階的に伸ばす</h2><p class="lead">距離は目安です。脛の状態を最優先に調整します。</p><div class="table-wrap"><table><thead><tr><th>週</th><th>目安距離</th><th>ポイント</th></tr></thead><tbody><tr><td>8/9</td><td>18km前後</td><td>現状ペースで様子を見る</td></tr><tr><td>8/23</td><td>20km</td><td>違和感なければ微増</td></tr><tr><td>9/6</td><td>22〜24km</td><td>回復週を挟みつつ増やす</td></tr><tr><td>9/20</td><td>26km</td><td>後半をレースペース想定で</td></tr><tr><td>10/4</td><td>30km前後</td><td>ピーク。レースペースを一部組み込む</td></tr><tr><td>10/18</td><td>18km</td><td>テーパー開始、強度は維持</td></tr><tr><td>10/25</td><td>10km前後</td><td>最終調整、距離を大きく落とす</td></tr></tbody></table></div></div>
+      <div class="page-number">06</div>
+    </section>
+    <section class="slide comparison" data-slide="7" aria-label="7 / 11">
+      <div class="content"><h2>平日メニューは今の形をベースに強度を上げる</h2><p class="lead">火曜は疲労に応じてジョグに切り替える柔軟性を保ちます。</p><div class="columns two"><article class="panel"><h3>火曜日</h3><ul><li>今: 1kmアップ→3kmを5:30/km→1kmダウン</li><li>今後: 距離を7〜8kmに伸ばし、閾値区間を長くする</li></ul></article><article class="panel"><h3>木曜日</h3><ul><li>今: 6:50→5:20まで1kmごとビルドアップ</li><li>今後: 到達ペースを5:10前後まで引き上げる</li></ul></article></div></div>
+      <div class="page-number">07</div>
+    </section>
+    <section class="slide data_focus" data-slide="8" aria-label="8 / 11">
+      <div class="content"><h2>9月末に一度、レースペースを確認する</h2><p class="lead">30kmロング走の後半にレースペースを組み込み、進捗を測ります。</p><div class="stats" style="--stat-count:3"><article class="stat"><div class="stat-value">9月下旬</div><div class="stat-label">確認タイミング</div><div class="stat-note">ロング走の後半で実施</div></article><article class="stat"><div class="stat-value">5:41/km</div><div class="stat-label">目標ペース</div><div class="stat-note">サブ4ペースの目安</div></article><article class="stat"><div class="stat-value">要調整</div><div class="stat-label">結果次第で</div><div class="stat-note">ペースや目標を見直す</div></article></div></div>
+      <div class="page-number">08</div>
+    </section>
+    <section class="slide table" data-slide="9" aria-label="9 / 11">
+      <div class="content"><h2>レース当日の目安ペースと注意点</h2><p class="lead">サブ4ペースなら制限時間に十分な余裕があります。</p><div class="table-wrap"><table><thead><tr><th>地点</th><th>距離</th><th>目安タイム</th></tr></thead><tbody><tr><td>5km</td><td>5km</td><td>0:28</td></tr><tr><td>10km</td><td>10km</td><td>0:57</td></tr><tr><td>ハーフ</td><td>21.1km</td><td>2:00</td></tr><tr><td>30km</td><td>30km</td><td>2:51</td></tr><tr><td>35km</td><td>35km</td><td>3:19</td></tr><tr><td>ゴール</td><td>42.195km</td><td>4:00</td></tr></tbody></table></div><p class="note">制限時間は号砲から6時間。海沿いの往復コースで、アップダウンを含む区間もあります。</p></div>
+      <div class="slide-source">出典: 下関海響マラソン2026 公式サイト（開催要項・コースマップ）</div><div class="page-number">09</div>
+    </section>
+    <section class="slide summary_action" data-slide="10" aria-label="10 / 11">
+      <div class="content"><h2>次の一歩を決めて動き出す</h2><div class="headline" style="margin-top:20px;text-align:left;font-size:48px">安全な積み上げが、サブ4への一番の近道</div><div class="actions"><div class="action"><span class="action-number">01</span><span>今週のロング走を18km前後に設定する</span></div><div class="action"><span class="action-number">02</span><span>カーフレイズなど補強運動を今週から始める</span></div><div class="action"><span class="action-number">03</span><span>9月下旬にペース確認走を予定に入れる</span></div></div></div>
+      <div class="page-number">10</div>
+    </section>
+    <section class="slide sources_appendix" data-slide="11" aria-label="11 / 11">
+      <div class="content"><h2>出典</h2><div class="sources-list"><div class="source-item"><div class="source-id">[S1]</div><div><div class="source-main">下関海響マラソン2026 開催要項</div><div class="source-meta">下関海響マラソン実行委員会 / https://kaikyomarathon.jp/outline/ / 確認日 2026-08-04</div></div></div><div class="source-item"><div class="source-id">[S2]</div><div><div class="source-main">下関海響マラソン2026 コースマップ</div><div class="source-meta">下関海響マラソン実行委員会 / https://kaikyomarathon.jp/course/ / 確認日 2026-08-04</div></div></div></div></div>
+      <div class="page-number">11</div>
+    </section>
+  </main>
+  <nav class="controls" aria-label="スライド操作">
+    <button type="button" id="prev" aria-label="前へ">‹</button>
+    <span id="indicator">1 / 1</span>
+    <button type="button" id="next" aria-label="次へ">›</button>
+  </nav>
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    let current = 0;
+    function showSlide(index) {
+      current = Math.max(0, Math.min(slides.length - 1, Number(index) || 0));
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+      document.getElementById('indicator').textContent = `${current + 1} / ${slides.length}`;
+      return current;
+    }
+    function scaleDeck() {
+      if (window.matchMedia('print').matches) return;
+      const scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+      document.getElementById('viewport').style.transform = `scale(${scale})`;
+    }
+    document.getElementById('prev').addEventListener('click', () => showSlide(current - 1));
+    document.getElementById('next').addEventListener('click', () => showSlide(current + 1));
+    document.addEventListener('keydown', event => {
+      if (['ArrowRight', 'PageDown', ' '].includes(event.key)) showSlide(current + 1);
+      if (['ArrowLeft', 'PageUp'].includes(event.key)) showSlide(current - 1);
+      if (event.key === 'Home') showSlide(0);
+      if (event.key === 'End') showSlide(slides.length - 1);
+    });
+    window.addEventListener('resize', scaleDeck);
+    window.showSlide = showSlide;
+    window.deckSlideCount = slides.length;
+    showSlide(0);
+    scaleDeck();
+  </script>
+</body>
+</html>

@@ -68,6 +68,17 @@ async function main() {
   page.on("console", message => { if (message.type() === "error") consoleErrors.push(message.text()); });
   page.on("pageerror", error => consoleErrors.push(error.message));
   await page.goto(pathToFileURL(htmlPath).href, { waitUntil: "networkidle" });
+  const fontCheck = await page.evaluate(async () => {
+    await document.fonts.ready;
+    const loaded = document.fonts.check('700 48px "Slide Noto Sans JP"');
+    const probe = document.createElement("span");
+    probe.textContent = "日本語フォント確認";
+    probe.style.cssText = 'position:absolute;visibility:hidden;font:700 48px "Slide Noto Sans JP"';
+    document.body.appendChild(probe);
+    const family = getComputedStyle(probe).fontFamily;
+    probe.remove();
+    return { loaded, family, status: document.fonts.status };
+  });
 
   const slideCount = await page.evaluate(() => window.deckSlideCount || document.querySelectorAll(".slide").length);
   if (!slideCount) throw new Error("No slides found in HTML");
@@ -96,7 +107,7 @@ async function main() {
       const slide = document.querySelector(".slide.active");
       const slideRect = slide.getBoundingClientRect();
       const overflow = [];
-      for (const element of slide.querySelectorAll("h1,h2,h3,p,li,table,.panel,.step,.stat,.image-frame,.actions,.sources-list")) {
+      for (const element of slide.querySelectorAll("h1,h2,h3,p,li,table,.panel,.step,.stat,.image-frame,.actions,.sources-list,.message-stage,.text-focus-grid,.process-grid,.bar-chart,.exercise-box")) {
         const rect = element.getBoundingClientRect();
         const style = getComputedStyle(element);
         if (style.display === "none" || style.visibility === "hidden") continue;
@@ -143,6 +154,7 @@ async function main() {
     // when a layout class changes the selected slide's flow or positioning.
     const printPage = await browser.newPage({ viewport: { width: 1600, height: 900 }, deviceScaleFactor: 1 });
     await printPage.goto(pathToFileURL(htmlPath).href, { waitUntil: "networkidle" });
+    await printPage.evaluate(() => document.fonts.ready);
     await printPage.emulateMedia({ media: "print" });
     const selected = await printPage.evaluate(target => {
       const slide = document.querySelector(`.slide[data-slide="${target}"]`);
@@ -175,6 +187,7 @@ async function main() {
   await browser.close();
 
   const failures = [];
+  if (!fontCheck.loaded || fontCheck.status !== "loaded" || !fontCheck.family.includes("Slide Noto Sans JP")) failures.push({ code: "FONT_LOAD", message: "Bundled Slide Noto Sans JP did not load", details: fontCheck });
   if (!navigationPass) failures.push({ code: "NAVIGATION", message: "Navigation did not clamp or update correctly" });
   if (consoleErrors.length) failures.push({ code: "CONSOLE", message: "Browser console errors occurred", details: consoleErrors });
   for (const slide of slides) {
@@ -198,6 +211,7 @@ async function main() {
     individual_pdf_bytes: individualPdfBytes,
     navigation,
     navigation_pass: navigationPass,
+    font: fontCheck,
     contact_sheet: contactSheet,
     slides,
     failures,

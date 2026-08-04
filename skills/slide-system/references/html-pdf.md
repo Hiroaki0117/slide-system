@@ -4,7 +4,8 @@ Use the bundled deterministic path instead of writing a complete HTML/CSS/JavaSc
 
 ## Files
 
-- `assets/deck-template.html`: warm_clean styling, fixed layout classes, navigation, page numbering, responsive scaling, and print rules.
+- `assets/deck-template.html`: warm_clean styling, fixed layout classes, navigation, page numbering, responsive scaling, embedded-font marker, and print rules.
+- `assets/fonts/NotoSansJP-Variable.ttf`: bundled Japanese font embedded into every final HTML/PDF deck.
 - `assets/deck-schema-example.json`: compact content model and supported fields.
 - `scripts/build_deck.py`: validates the content model and creates one self-contained HTML file.
 - `scripts/render_deck.mjs`: opens the HTML, tests navigation, renders every slide, makes a contact sheet, and exports PDF in one run.
@@ -20,7 +21,7 @@ Use the bundled deterministic path instead of writing a complete HTML/CSS/JavaSc
 python scripts/build_deck.py --input deck.json --template assets/deck-template.html --output OUTPUT_DIR/deck-draft.html --report WORK_DIR/static-qa.json
 ```
 
-The build must exit successfully with no `FAIL` item before rendering.
+The build must exit successfully with no `FAIL` item before rendering. Review and resolve every warning; do not ignore a visual-cadence warning merely because the build completed.
 
 ## Render and export
 
@@ -39,13 +40,19 @@ Rename the validated pair without `draft` only after final QA.
 ## Supported layouts
 
 - `cover`
+- `agenda`
+- `section_divider`
 - `single_message`
 - `text_focus`
+- `text_visual`
 - `comparison`
 - `process`
 - `data_focus`
+- `bar_chart`
 - `table`
+- `decision_flow`
+- `exercise`
 - `summary_action`
 - `sources_appendix`
 
-Use `text_focus` with an embedded image for a simple text-and-image slide. For a visual form the schema cannot express without loss, create a small, task-specific extension while preserving the template tokens, fixed areas, print rules, and validator contract. Do not replace the entire template.
+Use `text_visual` for a simple text-and-image slide. The renderer must wait for `document.fonts.ready` and fail if the bundled font is unavailable. For a visual form the schema cannot express without loss, create a small, task-specific extension while preserving the template tokens, fixed areas, print rules, and validator contract. Do not replace the entire template.

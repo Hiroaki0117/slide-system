@@ -1,0 +1,156 @@
+{
+  "deck_title": "下関海響マラソン サブ4達成ロードマップ",
+  "audience": "2026年11月1日の下関海響マラソンで初フルのサブ4を目指す依頼者本人",
+  "purpose": "現在地、安全条件、13週間の進め方、レース当日の判断基準を自分で確認できるようにする",
+  "mode": "standalone",
+  "slides": [
+    {
+      "layout": "cover",
+      "eyebrow": "MARATHON × ROADMAP",
+      "title": "下関海響マラソン\nサブ4達成ロードマップ",
+      "subtitle": "現在地から本番までの13週間を、安全条件とともに整理する",
+      "date": "2026.8.4"
+    },
+    {
+      "layout": "single_message",
+      "job": "claim",
+      "visual_role": "explain",
+      "title": "目標はグロスタイムで4時間未満",
+      "headline": "SUB 4",
+      "body": "公式記録は号砲からフィニッシュまで。平均5分41秒／kmはスタートロスを含まない等速換算なので、本番はわずかな余裕を持つ必要があります。",
+      "source": "出典: 下関海響マラソン2026 開催要項 [S1]"
+    },
+    {
+      "layout": "comparison",
+      "job": "compare",
+      "visual_role": "evidence",
+      "title": "スピードより距離耐性と継続性が課題",
+      "lead": "ハーフの速さは可能性を示しますが、初フルでは走歴と故障歴も同時に見ます。",
+      "columns": [
+        {
+          "title": "現在の土台",
+          "tone": "mint",
+          "body": "ハーフ 1:51:19（約5:17／km）\n週3回、土曜は2時間で17.5km\nランニング歴は約9か月"
+        },
+        {
+          "title": "サブ4の条件",
+          "tone": "coral",
+          "body": "42.195kmをグロス4時間未満\n等速換算は約5:41／km\n故障せず練習を継続できることが前提"
+        }
+      ],
+      "source": "出典: 依頼者メモ [S5]、大会公式要項 [S1]"
+    },
+    {
+      "layout": "text_focus",
+      "job": "instruction",
+      "visual_role": "explain",
+      "title": "計画より先に、現在の痛みを確認する",
+      "lead": "脛の内側を痛めやすく、ハーフ後に3週間走れなかった経験があります。",
+      "bullets": [
+        "現在も痛む、局所的に強く痛む場合は、計画を開始せず医療専門職へ相談する",
+        "痛みがない場合も、以前より頻度・時間・強度を下げた状態から戻す",
+        "同じ痛みが再発したら、その日の運動を中止して前段階へ戻る"
+      ],
+      "callout": "未確認の安全条件\n現在、脛に痛みがあるか",
+      "source": "出典: AAOS Shin Splints [S3]、依頼者メモ [S5]"
+    },
+    {
+      "layout": "process",
+      "job": "explain",
+      "visual_role": "explain",
+      "title": "13週間は4段階でつなげる",
+      "lead": "日付は目安。次へ進む条件は、痛みなく予定を継続できることです。",
+      "steps": [
+        { "label": "8/4–16", "title": "安全確認", "body": "現在の痛みを確認し、無理なく週3回を続ける" },
+        { "label": "8/17–9/13", "title": "持久力", "body": "土曜の時間を少しずつ延ばし、回復反応を見る" },
+        { "label": "9/14–10/11", "title": "実戦準備", "body": "ペース・補給・装備を練習で試す" },
+        { "label": "10/12–11/1", "title": "調整", "body": "2〜3週で量を減らし、本番へ疲労を残さない" }
+      ],
+      "source": "出典: Wang et al. (2023) [S4]、依頼者情報を基にした提案"
+    },
+    {
+      "layout": "comparison",
+      "job": "instruction",
+      "visual_role": "explain",
+      "title": "週3回の役割を分け、全部を頑張らない",
+      "lead": "現在の生活リズムを維持し、1週間の中で負荷の役割を分けます。",
+      "columns": [
+        { "title": "火曜日", "tone": "neutral", "body": "疲労が残る日は楽なジョグ\n余裕がある日は短い一定ペース\n目的：動きを整える" },
+        { "title": "木曜日", "tone": "coral", "body": "無理のないビルドアップ\n最後まで余力を残す\n目的：ペース感覚を作る" },
+        { "title": "土曜日", "tone": "mint", "body": "会話できる強度の長時間走\n距離より翌日までの反応を確認\n目的：距離耐性を育てる" }
+      ],
+      "source": "出典: 依頼者メモ [S5]を基にした提案"
+    },
+    {
+      "layout": "decision_flow",
+      "job": "instruction",
+      "visual_role": "explain",
+      "title": "痛みが出たら、進むより先に分岐する",
+      "lead": "距離やペースを増やす判断は、走行中だけでなく走行後の反応まで見て行います。",
+      "question": "脛に同じ痛みがある、または悪化しているか？",
+      "yes_label": "YES — 痛みあり",
+      "yes_action": "運動を中止して休養。改善しない・強い痛みがある場合は医療専門職へ相談する",
+      "no_label": "NO — 痛みなし",
+      "no_action": "現在の負荷を維持。問題なく続けてから、変更は1つだけにする",
+      "footer": "再発したら短い時間・低い強度・長い休養へ戻す",
+      "source": "出典: AAOS Shin Splints [S3]"
+    },
+    {
+      "layout": "data_focus",
+      "job": "evidence",
+      "visual_role": "evidence",
+      "title": "チェックポイントは速さだけで決めない",
+      "lead": "9月末を目安に、次の4点をまとめて見直します。",
+      "stats": [
+        { "value": "痛み", "label": "走行中・走行後", "note": "再発していないか" },
+        { "value": "継続", "label": "週3回の実施", "note": "無理なく続いたか" },
+        { "value": "持久力", "label": "長時間走の反応", "note": "翌日まで回復できたか" },
+        { "value": "実戦", "label": "ペース・補給・装備", "note": "練習で試せたか" }
+      ],
+      "source": "出典: 依頼者情報を基にした判断基準"
+    },
+    {
+      "layout": "table",
+      "job": "instruction",
+      "visual_role": "evidence",
+      "title": "当日は等速表より少し余裕を持つ",
+      "lead": "下表は4時間ちょうどの等速換算。公式記録はグロスタイムのため、実際の目標はこれよりわずかに早めに設定します。",
+      "headers": ["地点", "等速の経過", "当日の確認"],
+      "rows": [
+        ["5km", "0:28:26", "混雑で焦らず、呼吸を整える"],
+        ["10km", "0:56:53", "ペースと体感のずれを確認"],
+        ["ハーフ", "2:00:00", "補給と脚の余裕を確認"],
+        ["30km", "2:50:39", "無理な加速をせずフォーム維持"],
+        ["35km", "3:19:05", "残りを走り切れる範囲で判断"],
+        ["ゴール", "4:00:00", "グロスタイムで4時間未満" ]
+      ],
+      "note": "コース高低図、補給、装備は本番で初めて試さず、事前の長時間走で確認します。",
+      "source": "出典: 大会公式要項 [S1]、公式コース [S2]"
+    },
+    {
+      "layout": "summary_action",
+      "job": "summary",
+      "visual_role": "none",
+      "visual_reason": "直近の行動を読み返して実行するページで、追加図解より短い行動リストが明確なため",
+      "title": "今週は計画を増やす前に状態を記録する",
+      "headline": "安全に続けられることが、サブ4への第一条件",
+      "actions": [
+        "現在、脛に痛みがあるかを確認する",
+        "火・木・土の運動内容と、走行後の脛の反応を記録する",
+        "同じ痛みがなければ現状を維持し、次週の変更は1つだけにする"
+      ],
+      "note": "本資料は一般的な整理であり、診断や個別の治療指示ではありません。"
+    },
+    {
+      "layout": "sources_appendix",
+      "title": "出典",
+      "sources": [
+        { "id": "S1", "title": "下関海響マラソン2026 開催要項", "publisher": "下関海響マラソン実行委員会", "url": "https://www.kaikyomarathon.jp/outline/index.html", "checked": "2026-08-04" },
+        { "id": "S2", "title": "下関海響マラソン2026 コースマップ・高低図", "publisher": "下関海響マラソン実行委員会", "url": "https://www.kaikyomarathon.jp/course/", "checked": "2026-08-04" },
+        { "id": "S3", "title": "Shin Splints", "publisher": "American Academy of Orthopaedic Surgeons", "url": "https://www.orthoinfo.org/diseases--conditions/shin-splints/", "checked": "2026-08-04" },
+        { "id": "S4", "title": "Effects of tapering on performance in endurance athletes: A systematic review and meta-analysis", "publisher": "Wang et al., PLOS ONE (2023)", "url": "https://pubmed.ncbi.nlm.nih.gov/37163550/", "checked": "2026-08-04" },
+        { "id": "S5", "title": "ランニング状況メモ", "publisher": "依頼者提供", "checked": "2026-08-04" }
+      ]
+    }
+  ]
+}
