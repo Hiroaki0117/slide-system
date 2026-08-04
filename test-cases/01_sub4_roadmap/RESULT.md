@@ -16,11 +16,11 @@
 
 | 項目 | 判定 | 記録 |
 |---|---|---|
-| 添付は`RUNNING_NOTES.md`のみ | `NOT_VERIFIED` | 未実行 |
-| 依頼文を変更していない | `NOT_VERIFIED` | 未実行 |
-| 入力を事前に構造化・補足していない | `NOT_VERIFIED` | 未実行 |
-| `EXPECTED.md`をClaudeへ渡していない | `NOT_VERIFIED` | 未実行 |
-| 最初の成果物まで改善指示をしていない | `NOT_VERIFIED` | 未実行 |
+| 添付は`RUNNING_NOTES.md`のみ | `NOT_VERIFIED` | 実行済 |
+| 依頼文を変更していない | `NOT_VERIFIED` | 実行済 |
+| 入力を事前に構造化・補足していない | `NOT_VERIFIED` | 実行済 |
+| `EXPECTED.md`をClaudeへ渡していない | `NOT_VERIFIED` | 実行済 |
+| 最初の成果物まで改善指示をしていない | `NOT_VERIFIED` | 済実行 |
 
 ## 3. Claudeの最初の応答
 
