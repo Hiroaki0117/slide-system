@@ -1,6 +1,6 @@
 ---
 spec_name: slide-system-master
-version: 0.4.0
+version: 0.5.0
 status: draft
 updated: 2026-08-04
 language: ja
@@ -43,7 +43,7 @@ language: ja
 | `10_CONTENT.md` | 構成、文章、情報量 | 有効 |
 | `20_DESIGN.md` | 色、文字、余白、トンマナ | 有効 |
 | `30_LAYOUTS.md` | レイアウトタイプと選択条件 | 有効 |
-| `40_VISUALS.md` | 写真、イラスト、図解、グラフ | 設計予定 |
+| `40_VISUALS.md` | 写真、イラスト、図解、グラフ | 有効 |
 | `50_OUTPUTS.md` | 出力プロファイルと形式別要件 | 有効 |
 | `60_QA.md` | 全体の完成判定 | 設計予定 |
 
@@ -160,6 +160,7 @@ language: ja
 - 仮タイトル
 - 使用する根拠または元資料
 - レイアウトタイプ
+- ビジュアル役割（`evidence`、`explain`、`context`、`decoration`、`none`）
 - 前後のスライドとのつながり
 
 計画は制作のための内部情報です。ユーザーが求めていない限り、完成スライド上に制作メモを表示しません。
