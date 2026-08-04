@@ -34,6 +34,10 @@ Do not mix audience levels within one main narrative. Put specialist detail in a
 - Prefer concise prose over fragments that lose meaning.
 - Remove duplicate qualifiers and repeated conclusions.
 - When content does not fit, shorten, change layout, split the slide, or move detail to an appendix before reducing type size.
+- Match the title's certainty to the evidence. Use `目安`, `可能性`, `条件付き`, or an explicit uncertainty when the evidence does not support a categorical conclusion.
+- Treat forecasts and formula-derived values as estimates. State what the calculation does not account for on the same slide.
+- For a roadmap, show not only phases or target values but also the conditions for advancing, holding, stepping back, and stopping.
+- Check dates and remaining periods from exact dates before rounding, and use the nearest natural unit consistently throughout the deck.
 
 Guidance for self-contained slides:
 

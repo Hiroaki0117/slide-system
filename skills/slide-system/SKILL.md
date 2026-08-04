@@ -11,7 +11,8 @@ Create a usable slide deck from ordinary language without requiring the user to 
 
 - Treat incomplete, informal input as normal. Do not ask the user to rewrite it as a specification.
 - Infer safe defaults and ask only questions that materially change the result or are necessary for safety, rights, or factual accuracy.
-- Combine confirmation into one compact message. Use an interactive question UI when available.
+- Separate blocking questions from production approval. Never treat an answer to a question as approval.
+- Keep each user-facing checkpoint compact. Use an interactive question UI when available.
 - Do not expose labels such as `standalone`, `how_to`, `warm_clean`, or `html_pdf` unless the user asks about the system.
 - Do not narrate routine production steps. Suppress messages such as “Good, continuing,” static-validation success, render starts, per-page inspection updates, code changes, and raw QA logs. Tool activity may still appear in the interface; do not duplicate it in prose.
 - Do not paste generated HTML, CSS, scripts, or detailed QA records into chat.
@@ -49,30 +50,44 @@ Read `references/html-pdf.md` before building the default HTML/PDF output.
 4. Identify missing information that materially changes safety, rights, scope, or factual accuracy.
 5. If a required input, right, or capability is missing, recommend the safest practical option and at most two alternatives before production.
 
-### 2. Confirm once and stop
+### 2. Resolve blocking questions and stop
+
+If a missing answer materially changes safety, rights, factual accuracy, scope, or the proposed deliverables, ask only the necessary question and stop the turn. Do not include the production approval choice in the same message.
+
+Set `work-state.json` to `phase: "questions_pending"`. After the user answers, update the conditions, but do not infer approval from that answer. If another blocking answer is still required, ask it and stop again.
+
+When health or safety changes the recommendation, ask one concise question about the missing condition. For an injury history, ask whether pain is currently present before proposing an individualized plan.
+
+### 3. Present production conditions and stop
 
 Present one plain-language production confirmation containing:
 
 - who the slides are for and how they will be used;
 - the proposed title, date, approximate length, and story direction;
 - the deliverable formats;
-- important assumptions, corrections, or safety questions.
+- important assumptions, corrections, and safety conditions already resolved.
 
-For a new deck or full restructuring, this confirmation is a hard gate. Send exactly one compact confirmation, then stop the turn and wait for the user's reply. Do not search the web, draft the content model, build HTML, render, or export in the same turn. Do not ask about inferred design or internal settings. Skip this gate only for a minor edit, conversion, evaluation, or when the user explicitly says confirmation is unnecessary.
+For a new deck or full restructuring, this confirmation is a hard gate. End with an explicit choice such as `この内容で制作する` or `内容を修正する`, then stop the turn and wait. Set `work-state.json` to `phase: "confirmation_pending"` and `approval.status: "pending"`.
 
-When health or safety can change the recommendation, include one concise question about the missing condition. For an injury history, ask whether pain is currently present before creating an individualized plan.
+Only an unambiguous approval of the presented conditions counts. A reply that merely answers a preceding question, supplies a correction, says to continue gathering information, or is otherwise ambiguous is not approval. Incorporate the new information, present the revised production conditions, and stop again.
 
-### 3. Plan internally
+After explicit approval, record `phase: "approved"`, `approval.status: "approved"`, and the user's exact approval reply in `approval.user_reply`. If the user explicitly waives confirmation, record `approval.status: "waived"` and the exact waiver reply. Never create or set these values before the user provides that reply.
+
+While the phase is `questions_pending` or `confirmation_pending`, allow only the minimum read-only lookup needed to identify supplied material, verify an event or date, or form accurate production conditions. Do not perform broader content research, draft the content model, build HTML, render, or export. Skip this gate only for a minor edit, conversion, evaluation, or explicit waiver.
+
+### 4. Plan internally
 
 After confirmation, verify unstable and high-stakes facts before writing them.
 Define one communication job for the deck. Give every slide one narrative job and one primary claim. Choose a cumulative story rather than an agenda-shaped list. End with the conclusion, action, application, or understanding appropriate to the deck type.
 
 Create a compact internal content model before implementation. Validate factual claims, title lengths, text density, minimum type sizes, citations, and source coverage before rendering or exporting PDF.
 
-### 4. Checkpoint before expensive work
+### 5. Checkpoint before expensive work
 
 Use a task-local working directory. Maintain `work-state.json` with:
 
+- current phase: `questions_pending`, `confirmation_pending`, `approved`, `building`, `qa`, or `complete`;
+- approval status and the exact user reply that granted or waived approval;
 - confirmed conditions;
 - source list and unresolved assumptions;
 - slide count and slide jobs;
@@ -84,13 +99,15 @@ Save the content model and `work-state.json` before rendering. Save a clearly na
 
 If resuming a prior task, read `work-state.json` and existing artifacts first. Do not repeat research, rebuild from scratch, or ask the same questions unless the files are missing or assumptions changed.
 
-### 5. Build efficiently
+Before calling a production script, pass `work-state.json` to its approval gate. A missing, pending, or unauditable approval is a hard failure, not a warning.
+
+### 6. Build efficiently
 
 For HTML/PDF, use the bundled template and scripts described in `references/html-pdf.md`. Generate deck data, not a new site framework. Reuse the existing CSS, bundled Japanese font, navigation, print rules, page numbering, and layout classes. Assign every content slide both `job` and `visual_role`; use `visual_reason` when the role is `none`.
 
 For PowerPoint, follow `references/pptx.md` and use the available presentation-generation capability. Do not convert the HTML into a flattened PowerPoint unless the user explicitly accepts a non-editable result.
 
-### 6. Validate in the correct order
+### 7. Validate in the correct order
 
 1. Run static validation before screenshots or PDF generation.
 2. Fix all static failures together.
@@ -103,7 +120,7 @@ For PowerPoint, follow `references/pptx.md` and use the available presentation-g
 
 Do not reduce quality to meet a turn limit. Reduce repeated work, tool calls, and narration instead.
 
-### 7. Handle resource limits safely
+### 8. Handle resource limits safely
 
 Checkpoint after every build, render, correction batch, and export. Before starting another correction cycle, ensure current artifacts and remaining QA are saved.
 
@@ -116,7 +133,7 @@ If the environment stops before completion:
 
 Never claim completion when a required artifact or final QA is missing.
 
-### 8. Deliver concisely
+### 9. Deliver concisely
 
 The final response should normally contain only:
 

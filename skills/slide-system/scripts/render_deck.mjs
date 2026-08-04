@@ -121,6 +121,33 @@ async function main() {
         const lineHeight = Number.parseFloat(getComputedStyle(h2).lineHeight);
         titleWrap = Number.isFinite(lineHeight) && h2.getBoundingClientRect().height > lineHeight * 1.45;
       }
+      let coverTitleOrphan = false;
+      const h1 = slide.querySelector("h1");
+      if (h1 && h1.firstChild?.nodeType === Node.TEXT_NODE) {
+        const text = h1.firstChild.textContent || "";
+        const lines = [];
+        for (let index = 0; index < text.length; index += 1) {
+          if (/\s/.test(text[index])) continue;
+          const range = document.createRange();
+          range.setStart(h1.firstChild, index);
+          range.setEnd(h1.firstChild, index + 1);
+          const rect = range.getBoundingClientRect();
+          let line = lines.find(item => Math.abs(item.top - rect.top) < 2);
+          if (!line) {
+            line = { top: rect.top, left: rect.left, right: rect.right, count: 0 };
+            lines.push(line);
+          }
+          line.left = Math.min(line.left, rect.left);
+          line.right = Math.max(line.right, rect.right);
+          line.count += 1;
+        }
+        if (lines.length > 1) {
+          lines.sort((a, b) => a.top - b.top);
+          const previous = lines.at(-2);
+          const last = lines.at(-1);
+          coverTitleOrphan = last.count <= 2 || (last.right - last.left) < (previous.right - previous.left) * 0.25;
+        }
+      }
       const fontFailures = [];
       const checks = [
         ["h1", 66.6],
@@ -135,7 +162,7 @@ async function main() {
           if (Number.isFinite(size) && size + 0.1 < minimum) fontFailures.push(`${selector}:${size}px`);
         }
       }
-      return { overflow, titleWrap, fontFailures, width: slideRect.width, height: slideRect.height };
+      return { overflow, titleWrap, coverTitleOrphan, fontFailures, width: slideRect.width, height: slideRect.height };
     });
     const imagePath = path.join(renderDir, `slide-${String(index + 1).padStart(2, "0")}.png`);
     await page.locator(".slide.active").screenshot({ path: imagePath });
@@ -193,6 +220,7 @@ async function main() {
   for (const slide of slides) {
     if (slide.overflow.length) failures.push({ code: "OVERFLOW", slide: slide.number, details: slide.overflow });
     if (slide.titleWrap) failures.push({ code: "TITLE_WRAP", slide: slide.number });
+    if (slide.coverTitleOrphan) failures.push({ code: "COVER_TITLE_ORPHAN", slide: slide.number });
     if (slide.fontFailures.length) failures.push({ code: "FONT_SIZE", slide: slide.number, details: slide.fontFailures });
     if (Math.round(slide.width) !== 1600 || Math.round(slide.height) !== 900) failures.push({ code: "SLIDE_SIZE", slide: slide.number, details: [slide.width, slide.height] });
   }

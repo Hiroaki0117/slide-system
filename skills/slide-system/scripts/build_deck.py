@@ -33,6 +33,8 @@ ALLOWED_LAYOUTS = {
 ALLOWED_JOBS = {"claim", "explain", "evidence", "compare", "instruction", "question", "exercise", "summary", "transition"}
 ALLOWED_VISUAL_ROLES = {"evidence", "explain", "context", "decoration", "none"}
 PLACEHOLDER_RE = re.compile(r"\b(?:TODO|TBD|LOREM|PLACEHOLDER)\b|仮(?:タイトル|本文|画像)|ここに", re.I)
+APPROVAL_STATUSES = {"approved", "waived"}
+PRODUCTION_PHASES = {"approved", "building", "qa"}
 
 
 def esc(value: object) -> str:
@@ -56,6 +58,25 @@ def add_issue(issues: list[dict], level: str, code: str, message: str, slide: in
     issues.append(item)
 
 
+def validate_approval(work_state: object) -> list[dict]:
+    issues: list[dict] = []
+    if not isinstance(work_state, dict):
+        add_issue(issues, "FAIL", "PRODUCTION_NOT_APPROVED", "work-state must be a JSON object")
+        return issues
+
+    phase = str(work_state.get("phase", "")).strip()
+    approval = work_state.get("approval")
+    if phase not in PRODUCTION_PHASES or not isinstance(approval, dict):
+        add_issue(issues, "FAIL", "PRODUCTION_NOT_APPROVED", "Production phase is not approved")
+        return issues
+
+    status = str(approval.get("status", "")).strip()
+    user_reply = str(approval.get("user_reply", "")).strip()
+    if status not in APPROVAL_STATUSES or not user_reply:
+        add_issue(issues, "FAIL", "PRODUCTION_NOT_APPROVED", "Approval needs an approved or waived status and the user's exact reply")
+    return issues
+
+
 def validate(deck: dict) -> list[dict]:
     issues: list[dict] = []
     slides = deck.get("slides")
@@ -73,6 +94,18 @@ def validate(deck: dict) -> list[dict]:
         add_issue(issues, "FAIL", "MISSING_AUDIENCE", "Deck metadata needs an intended audience")
     if not str(deck.get("purpose", "")).strip():
         add_issue(issues, "FAIL", "MISSING_PURPOSE", "Deck metadata needs a concrete audience outcome")
+    high_stakes = deck.get("high_stakes") is True
+    if high_stakes:
+        safety = deck.get("safety")
+        if not isinstance(safety, dict):
+            add_issue(issues, "FAIL", "MISSING_SAFETY_MODEL", "A high-stakes deck needs a safety object")
+        else:
+            if not str(safety.get("current_condition", "")).strip():
+                add_issue(issues, "FAIL", "MISSING_CURRENT_CONDITION", "A high-stakes deck needs the confirmed current condition or an explicit unknown status")
+            for field in ("limitations", "stop_conditions"):
+                value = safety.get(field)
+                if not isinstance(value, list) or not any(str(item).strip() for item in value):
+                    add_issue(issues, "FAIL", "MISSING_SAFETY_CONDITION", f"A high-stakes deck needs non-empty {field}")
     body_limit = 120 if mode == "presented" else 220
     saw_source_marker = False
     saw_sources_slide = False
@@ -120,6 +153,8 @@ def validate(deck: dict) -> list[dict]:
             else:
                 meaningful_visuals += 1
                 consecutive_text_only = 0
+            if high_stakes and job in {"claim", "instruction"} and not str(slide.get("source", "")).strip():
+                add_issue(issues, "FAIL", "HIGH_STAKES_SOURCE", "High-stakes claim and instruction slides need a short source marker", index)
 
         bullets = slide.get("bullets", [])
         if isinstance(bullets, list) and len(bullets) > 4:
@@ -193,6 +228,8 @@ def validate(deck: dict) -> list[dict]:
 
     if saw_source_marker and not saw_sources_slide:
         add_issue(issues, "FAIL", "MISSING_SOURCES_SLIDE", "Short source markers exist but no sources appendix exists")
+    if high_stakes and not saw_sources_slide:
+        add_issue(issues, "FAIL", "MISSING_SOURCES_SLIDE", "A high-stakes deck needs a sources appendix")
     if saw_sources_slide and slides[-1].get("layout") != "sources_appendix":
         add_issue(issues, "WARN", "SOURCES_POSITION", "Sources appendix is normally the final slide")
     if content_slide_count >= 6 and meaningful_visuals < max(2, round(content_slide_count * 0.35)):
@@ -355,15 +392,33 @@ def render_slide(slide: dict, index: int, total: int, base_dir: Path) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True)
+    parser.add_argument("--work-state", required=True)
     parser.add_argument("--template", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--report", required=True)
     args = parser.parse_args()
 
     input_path = Path(args.input).resolve()
+    work_state_path = Path(args.work_state).resolve()
     template_path = Path(args.template).resolve()
     output_path = Path(args.output).resolve()
     report_path = Path(args.report).resolve()
+
+    try:
+        work_state = json.loads(work_state_path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        issues = [{"level": "FAIL", "code": "PRODUCTION_NOT_APPROVED", "message": f"Approval record is unavailable: {exc}"}]
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(json.dumps({"status": "FAIL", "issues": issues}, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(json.dumps({"status": "FAIL", "issues": issues}, ensure_ascii=False))
+        return 2
+
+    approval_issues = validate_approval(work_state)
+    if approval_issues:
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(json.dumps({"status": "FAIL", "issues": approval_issues}, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(json.dumps({"status": "FAIL", "issues": approval_issues}, ensure_ascii=False))
+        return 2
 
     try:
         deck = json.loads(input_path.read_text(encoding="utf-8"))

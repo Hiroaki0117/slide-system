@@ -3,6 +3,7 @@
   "audience": "この資料を読む主な対象者",
   "purpose": "読み終えた後に理解・判断・実行できること",
   "mode": "standalone",
+  "high_stakes": false,
   "slides": [
     {
       "layout": "cover",

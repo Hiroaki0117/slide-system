@@ -1,0 +1,15 @@
+{
+  "phase": "questions_pending",
+  "approval": {
+    "status": "pending",
+    "user_reply": ""
+  },
+  "confirmed_conditions": {},
+  "sources": [],
+  "unresolved_assumptions": [],
+  "slide_jobs": [],
+  "artifacts": {},
+  "completed_steps": [],
+  "remaining_steps": [],
+  "last_failures": []
+}

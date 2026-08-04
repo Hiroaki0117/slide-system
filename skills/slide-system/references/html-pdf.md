@@ -7,21 +7,25 @@ Use the bundled deterministic path instead of writing a complete HTML/CSS/JavaSc
 - `assets/deck-template.html`: warm_clean styling, fixed layout classes, navigation, page numbering, responsive scaling, embedded-font marker, and print rules.
 - `assets/fonts/NotoSansJP-Variable.ttf`: bundled Japanese font embedded into every final HTML/PDF deck.
 - `assets/deck-schema-example.json`: compact content model and supported fields.
+- `assets/work-state-example.json`: production phase and approval receipt required by the build gate.
 - `scripts/build_deck.py`: validates the content model and creates one self-contained HTML file.
 - `scripts/render_deck.mjs`: opens the HTML, tests navigation, renders every slide, makes a contact sheet, and exports PDF in one run.
 
 ## Build
 
-1. Copy `assets/deck-schema-example.json` to the task working directory as `deck.json`.
-2. Replace the example content and delete unused example slides.
-3. Use only supported layout names. Prefer a different existing layout or split a slide instead of adding new CSS.
-4. Run:
+1. Copy `assets/work-state-example.json` to the task working directory as `work-state.json` during preflight.
+2. Record blocking questions and production confirmation in the phases defined by `SKILL.md`.
+3. Only after explicit approval or waiver, set the approval receipt and change the phase to `approved`.
+4. Copy `assets/deck-schema-example.json` to the task working directory as `deck.json`.
+5. Replace the example content and delete unused example slides.
+6. Use only supported layout names. Prefer a different existing layout or split a slide instead of adding new CSS.
+7. Run:
 
 ```text
-python scripts/build_deck.py --input deck.json --template assets/deck-template.html --output OUTPUT_DIR/deck-draft.html --report WORK_DIR/static-qa.json
+python scripts/build_deck.py --input deck.json --work-state work-state.json --template assets/deck-template.html --output OUTPUT_DIR/deck-draft.html --report WORK_DIR/static-qa.json
 ```
 
-The build must exit successfully with no `FAIL` item before rendering. Review and resolve every warning; do not ignore a visual-cadence warning merely because the build completed.
+The build must exit successfully with no `FAIL` item before rendering. `PRODUCTION_NOT_APPROVED` means the conversation must return to the confirmation checkpoint; do not fabricate approval data. Review and resolve every warning; do not ignore a visual-cadence warning merely because the build completed.
 
 ## Render and export
 

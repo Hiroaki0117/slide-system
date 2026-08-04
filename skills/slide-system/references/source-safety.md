@@ -13,6 +13,7 @@ Use this reference when research, rights, or high-stakes guidance is involved.
 
 ## High-stakes topics
 
+- Set `high_stakes: true` in the content model. Add a `safety` object containing the confirmed current condition, limitations, and stop or consultation conditions before building.
 - Do not diagnose, guarantee outcomes, or present general guidance as individualized professional advice.
 - Identify missing information that changes safety. Ask one concise question when needed.
 - Use conditional wording and decision criteria.
@@ -20,6 +21,11 @@ Use this reference when research, rights, or high-stakes guidance is involved.
 - Put limitations beside the relevant recommendation, not only on the final sources slide.
 - For an exercise plan with an injury history, ask whether pain is currently present before production. If pain is present or status is unknown, do not present the plan as cleared for execution; show a stop condition and recommend qualified medical assessment.
 - Do not add remembered numeric rules, pace predictions, progression percentages, exercise prescriptions, or return-to-running thresholds without an authoritative source that directly supports them.
+- Match the strength of each claim to the evidence. A calculator, prediction formula, benchmark, or single past result may support a rough estimate, but not a categorical statement that an outcome is achievable.
+- Show the inputs, assumptions, and main limitation beside a prediction or derived number.
+- Do not convert population-level guidance into a fixed individualized schedule without the user's current condition, baseline, response, and recovery information.
+- For a progressive plan, include the starting condition, progression condition, recovery or easier period, regression condition, and stop or consultation condition. If any safety-critical condition is unknown, label the plan as provisional rather than executable.
+- Do not make an immediate action the conclusion unless the information needed to decide that action has been confirmed.
 
 ## Assets and rights
 
