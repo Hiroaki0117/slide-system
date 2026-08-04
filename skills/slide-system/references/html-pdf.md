@@ -32,10 +32,12 @@ The build must exit successfully with no `FAIL` item before rendering. `PRODUCTI
 After static validation passes, run one batch command:
 
 ```text
-node scripts/render_deck.mjs --html OUTPUT_DIR/deck-draft.html --pdf OUTPUT_DIR/deck-draft.pdf --renders WORK_DIR/renders --report WORK_DIR/render-qa.json
+node scripts/render_deck.mjs --html OUTPUT_DIR/deck-draft.html --pdf OUTPUT_DIR/deck-draft.pdf --renders WORK_DIR/renders --report WORK_DIR/render-qa.json --work-state WORK_DIR/work-state.json
 ```
 
-The script requires Playwright. If it is unavailable, use the environment's browser or PDF capability while preserving the same order: final HTML first, all-slide render, then PDF.
+The renderer verifies production approval. When `delivery_profile` is `staged`, it also requires `phase: "pdf_requested"` or `phase: "qa"` and the exact follow-up reply in `pdf_request.user_reply`. It must reject PDF work during the HTML-only stage.
+
+The script requires Playwright. If it is unavailable, use the environment's browser or PDF capability while preserving the same approval and staged-delivery gates, then the same order: final HTML first, all-slide render, then PDF.
 
 Inspect `contact-sheet.png`, then inspect all generated slide PNGs at readable size. Record issues together, edit `deck.json`, rebuild once, and rerender affected and related pages as a batch. Generate the final PDF only after the final HTML passes.
 

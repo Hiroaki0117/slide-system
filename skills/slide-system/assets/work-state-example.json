@@ -1,5 +1,6 @@
 {
   "phase": "questions_pending",
+  "delivery_profile": "standard",
   "approval": {
     "status": "pending",
     "user_reply": ""

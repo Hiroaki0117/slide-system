@@ -15,10 +15,34 @@ function parseArgs(argv) {
     if (!key?.startsWith("--") || argv[i + 1] === undefined) throw new Error(`Invalid argument near ${key}`);
     result[key.slice(2)] = argv[i + 1];
   }
-  for (const key of ["html", "pdf", "renders", "report"]) {
+  for (const key of ["html", "pdf", "renders", "report", "work-state"]) {
     if (!result[key]) throw new Error(`Missing --${key}`);
   }
   return result;
+}
+
+function readWorkflowState(workStatePath) {
+  const resolved = path.resolve(workStatePath);
+  if (!fs.existsSync(resolved)) throw new Error(`PRODUCTION_NOT_APPROVED: work-state not found: ${resolved}`);
+  const state = JSON.parse(fs.readFileSync(resolved, "utf8"));
+  const approval = state.approval || {};
+  const approvalStatus = String(approval.status || "");
+  const approvalReply = String(approval.user_reply || "").trim();
+  if (!["approved", "waived"].includes(approvalStatus) || !approvalReply) {
+    throw new Error("PRODUCTION_NOT_APPROVED: explicit approval record is required");
+  }
+
+  const phase = String(state.phase || "");
+  const deliveryProfile = String(state.delivery_profile || "standard");
+  if (deliveryProfile === "staged") {
+    const pdfReply = String(state.pdf_request?.user_reply || "").trim();
+    if (!["pdf_requested", "qa"].includes(phase) || !pdfReply) {
+      throw new Error("PDF_STAGE_NOT_REQUESTED: deliver HTML and wait for the user's next reply before rendering PDF");
+    }
+  } else if (!["approved", "building", "qa"].includes(phase)) {
+    throw new Error(`PRODUCTION_NOT_APPROVED: unsupported production phase ${phase || "(missing)"}`);
+  }
+  return { path: resolved, phase, delivery_profile: deliveryProfile, approval_status: approvalStatus };
 }
 
 function findBrowser(explicitPath) {
@@ -52,6 +76,7 @@ async function makeContactSheet(browser, imagePaths, outputPath) {
 
 async function main() {
   const args = parseArgs(process.argv.slice(2));
+  const workflow = readWorkflowState(args["work-state"]);
   const htmlPath = path.resolve(args.html);
   const pdfPath = path.resolve(args.pdf);
   const renderDir = path.resolve(args.renders);
@@ -232,6 +257,7 @@ async function main() {
   const report = {
     status: failures.length ? "FAIL" : "PASS",
     browser: browserPath || "playwright-managed",
+    workflow,
     html: htmlPath,
     pdf: pdfPath,
     slide_count: slideCount,

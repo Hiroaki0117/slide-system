@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slide System Free"
+  short_description: "無料版Claude向けに段階納品する省資源スライド制作"
+  default_prompt: "$slide-system-freeを使って、添付資料から読みやすいスライドを作成してください。"
