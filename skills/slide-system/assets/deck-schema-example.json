@@ -1,0 +1,45 @@
+{
+  "deck_title": "資料タイトル",
+  "mode": "standalone",
+  "slides": [
+    {
+      "layout": "cover",
+      "eyebrow": "CATEGORY × PURPOSE",
+      "title": "資料タイトル",
+      "subtitle": "必要な場合だけ使う短い補足",
+      "date": "2026-08-04"
+    },
+    {
+      "layout": "data_focus",
+      "title": "数字から現在地が分かる",
+      "lead": "重要な数字は、意味と次の判断を添えて示します。",
+      "stats": [
+        { "value": "89日", "label": "残り期間", "note": "約12.7週" },
+        { "value": "5:41/km", "label": "目標ペース", "note": "平均の目安" }
+      ],
+      "source": "出典: 依頼者提供情報、公式情報"
+    },
+    {
+      "layout": "process",
+      "title": "段階を踏むことで無理なく進める",
+      "steps": [
+        { "label": "01", "title": "整える", "body": "前提と安全条件を確認する" },
+        { "label": "02", "title": "伸ばす", "body": "必要な能力を段階的に高める" },
+        { "label": "03", "title": "仕上げる", "body": "本番条件に合わせて調整する" }
+      ]
+    },
+    {
+      "layout": "summary_action",
+      "title": "次の一歩を明確にする",
+      "headline": "小さく始め、結果を見て調整する",
+      "actions": ["今週の行動を1つ決める", "確認日を決める", "中止・見直し条件を共有する"]
+    },
+    {
+      "layout": "sources_appendix",
+      "title": "出典",
+      "sources": [
+        { "id": "S1", "title": "資料名", "publisher": "発行元", "url": "https://example.com", "checked": "2026-08-04" }
+      ]
+    }
+  ]
+}

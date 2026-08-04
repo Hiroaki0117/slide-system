@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>__DECK_TITLE__</title>
+  <style>
+    :root {
+      --bg: #FFF8F4;
+      --surface: #FFFFFF;
+      --text: #3F3639;
+      --muted: #665B5E;
+      --coral-text: #B94D48;
+      --coral: #E96E68;
+      --coral-soft: #FFD2C7;
+      --mint: #C5E7E1;
+      --divider: #E8DFDC;
+      --dark: #3F3639;
+      --inverse: #FFF8F4;
+      --font: "Noto Sans JP", "Yu Gothic", "Hiragino Sans", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #F1F3F5; color: var(--text); font-family: var(--font); }
+    body { display: grid; place-items: center; }
+    .viewport { position: relative; width: 1600px; height: 900px; transform-origin: center center; }
+    .slide {
+      position: absolute; inset: 0; display: none; overflow: hidden; contain: size layout paint;
+      width: 1600px; height: 900px; padding: 64px 88px 66px;
+      background: var(--bg); color: var(--text);
+    }
+    .slide.active { display: block; }
+    .slide::before { content: ""; position: absolute; width: 250px; height: 250px; border-radius: 50%; right: -135px; top: -145px; background: var(--coral-soft); opacity: .62; pointer-events: none; }
+    .slide::after { content: ""; position: absolute; width: 180px; height: 180px; border-radius: 50%; left: -110px; bottom: -115px; background: var(--mint); opacity: .42; pointer-events: none; }
+    .slide.cover::before { width: 470px; height: 470px; right: -115px; top: -215px; opacity: .92; }
+    .slide.cover::after { width: 300px; height: 300px; left: auto; right: 175px; bottom: -175px; opacity: .92; }
+    .slide.no-decor::before, .slide.no-decor::after { display: none; }
+    .content { position: relative; z-index: 1; height: 100%; }
+    .eyebrow { margin: 10px 0 42px; color: var(--coral); font-size: 24px; line-height: 1.25; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; }
+    h1 { max-width: 1050px; margin: 0; font-size: 72px; line-height: 1.14; letter-spacing: -.035em; font-weight: 800; }
+    h2 { margin: 0 0 36px; font-size: 48px; line-height: 1.18; letter-spacing: -.025em; font-weight: 800; }
+    h3 { margin: 0 0 14px; font-size: 32px; line-height: 1.25; font-weight: 700; }
+    p, li, td, th { font-size: 24px; line-height: 1.55; }
+    p { margin: 0; }
+    .subtitle { max-width: 900px; margin-top: 28px; color: var(--muted); font-size: 28px; line-height: 1.5; }
+    .date { position: absolute; left: 0; bottom: 26px; color: var(--muted); font-size: 20px; font-weight: 600; }
+    .accent-line { width: 110px; height: 8px; margin-top: 44px; border-radius: 999px; background: var(--coral); }
+    .lead { max-width: 1160px; margin: -8px 0 32px; color: var(--muted); font-size: 28px; line-height: 1.5; }
+    .headline { max-width: 1240px; margin: 112px auto 0; text-align: center; font-size: 58px; line-height: 1.28; letter-spacing: -.03em; font-weight: 800; }
+    .headline-support { max-width: 980px; margin: 34px auto 0; text-align: center; color: var(--muted); font-size: 26px; line-height: 1.55; }
+    ul { margin: 18px 0 0; padding-left: 1.35em; }
+    li { margin: 12px 0; padding-left: .15em; }
+    li::marker { color: var(--coral); }
+    .callout { margin-top: 32px; padding: 22px 28px; border-left: 8px solid var(--coral); background: rgba(255,255,255,.72); border-radius: 0 18px 18px 0; font-size: 24px; line-height: 1.5; }
+    .columns { display: grid; gap: 28px; align-items: stretch; }
+    .columns.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .columns.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .panel { min-width: 0; padding: 30px 32px; border-top: 7px solid var(--coral); border-radius: 18px; background: rgba(255,255,255,.84); }
+    .panel.mint { border-top-color: #7CC7BA; }
+    .panel.neutral { border-top-color: var(--divider); }
+    .panel p { color: var(--muted); }
+    .process-grid { display: grid; grid-template-columns: repeat(var(--step-count), minmax(0, 1fr)); gap: 24px; margin-top: 70px; }
+    .step { position: relative; min-width: 0; padding: 26px 22px 28px; border-top: 7px solid var(--coral); background: rgba(255,255,255,.76); border-radius: 18px; }
+    .step:not(:last-child)::after { content: ""; position: absolute; top: 50%; right: -18px; width: 12px; height: 3px; background: var(--coral); transform: translateY(-50%); }
+    .step-label { display: inline-grid; place-items: center; min-width: 46px; height: 46px; padding: 0 12px; margin-bottom: 22px; border-radius: 999px; background: var(--coral-soft); color: var(--coral-text); font-size: 20px; font-weight: 800; }
+    .step p { color: var(--muted); font-size: 22px; line-height: 1.5; }
+    .stats { display: grid; grid-template-columns: repeat(var(--stat-count), minmax(0, 1fr)); gap: 26px; margin-top: 52px; }
+    .stat { min-width: 0; padding: 28px 30px 30px; border-bottom: 7px solid var(--coral); background: rgba(255,255,255,.84); border-radius: 18px; }
+    .stat:nth-child(even) { border-bottom-color: #7CC7BA; }
+    .stat-value { color: var(--coral-text); font-size: 54px; line-height: 1.12; font-weight: 800; letter-spacing: -.035em; }
+    .stat-label { margin-top: 16px; font-size: 26px; font-weight: 700; }
+    .stat-note { margin-top: 7px; color: var(--muted); font-size: 20px; }
+    .table-wrap { max-height: 590px; overflow: hidden; border-radius: 16px; background: rgba(255,255,255,.86); }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    th { padding: 18px 20px; text-align: left; color: var(--coral-text); background: var(--coral-soft); font-size: 21px; font-weight: 800; }
+    td { padding: 17px 20px; border-top: 1px solid var(--divider); vertical-align: top; font-size: 20px; line-height: 1.42; }
+    tr:nth-child(even) td { background: rgba(197,231,225,.18); }
+    .note { margin-top: 22px; color: var(--muted); font-size: 20px; line-height: 1.5; }
+    .actions { display: grid; gap: 18px; margin-top: 42px; }
+    .action { display: grid; grid-template-columns: 52px 1fr; gap: 20px; align-items: center; padding: 20px 26px; border-bottom: 1px solid var(--divider); font-size: 24px; line-height: 1.45; }
+    .action-number { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--coral-soft); color: var(--coral-text); font-size: 20px; font-weight: 800; }
+    .sources-list { display: grid; gap: 15px; margin-top: 12px; }
+    .source-item { display: grid; grid-template-columns: 72px 1fr; gap: 18px; padding-bottom: 13px; border-bottom: 1px solid var(--divider); }
+    .source-id { color: var(--coral-text); font-size: 18px; font-weight: 800; }
+    .source-main { font-size: 17px; line-height: 1.38; overflow-wrap: anywhere; }
+    .source-meta { margin-top: 3px; color: var(--muted); font-size: 14px; line-height: 1.35; }
+    .slide-source { position: absolute; left: 88px; bottom: 27px; z-index: 2; max-width: 1180px; color: var(--muted); font-size: 14px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .page-number { position: absolute; right: 88px; bottom: 23px; z-index: 2; font-size: 17px; font-weight: 800; }
+    .image-layout { display: grid; grid-template-columns: 1.05fr .95fr; gap: 42px; align-items: center; }
+    .image-layout.reverse { grid-template-columns: .95fr 1.05fr; }
+    .image-frame { width: 100%; height: 500px; overflow: hidden; border-radius: 28px; background: var(--surface); }
+    .image-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .slide:not(.active) { display: none; }
+    .slide.active { display: block; }
+    .controls { position: fixed; z-index: 99; left: 50%; bottom: 18px; display: flex; gap: 10px; align-items: center; transform: translateX(-50%); padding: 8px 12px; border-radius: 999px; background: rgba(63,54,57,.9); color: #fff; font: 600 14px/1 var(--font); }
+    .controls button { width: 34px; height: 30px; border: 0; border-radius: 999px; color: #fff; background: rgba(255,255,255,.15); cursor: pointer; font-size: 17px; }
+    .controls button:hover { background: rgba(255,255,255,.28); }
+    @media print {
+      @page { size: 1600px 900px; margin: 0; }
+      html, body { width: auto; height: auto; overflow: visible; background: #fff; }
+      body { display: block; }
+      .viewport { width: auto; height: auto; transform: none !important; }
+      .slide { position: relative; display: block !important; width: 1600px; height: 900px; padding: 64px 88px 66px; overflow: hidden; page-break-inside: avoid; break-inside: avoid-page; page-break-after: always; break-after: page; }
+      .slide:last-child { page-break-after: auto; break-after: auto; }
+      .slide-source { left: 88px; bottom: 27px; }
+      .page-number { right: 88px; bottom: 23px; }
+      .controls { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="viewport" id="viewport">
+__SLIDES__
+  </main>
+  <nav class="controls" aria-label="スライド操作">
+    <button type="button" id="prev" aria-label="前へ">‹</button>
+    <span id="indicator">1 / 1</span>
+    <button type="button" id="next" aria-label="次へ">›</button>
+  </nav>
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    let current = 0;
+    function showSlide(index) {
+      current = Math.max(0, Math.min(slides.length - 1, Number(index) || 0));
+      slides.forEach((slide, i) => slide.classList.toggle('active', i === current));
+      document.getElementById('indicator').textContent = `${current + 1} / ${slides.length}`;
+      return current;
+    }
+    function scaleDeck() {
+      if (window.matchMedia('print').matches) return;
+      const scale = Math.min(window.innerWidth / 1600, window.innerHeight / 900);
+      document.getElementById('viewport').style.transform = `scale(${scale})`;
+    }
+    document.getElementById('prev').addEventListener('click', () => showSlide(current - 1));
+    document.getElementById('next').addEventListener('click', () => showSlide(current + 1));
+    document.addEventListener('keydown', event => {
+      if (['ArrowRight', 'PageDown', ' '].includes(event.key)) showSlide(current + 1);
+      if (['ArrowLeft', 'PageUp'].includes(event.key)) showSlide(current - 1);
+      if (event.key === 'Home') showSlide(0);
+      if (event.key === 'End') showSlide(slides.length - 1);
+    });
+    window.addEventListener('resize', scaleDeck);
+    window.showSlide = showSlide;
+    window.deckSlideCount = slides.length;
+    showSlide(0);
+    scaleDeck();
+  </script>
+</body>
+</html>
