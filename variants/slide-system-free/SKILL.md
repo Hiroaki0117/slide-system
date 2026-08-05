@@ -96,13 +96,13 @@ In this turn only:
 3. For other deck types, create a compact 6–8 slide content model and run the standard static builder. Use 9–10 slides when required content cannot fit legibly. Do not rely on a later correction turn to add essential content.
 4. Save `deck-draft.html`, `deck.json`, static QA, and `work-state.json` in the user-accessible output directory. The compact builder must create HTML whether its report says `PASS` or `DRAFT`.
 5. Confirm that the HTML navigation includes `PDF保存`. Set `phase: "html_delivered"`, store the HTML path, and set the next action to `PDF化`.
-6. Return the HTML draft to the user and stop the turn.
+6. Return the HTML draft, then copy the compact builder's `user_review_points` into the response as three short confirmation points. Ask the user to check the proposed distances, recurring-session intensity, and start/stop conditions; do not automatically rewrite those content decisions. Then stop the turn.
 
 If the compact builder reports `DRAFT`, return that HTML immediately and say it is a visible, non-executable validation draft. Do not inspect source code, rebuild, research again, or retry in the same turn. A `DRAFT` is not completion; its banner and QA report preserve the unresolved issue for the next chat or turn.
 
 Do not run `render_deck.mjs`, create screenshots, export PDF, or start visual correction in Stage A. Do not use remaining capacity to continue automatically.
 
-The Stage A response must clearly say that the HTML is a usable draft, PDF確認 remains, and the user can reply naturally with `PDFもお願いします` or use the HTML's `PDF保存` button if the session limit is near.
+The Stage A response must clearly say that the HTML is a usable draft, identify the three user review points, and explain that PDF確認 remains. The user can reply naturally with a correction or `PDFもお願いします`, or use the HTML's `PDF保存` button if the session limit is near.
 
 ### Stage A tool budget
 

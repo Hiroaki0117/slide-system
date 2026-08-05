@@ -56,17 +56,26 @@ def main() -> int:
         work = Path(temporary)
         result, html, report = run_builder(work, valid, "valid")
         assert result["status"] == "PASS" and result["complete"] is True
-        assert result["must_return_html"] is True and result["slide_count"] == 9
+        assert result["must_return_html"] is True and result["slide_count"] == 10
+        assert len(result["user_review_points"]) == 3
         assert report["quality_gate"] == "UNCHANGED_STRICT_VALIDATOR"
         assert report["issues"] == []
+        assert report["user_review_points"] == result["user_review_points"]
         assert "検証未完了ドラフト" not in html
         assert "slide-deck-data" in html and "__DRAFT_BANNER__" not in html
+
+        compact = json.loads(json.dumps(valid, ensure_ascii=False))
+        compact["phases"] = compact["phases"][1:]
+        result, html, report = run_builder(work, compact, "four-phases")
+        assert result["status"] == "PASS" and result["slide_count"] == 9
+        assert "｜前半" not in html and "｜後半" not in html
 
         invalid = json.loads(json.dumps(valid, ensure_ascii=False))
         invalid["sources"] = [item for item in invalid["sources"] if item["role"] != "nutrition"]
         result, html, report = run_builder(work, invalid, "invalid")
         assert result["status"] == "DRAFT" and result["complete"] is False
         assert result["must_return_html"] is True and Path(result["html"]).exists()
+        assert len(result["user_review_points"]) == 1
         assert report["quality_gate"] == "NOT_RUN_INPUT_INCOMPLETE"
         assert "検証未完了ドラフト" in html
         assert report["issues"][0]["code"] == "COMPACT_INPUT_ERROR"

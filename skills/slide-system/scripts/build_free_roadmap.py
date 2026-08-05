@@ -13,6 +13,11 @@ import build_deck as engine
 
 
 DRAFT_NOTICE = "検証未完了ドラフト｜実行用ではありません。内容と安全条件の確認が必要です。"
+DEFAULT_REVIEW_POINTS = [
+    "各週のロング走距離・時間が本人の意図と体調に合っているか",
+    "火曜・木曜・土曜の練習強度と役割が本人の認識と合っているか",
+    "現在の状態に対する開始条件・中止条件が明確か",
+]
 
 
 def text(value: object, fallback: str = "未設定") -> str:
@@ -97,7 +102,7 @@ def expand(brief: dict) -> dict:
             "progression_condition": text(item.get("progression_condition")),
             "hold_or_regress_condition": text(item.get("hold_or_regress_condition")),
             "execution_condition": execution,
-            "slide": 3,
+            "slide": 0,
         }
         phase_guidance.append(phase)
         phase_rows.append([
@@ -109,13 +114,30 @@ def expand(brief: dict) -> dict:
         if phase["phase_type"] == "taper":
             taper_visible_text = phase["purpose"]
 
+    phase_row_limit = 4
+    if len(phase_rows) > phase_row_limit:
+        phase_split_at = ceil(len(phase_rows) / 2)
+        phase_sections = [phase_rows[:phase_split_at], phase_rows[phase_split_at:]]
+    else:
+        phase_split_at = len(phase_rows)
+        phase_sections = [phase_rows]
+    for index, phase in enumerate(phase_guidance):
+        phase["slide"] = 3 if index < phase_split_at else 4
+
+    phase_slide_count = len(phase_sections)
+    weekly_first_slide = 3 + phase_slide_count
+    weekly_second_slide = weekly_first_slide + 1
+    session_slide = weekly_second_slide + 1
+    event_slide = session_slide + 1
+    safety_slide = event_slide + 1
+
     weekly_guidance = []
     week_rows_first = []
     week_rows_second = []
     split_at = ceil(expected_weeks / 2)
     for item in weeks:
         week_number = item.get("week")
-        slide_number = 4 if isinstance(week_number, int) and week_number <= split_at else 5
+        slide_number = weekly_first_slide if isinstance(week_number, int) and week_number <= split_at else weekly_second_slide
         weekly = {
             "week": week_number,
             "period": text(item.get("period")),
@@ -127,7 +149,7 @@ def expand(brief: dict) -> dict:
         weekly_guidance.append(weekly)
         label = f"第{week_number}週" + ("・回復" if weekly["recovery_week"] else "")
         row = [label, weekly["period"], weekly["distance_or_time"]]
-        (week_rows_first if slide_number == 4 else week_rows_second).append(row)
+        (week_rows_first if slide_number == weekly_first_slide else week_rows_second).append(row)
 
     session_guidance = []
     session_rows = []
@@ -141,7 +163,7 @@ def expand(brief: dict) -> dict:
             "basis": text(item.get("basis")),
             "basis_type": text(item.get("basis_type")),
             "source_ids": item.get("source_ids", []),
-            "slide": 6,
+            "slide": session_slide,
             "execution_condition": execution,
         }
         if session["basis_type"] == "user_confirmed":
@@ -160,11 +182,11 @@ def expand(brief: dict) -> dict:
         "course_summary": text(event.get("course_summary")),
         "goal_basis": text(event.get("goal_basis")),
         "pace_buffer_note": text(event.get("pace_buffer_note")),
-        "strategy_slide": 7,
+        "strategy_slide": event_slide,
         "source_ids": [text(event_source.get("id"))],
     }
     event_strategy = {
-        "slide": 7,
+        "slide": event_slide,
         "segments": [
             {"label": text(item.get("label")), "approach": text(item.get("approach"))}
             for item in segments
@@ -185,18 +207,20 @@ def expand(brief: dict) -> dict:
     taper_id = text(taper_source.get("id"))
     event_id = text(event_source.get("id"))
     nutrition_id = text(nutrition_source.get("id"))
-    claim_evidence = [
-        evidence(safety_source, clearance, 2, "実行前の復帰条件", "safety"),
-        evidence(safety_source, execution, 3, "段階計画の実行条件", "safety"),
-        evidence(safety_source, execution, 4, "週別計画前半の実行条件", "safety"),
-        evidence(safety_source, execution, 5, "週別計画後半の実行条件", "safety"),
-        evidence(safety_source, execution, 6, "定例練習の実行条件", "safety"),
-        evidence(safety_source, pre_clearance_action, 8, "復帰前の行動", "safety"),
-        evidence(event_source, event_facts["timing_basis"], 7, "公式記録基準"),
-        evidence(nutrition_source, event_strategy["fueling"], 7, "補給の準備", "instruction"),
-    ]
+    claim_evidence = [evidence(safety_source, clearance, 2, "実行前の復帰条件", "safety")]
+    for phase_slide in range(3, 3 + phase_slide_count):
+        claim_evidence.append(evidence(safety_source, execution, phase_slide, "段階計画の実行条件", "safety"))
+    claim_evidence.extend([
+        evidence(safety_source, execution, weekly_first_slide, "週別計画前半の実行条件", "safety"),
+        evidence(safety_source, execution, weekly_second_slide, "週別計画後半の実行条件", "safety"),
+        evidence(safety_source, execution, session_slide, "定例練習の実行条件", "safety"),
+        evidence(safety_source, pre_clearance_action, safety_slide, "復帰前の行動", "safety"),
+        evidence(event_source, event_facts["timing_basis"], event_slide, "公式記録基準"),
+        evidence(nutrition_source, event_strategy["fueling"], event_slide, "補給の準備", "instruction"),
+    ])
     if taper_visible_text:
-        claim_evidence.append(evidence(taper_source, taper_visible_text, 3, "調整期の考え方", "instruction"))
+        taper_slide = next(phase["slide"] for phase in phase_guidance if phase["phase_type"] == "taper")
+        claim_evidence.append(evidence(taper_source, taper_visible_text, taper_slide, "調整期の考え方", "instruction"))
 
     comparison_model = {
         "current_value": text(comparison.get("current_value")),
@@ -224,13 +248,23 @@ def expand(brief: dict) -> dict:
             ],
             "source": f"出典: [{safety_id}]（復帰条件のみ）",
         },
-        {
+    ]
+    for section_index, rows in enumerate(phase_sections):
+        suffix = "" if phase_slide_count == 1 else ("｜前半" if section_index == 0 else "｜後半")
+        section_start = 0 if section_index == 0 else phase_split_at
+        section_end = phase_split_at if section_index == 0 and phase_slide_count > 1 else len(phase_guidance)
+        section_has_taper = any(phase["phase_type"] == "taper" for phase in phase_guidance[section_start:section_end])
+        phase_source = f"出典: [{safety_id}]（実行条件）"
+        if section_has_taper:
+            phase_source += f" [{taper_id}]（調整期）"
+        slides.append({
             "layout": "table", "job": "instruction", "visual_role": "evidence",
-            "title": "段階ごとの目的と進行条件", "lead": execution,
+            "title": f"段階ごとの目的と進行条件{suffix}", "lead": execution,
             "headers": ["段階・期間", "距離・目的", "確認・進行", "維持・後退"],
-            "rows": phase_rows,
-            "source": f"出典: [{safety_id}]（実行条件） [{taper_id}]（調整期）",
-        },
+            "rows": rows,
+            "source": phase_source,
+        })
+    slides.extend([
         {
             "layout": "table", "job": "instruction", "visual_role": "evidence",
             "title": f"第1〜{split_at}週のロング走", "lead": execution,
@@ -270,7 +304,7 @@ def expand(brief: dict) -> dict:
                 for item in brief.get("sources", [])
             ],
         },
-    ]
+    ])
 
     return {
         "deck_title": text(brief.get("deck_title")),
@@ -295,7 +329,7 @@ def expand(brief: dict) -> dict:
             "recovery_conditions": [text(condition.get("recovery_condition"))],
             "regression_conditions": [text(condition.get("regression_condition"))],
             "stop_conditions": [stop_condition], "consultation_conditions": [consultation],
-            "pre_clearance_actions": [pre_clearance_action], "action_slide": 8,
+            "pre_clearance_actions": [pre_clearance_action], "action_slide": safety_slide,
             "phase_guidance": phase_guidance, "session_guidance": session_guidance,
             "weekly_long_sessions": weekly_guidance,
         },
@@ -303,6 +337,7 @@ def expand(brief: dict) -> dict:
         "event_facts": event_facts,
         "event_strategy": event_strategy,
         "current_target_comparison": comparison_model,
+        "user_review_points": DEFAULT_REVIEW_POINTS,
         "slides": slides,
     }
 
@@ -314,6 +349,7 @@ def minimal_draft(brief: object, message: str) -> dict:
         "audience": text(data.get("audience"), "依頼者"),
         "purpose": "不足項目を確認して制作を再開する",
         "mode": "standalone", "high_stakes": False,
+        "user_review_points": ["検証未完了の理由を確認し、入力を修正する"],
         "slides": [
             {"layout": "cover", "title": text(data.get("deck_title"), "スライド下書き"), "date": text(data.get("date"), date.today().isoformat())},
             {
@@ -361,6 +397,7 @@ def main() -> int:
             "status": "DRAFT" if failures else "PASS", "slide_count": len(deck["slides"]),
             "warning_count": sum(item["level"] == "WARN" for item in issues), "issues": issues,
             "quality_gate": "UNCHANGED_STRICT_VALIDATOR",
+            "user_review_points": deck.get("user_review_points", []),
         }
         notice = DRAFT_NOTICE if failures else ""
     except Exception as exc:
@@ -369,6 +406,7 @@ def main() -> int:
             "status": "DRAFT", "slide_count": len(deck["slides"]), "warning_count": 0,
             "issues": [{"level": "FAIL", "code": "COMPACT_INPUT_ERROR", "message": str(exc)}],
             "quality_gate": "NOT_RUN_INPUT_INCOMPLETE",
+            "user_review_points": deck.get("user_review_points", []),
         }
         notice = DRAFT_NOTICE
 
@@ -380,6 +418,7 @@ def main() -> int:
         "status": report["status"], "html": str(output_path), "deck": str(deck_path),
         "report": str(report_path), "slide_count": report["slide_count"],
         "complete": report["status"] == "PASS", "must_return_html": True,
+        "user_review_points": report["user_review_points"],
     }, ensure_ascii=False))
     return 0
 

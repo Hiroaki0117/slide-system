@@ -30,6 +30,8 @@ def main() -> int:
         "Treat the script as an opaque executable",
         "The compact builder must create HTML whether its report says `PASS` or `DRAFT`",
         "Do not inspect builder or validator source code",
+        "user_review_points",
+        "do not automatically rewrite those content decisions",
     ]
     missing = [item for item in required if item not in text]
     assert not missing, f"Missing free-plan turn-gate contract: {missing}"
