@@ -10,6 +10,7 @@ import json
 import mimetypes
 import re
 import sys
+from datetime import date
 from pathlib import Path
 
 
@@ -36,6 +37,14 @@ PLACEHOLDER_RE = re.compile(r"\b(?:TODO|TBD|LOREM|PLACEHOLDER)\b|仮(?:タイト
 SOURCE_ID_RE = re.compile(r"\[([A-Za-z][A-Za-z0-9_-]*)\]")
 APPROVAL_STATUSES = {"approved", "waived"}
 PRODUCTION_PHASES = {"approved", "building", "qa"}
+SESSION_INTENSITIES = {"easy", "recovery", "quality", "long_easy", "other"}
+PHASE_TYPES = {"base", "build", "peak", "recovery", "taper", "other"}
+LOAD_GUIDE_RE = re.compile(r"\d+(?:[.,]\d+)?\s*(?:km|キロ|分|時間|mile|miles|mi)", re.I)
+VISIBLE_SLIDE_FIELDS = {
+    "eyebrow", "title", "subtitle", "date", "headline", "body", "lead", "bullets",
+    "callout", "sections", "columns", "steps", "stats", "bars", "note", "headers",
+    "rows", "question", "yes_action", "no_action", "prompt", "answer", "actions", "source",
+}
 
 
 def esc(value: object) -> str:
@@ -50,6 +59,13 @@ def text_len(value: object) -> int:
     if isinstance(value, list):
         return sum(text_len(v) for v in value)
     return len(str(value).strip())
+
+
+def visible_slide_text(slide: object) -> str:
+    if not isinstance(slide, dict):
+        return ""
+    visible = {key: value for key, value in slide.items() if key in VISIBLE_SLIDE_FIELDS}
+    return json.dumps(visible, ensure_ascii=False)
 
 
 def add_issue(issues: list[dict], level: str, code: str, message: str, slide: int | None = None) -> None:
@@ -96,6 +112,34 @@ def validate(deck: dict) -> list[dict]:
     if not str(deck.get("purpose", "")).strip():
         add_issue(issues, "FAIL", "MISSING_PURPOSE", "Deck metadata needs a concrete audience outcome")
     high_stakes = deck.get("high_stakes") is True
+    if deck.get("dated_roadmap") is True:
+        timeline = deck.get("timeline")
+        if not isinstance(timeline, dict):
+            add_issue(issues, "FAIL", "MISSING_TIMELINE", "A dated roadmap needs a timeline object")
+        else:
+            required_timeline = ("current_date", "target_date", "duration_text", "slide")
+            if any(not str(timeline.get(field, "")).strip() for field in required_timeline):
+                add_issue(issues, "FAIL", "INCOMPLETE_TIMELINE", f"A dated roadmap needs {', '.join(required_timeline)}")
+            else:
+                try:
+                    current = date.fromisoformat(str(timeline["current_date"]))
+                    target = date.fromisoformat(str(timeline["target_date"]))
+                    remaining_days = (target - current).days
+                    if remaining_days < 0:
+                        raise ValueError("target_date precedes current_date")
+                    duration_text = str(timeline["duration_text"])
+                    if str(remaining_days) not in duration_text:
+                        add_issue(issues, "FAIL", "TIMELINE_DAY_MISMATCH", f"duration_text must visibly include the exact {remaining_days} remaining days")
+                    rounded_match = re.search(r"約\s*(\d+)\s*週間", duration_text)
+                    if rounded_match and int(rounded_match.group(1)) != round(remaining_days / 7):
+                        add_issue(issues, "FAIL", "TIMELINE_WEEK_ROUNDING", f"{remaining_days} days rounds naturally to about {round(remaining_days / 7)} weeks")
+                    timeline_slide = timeline.get("slide")
+                    if not isinstance(timeline_slide, int) or not 1 <= timeline_slide <= len(slides):
+                        add_issue(issues, "FAIL", "TIMELINE_SLIDE", "timeline.slide must identify a valid slide")
+                    elif duration_text not in visible_slide_text(slides[timeline_slide - 1]):
+                        add_issue(issues, "FAIL", "TIMELINE_NOT_VISIBLE", "The exact duration_text must be visible on timeline.slide")
+                except (TypeError, ValueError) as exc:
+                    add_issue(issues, "FAIL", "INVALID_TIMELINE_DATE", f"Timeline dates must be valid ISO dates: {exc}")
     if high_stakes:
         safety = deck.get("safety")
         if not isinstance(safety, dict):
@@ -112,14 +156,52 @@ def validate(deck: dict) -> list[dict]:
                     value = safety.get(field)
                     if not isinstance(value, list) or not any(str(item).strip() for item in value):
                         add_issue(issues, "FAIL", "MISSING_PROGRESSIVE_PLAN_CONDITION", f"A progressive high-stakes plan needs non-empty {field}")
+                phase_guidance = safety.get("phase_guidance")
+                if not isinstance(phase_guidance, list) or len(phase_guidance) < 2:
+                    add_issue(issues, "FAIL", "MISSING_PHASE_GUIDANCE", "A progressive exercise plan needs at least two phases with visible load guidance")
+                else:
+                    phase_types: set[str] = set()
+                    required_phase = ("name", "period", "phase_type", "long_session_distance_or_time", "purpose", "checkpoint", "progression_condition", "hold_or_regress_condition", "slide")
+                    for phase_index, phase in enumerate(phase_guidance, 1):
+                        if not isinstance(phase, dict) or any(not str(phase.get(field, "")).strip() for field in required_phase):
+                            add_issue(issues, "FAIL", "INCOMPLETE_PHASE_GUIDANCE", f"Phase guidance {phase_index} needs {', '.join(required_phase)}")
+                            continue
+                        phase_type = str(phase.get("phase_type", "")).strip()
+                        phase_types.add(phase_type)
+                        if phase_type not in PHASE_TYPES:
+                            add_issue(issues, "FAIL", "INVALID_PHASE_TYPE", f"Phase guidance {phase_index} has unsupported phase_type: {phase_type}")
+                        load_guide = str(phase.get("long_session_distance_or_time", "")).strip()
+                        if not LOAD_GUIDE_RE.search(load_guide):
+                            add_issue(issues, "FAIL", "NON_NUMERIC_PHASE_LOAD", f"Phase guidance {phase_index} needs a numeric distance or time guide, not only a vague progression phrase")
+                        phase_slide = phase.get("slide")
+                        if not isinstance(phase_slide, int) or not 1 <= phase_slide <= len(slides):
+                            add_issue(issues, "FAIL", "PHASE_GUIDANCE_SLIDE", f"Phase guidance {phase_index} must identify a valid slide")
+                        else:
+                            shown = visible_slide_text(slides[phase_slide - 1])
+                            if str(phase.get("period")) not in shown or load_guide not in shown:
+                                add_issue(issues, "FAIL", "PHASE_GUIDANCE_NOT_VISIBLE", f"Phase guidance {phase_index} period and load guide must be visible on slide {phase_slide}")
+                    if safety.get("event_preparation") is True and not phase_types.intersection({"recovery", "taper"}):
+                        add_issue(issues, "FAIL", "MISSING_EVENT_RECOVERY_PHASE", "Event preparation needs a recovery or taper phase")
+
                 session_guidance = safety.get("session_guidance")
                 if not isinstance(session_guidance, list) or not session_guidance:
                     add_issue(issues, "FAIL", "MISSING_SESSION_GUIDANCE", "A progressive exercise plan needs session guidance with pace or effort, purpose, and adjustment conditions")
                 else:
-                    required = ("session_type", "pace_or_effort", "purpose", "adjustment_condition")
+                    required = ("session_type", "pace_or_effort", "purpose", "adjustment_condition", "intensity_class", "basis")
+                    intensities: list[str] = []
                     for session_index, session in enumerate(session_guidance, 1):
                         if not isinstance(session, dict) or any(not str(session.get(field, "")).strip() for field in required):
                             add_issue(issues, "FAIL", "INCOMPLETE_SESSION_GUIDANCE", f"Session guidance {session_index} needs {', '.join(required)}")
+                            continue
+                        intensity = str(session.get("intensity_class", "")).strip()
+                        intensities.append(intensity)
+                        if intensity not in SESSION_INTENSITIES:
+                            add_issue(issues, "FAIL", "INVALID_SESSION_INTENSITY", f"Session guidance {session_index} has unsupported intensity_class: {intensity}")
+                    if safety.get("novice_or_returning") is True:
+                        if not any(item in {"easy", "recovery"} for item in intensities):
+                            add_issue(issues, "FAIL", "MISSING_EASY_SESSION", "A beginner or return-from-injury plan needs an explicit easy or recovery session")
+                        if intensities.count("quality") > 1:
+                            add_issue(issues, "FAIL", "TOO_MANY_QUALITY_SESSIONS", "A beginner or return-from-injury plan should not prescribe more than one recurring quality session")
     body_limit = 120 if mode == "presented" else 220
     saw_source_marker = False
     saw_sources_slide = False

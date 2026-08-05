@@ -66,7 +66,7 @@ After approval, record `phase: "approved"`, `approval.status: "approved"`, and t
 In this turn only:
 
 1. Verify the minimum necessary unstable and high-stakes facts.
-2. Create a compact 6–8 slide content model with one job and one primary claim per slide. Before compressing, list the mandatory coverage and confirm that none is lost; use 9–10 slides when safety, source traceability, or the user's decision criteria do not fit legibly in 8.
+2. Create a compact 6–8 slide content model with one job and one primary claim per slide. Before compressing, list the mandatory coverage and confirm that none is lost; use 9–10 slides when safety, source traceability, phase-specific load guidance, or the user's decision criteria do not fit legibly in 8.
 3. Run the bundled static builder with `--work-state`. Resolve every static `FAIL` in one batch.
 4. Save `deck-draft.html`, `deck.json`, static QA, and `work-state.json` in the user-accessible output directory.
 5. Set `phase: "html_delivered"`, store the HTML path, and set the next action to `PDF化と最終QA`.
@@ -94,7 +94,13 @@ Never claim completion if PDF generation, page-count parity, font loading, overf
 - Match claim strength to evidence. Treat formulas, calculators, benchmarks, and single past results as estimates, not guarantees.
 - Put assumptions and the main limitation beside a derived number.
 - For progressive roadmaps, show starting, progression, recovery, regression, and stop or consultation conditions.
-- For exercise roadmaps, show the pace or effort, purpose, and adjustment condition for every recurring session type. Include long-session pace explicitly and distinguish it from goal-pace practice.
+- For a date-driven roadmap, set `dated_roadmap: true`, calculate the exact remaining days from ISO dates, and show one consistent natural rounding such as `88日（約13週間）`. Do not shorten 12 weeks and 4 days to `約12週間`.
+- For progressive exercise roadmaps, include `safety.phase_guidance`. Every phase needs its period, a numeric long-session distance or time guide, purpose, checkpoint, progression condition, hold or regression condition, and the slide number where the period and load guide are visibly shown.
+- A fixed single prescription is prohibited, but omission of load guidance is also prohibited. Use conditional ranges, an explicit current-load ceiling, or time ranges. Do not replace them with only `少しずつ延ばす`.
+- For exercise roadmaps, show the pace or effort, purpose, adjustment condition, intensity class, and basis for every recurring session type. Include long-session pace explicitly and distinguish it from goal-pace practice.
+- For a beginner or return-from-injury plan, set `safety.novice_or_returning: true`, keep at least one recurring session explicitly easy or recovery-oriented, and normally use no more than one quality session per week.
+- Do not invent a numeric workout pace from distance and frequency alone. Use a user-confirmed pace, a traceable calculation or authoritative source, or an effort/talk-test range marked provisional.
+- When an official result uses gun time, distinguish gross and net goals in the production conditions and final deck. Include official start, cutoff, and timing basis when they affect the requested outcome.
 - Do not use slide count as a reason to omit current-versus-target comparison, recovery periods, event-specific constraints, or final-use preparation such as pacing, fueling, equipment, and rehearsal when they affect the requested outcome.
 - Use source IDs such as `[S1]` on claim and instruction slides and ensure every ID resolves to one complete appendix entry. Do not put a publisher in a page footer unless that exact source appears in the appendix.
 - For high-stakes decks, set `high_stakes: true` and provide the required safety model and sources before building.
