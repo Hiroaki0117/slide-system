@@ -27,6 +27,38 @@ Use this reference when research, rights, or high-stakes guidance is involved.
 - For a progressive plan, include the starting condition, progression condition, recovery or easier period, regression condition, and stop or consultation condition. If any safety-critical condition is unknown, label the plan as provisional rather than executable.
 - Do not make an immediate action the conclusion unless the information needed to decide that action has been confirmed.
 
+### Progressive exercise plans
+
+- Set `safety.progressive_plan: true` and record non-empty `progression_conditions`, `recovery_conditions`, `regression_conditions`, and `consultation_conditions` in addition to `stop_conditions`.
+- Record `session_guidance` for every recurring session type. Each entry needs `session_type`, `pace_or_effort`, `purpose`, and `adjustment_condition` before building.
+- State the pace or effort for long sessions, easy or recovery sessions, and quality sessions separately. Keep long-session pace distinct from goal-pace segments unless an authoritative source and the confirmed condition support combining them.
+- Use a subjective effort or talk-test description alongside a numeric pace. Avoid false precision when weather, terrain, fatigue, injury status, or recent training makes the number uncertain.
+- Do not make all regular sessions demanding. Show where recovery occurs and what condition changes a demanding session into easy work or rest.
+- If current pain is present, recurrent, focal, or not clearly improving, do not present progression as cleared. Put assessment or consultation before distance or intensity progression and keep any plan provisional.
+
+Use this compact model shape before building:
+
+```json
+{
+  "progressive_plan": true,
+  "current_condition": "confirmed condition or explicit unknown",
+  "limitations": ["what is not established"],
+  "progression_conditions": ["when load may increase"],
+  "recovery_conditions": ["where easier work or rest occurs"],
+  "regression_conditions": ["when to reduce or hold"],
+  "stop_conditions": ["when to stop"],
+  "consultation_conditions": ["when to seek qualified assessment"],
+  "session_guidance": [
+    {
+      "session_type": "recurring session name",
+      "pace_or_effort": "numeric range plus effort cue, or effort cue alone",
+      "purpose": "why this session exists",
+      "adjustment_condition": "when to change it to easier work or rest"
+    }
+  ]
+}
+```
+
 ## Assets and rights
 
 - Use a user-requested image or logo when provided, unless there is a material rights or safety problem.

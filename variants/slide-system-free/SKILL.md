@@ -66,7 +66,7 @@ After approval, record `phase: "approved"`, `approval.status: "approved"`, and t
 In this turn only:
 
 1. Verify the minimum necessary unstable and high-stakes facts.
-2. Create a compact 6–8 slide content model with one job and one primary claim per slide.
+2. Create a compact 6–8 slide content model with one job and one primary claim per slide. Before compressing, list the mandatory coverage and confirm that none is lost; use 9–10 slides when safety, source traceability, or the user's decision criteria do not fit legibly in 8.
 3. Run the bundled static builder with `--work-state`. Resolve every static `FAIL` in one batch.
 4. Save `deck-draft.html`, `deck.json`, static QA, and `work-state.json` in the user-accessible output directory.
 5. Set `phase: "html_delivered"`, store the HTML path, and set the next action to `PDF化と最終QA`.
@@ -94,6 +94,9 @@ Never claim completion if PDF generation, page-count parity, font loading, overf
 - Match claim strength to evidence. Treat formulas, calculators, benchmarks, and single past results as estimates, not guarantees.
 - Put assumptions and the main limitation beside a derived number.
 - For progressive roadmaps, show starting, progression, recovery, regression, and stop or consultation conditions.
+- For exercise roadmaps, show the pace or effort, purpose, and adjustment condition for every recurring session type. Include long-session pace explicitly and distinguish it from goal-pace practice.
+- Do not use slide count as a reason to omit current-versus-target comparison, recovery periods, event-specific constraints, or final-use preparation such as pacing, fueling, equipment, and rehearsal when they affect the requested outcome.
+- Use source IDs such as `[S1]` on claim and instruction slides and ensure every ID resolves to one complete appendix entry. Do not put a publisher in a page footer unless that exact source appears in the appendix.
 - For high-stakes decks, set `high_stakes: true` and provide the required safety model and sources before building.
 - Do not reduce source quality, minimum type size, contrast, safe margins, or final factual checks to save resources.
 

@@ -6,7 +6,7 @@
 
 ## 事前準備
 
-1. 別アカウントの無料版Claudeへ`dist/slide-system-free-v0.2.0.zip`だけを登録する
+1. 別アカウントの無料版Claudeへ`dist/slide-system-free-v0.2.1.zip`だけを登録する
 2. コード実行とファイル作成を有効にする
 3. このテスト専用の新しいチャットを開き、`slide-system-free`を有効にする
 4. プロジェクト仕様書、`EXPECTED.md`、`FREE_EXPECTED.md`、過去の生成物は添付しない
@@ -34,4 +34,4 @@
 
 ## 保存先
 
-生成物は`output/free-v0.2.0/`へ保存し、結果を`RESULT.md`へ追記します。
+生成物は`output/free-v0.2.1/`へ保存し、結果を`RESULT.md`へ追記します。

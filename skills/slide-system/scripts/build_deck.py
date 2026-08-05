@@ -33,6 +33,7 @@ ALLOWED_LAYOUTS = {
 ALLOWED_JOBS = {"claim", "explain", "evidence", "compare", "instruction", "question", "exercise", "summary", "transition"}
 ALLOWED_VISUAL_ROLES = {"evidence", "explain", "context", "decoration", "none"}
 PLACEHOLDER_RE = re.compile(r"\b(?:TODO|TBD|LOREM|PLACEHOLDER)\b|仮(?:タイトル|本文|画像)|ここに", re.I)
+SOURCE_ID_RE = re.compile(r"\[([A-Za-z][A-Za-z0-9_-]*)\]")
 APPROVAL_STATUSES = {"approved", "waived"}
 PRODUCTION_PHASES = {"approved", "building", "qa"}
 
@@ -106,12 +107,27 @@ def validate(deck: dict) -> list[dict]:
                 value = safety.get(field)
                 if not isinstance(value, list) or not any(str(item).strip() for item in value):
                     add_issue(issues, "FAIL", "MISSING_SAFETY_CONDITION", f"A high-stakes deck needs non-empty {field}")
+            if safety.get("progressive_plan") is True:
+                for field in ("progression_conditions", "recovery_conditions", "regression_conditions", "consultation_conditions"):
+                    value = safety.get(field)
+                    if not isinstance(value, list) or not any(str(item).strip() for item in value):
+                        add_issue(issues, "FAIL", "MISSING_PROGRESSIVE_PLAN_CONDITION", f"A progressive high-stakes plan needs non-empty {field}")
+                session_guidance = safety.get("session_guidance")
+                if not isinstance(session_guidance, list) or not session_guidance:
+                    add_issue(issues, "FAIL", "MISSING_SESSION_GUIDANCE", "A progressive exercise plan needs session guidance with pace or effort, purpose, and adjustment conditions")
+                else:
+                    required = ("session_type", "pace_or_effort", "purpose", "adjustment_condition")
+                    for session_index, session in enumerate(session_guidance, 1):
+                        if not isinstance(session, dict) or any(not str(session.get(field, "")).strip() for field in required):
+                            add_issue(issues, "FAIL", "INCOMPLETE_SESSION_GUIDANCE", f"Session guidance {session_index} needs {', '.join(required)}")
     body_limit = 120 if mode == "presented" else 220
     saw_source_marker = False
     saw_sources_slide = False
     consecutive_text_only = 0
     meaningful_visuals = 0
     content_slide_count = 0
+    referenced_source_ids: set[str] = set()
+    appendix_source_ids: set[str] = set()
 
     for index, slide in enumerate(slides, 1):
         if not isinstance(slide, dict):
@@ -153,8 +169,14 @@ def validate(deck: dict) -> list[dict]:
             else:
                 meaningful_visuals += 1
                 consecutive_text_only = 0
-            if high_stakes and job in {"claim", "instruction"} and not str(slide.get("source", "")).strip():
+            source_marker = str(slide.get("source", "")).strip()
+            if high_stakes and job in {"claim", "instruction"} and not source_marker:
                 add_issue(issues, "FAIL", "HIGH_STAKES_SOURCE", "High-stakes claim and instruction slides need a short source marker", index)
+            if source_marker:
+                marker_ids = set(SOURCE_ID_RE.findall(source_marker))
+                referenced_source_ids.update(marker_ids)
+                if high_stakes and not marker_ids:
+                    add_issue(issues, "FAIL", "UNSTRUCTURED_SOURCE_MARKER", "High-stakes source markers must cite appendix IDs such as [S1]", index)
 
         bullets = slide.get("bullets", [])
         if isinstance(bullets, list) and len(bullets) > 4:
@@ -219,6 +241,23 @@ def validate(deck: dict) -> list[dict]:
             sources = slide.get("sources", [])
             if not isinstance(sources, list) or not sources:
                 add_issue(issues, "FAIL", "EMPTY_SOURCES", "Sources slide needs at least one source", index)
+            else:
+                for source in sources:
+                    if not isinstance(source, dict):
+                        add_issue(issues, "FAIL", "INVALID_SOURCE", "Each source must be an object", index)
+                        continue
+                    source_id = str(source.get("id", "")).strip()
+                    if not source_id:
+                        add_issue(issues, "FAIL", "MISSING_SOURCE_ID", "Each source needs an ID", index)
+                        continue
+                    if source_id in appendix_source_ids:
+                        add_issue(issues, "FAIL", "DUPLICATE_SOURCE_ID", f"Duplicate source ID: {source_id}", index)
+                    appendix_source_ids.add(source_id)
+                    for field in ("title", "publisher", "checked"):
+                        if not str(source.get(field, "")).strip():
+                            add_issue(issues, "FAIL", "INCOMPLETE_SOURCE", f"Source {source_id} needs {field}", index)
+                    if source_id.upper().startswith("S") and not str(source.get("url", "")).strip():
+                        add_issue(issues, "FAIL", "MISSING_SOURCE_URL", f"External source {source_id} needs a URL", index)
         elif layout == "exercise":
             if not str(slide.get("prompt", "")).strip():
                 add_issue(issues, "FAIL", "EXERCISE_PROMPT", "Exercise layout needs a learner-facing prompt", index)
@@ -232,6 +271,12 @@ def validate(deck: dict) -> list[dict]:
         add_issue(issues, "FAIL", "MISSING_SOURCES_SLIDE", "A high-stakes deck needs a sources appendix")
     if saw_sources_slide and slides[-1].get("layout") != "sources_appendix":
         add_issue(issues, "WARN", "SOURCES_POSITION", "Sources appendix is normally the final slide")
+    missing_source_ids = sorted(referenced_source_ids - appendix_source_ids)
+    if missing_source_ids:
+        add_issue(issues, "FAIL", "UNRESOLVED_SOURCE_ID", f"Source markers are missing from the appendix: {', '.join(missing_source_ids)}")
+    unused_source_ids = sorted(appendix_source_ids - referenced_source_ids)
+    if unused_source_ids and referenced_source_ids:
+        add_issue(issues, "WARN", "UNUSED_SOURCE_ID", f"Appendix sources are not cited on a slide: {', '.join(unused_source_ids)}")
     if content_slide_count >= 6 and meaningful_visuals < max(2, round(content_slide_count * 0.35)):
         add_issue(issues, "WARN", "LOW_VISUAL_COVERAGE", "Too few content slides use evidence, explanation, or context visuals")
     return issues
