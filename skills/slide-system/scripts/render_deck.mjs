@@ -28,7 +28,10 @@ function readWorkflowState(workStatePath) {
   const approval = state.approval || {};
   const approvalStatus = String(approval.status || "");
   const approvalReply = String(approval.user_reply || "").trim();
-  if (!["approved", "waived"].includes(approvalStatus) || !approvalReply) {
+  const revision = state.revision || {};
+  const revisionApproved = [revision.source_artifact, revision.scope, revision.user_reply]
+    .every(value => String(value || "").trim());
+  if ((!['approved', 'waived'].includes(approvalStatus) || !approvalReply) && !revisionApproved) {
     throw new Error("PRODUCTION_NOT_APPROVED: explicit approval record is required");
   }
 

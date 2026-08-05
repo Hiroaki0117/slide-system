@@ -36,9 +36,11 @@ ALLOWED_VISUAL_ROLES = {"evidence", "explain", "context", "decoration", "none"}
 PLACEHOLDER_RE = re.compile(r"\b(?:TODO|TBD|LOREM|PLACEHOLDER)\b|仮(?:タイトル|本文|画像)|ここに", re.I)
 SOURCE_ID_RE = re.compile(r"\[([A-Za-z][A-Za-z0-9_-]*)\]")
 APPROVAL_STATUSES = {"approved", "waived"}
-PRODUCTION_PHASES = {"approved", "building", "qa"}
+PRODUCTION_PHASES = {"approved", "building", "qa", "revision_approved"}
 SESSION_INTENSITIES = {"easy", "recovery", "quality", "long_easy", "other"}
 PHASE_TYPES = {"base", "build", "peak", "recovery", "taper", "other"}
+BASIS_TYPES = {"user_confirmed", "calculation", "authoritative_source", "effort_only", "inference"}
+CONDITION_STATUSES = {"pain_free", "symptomatic", "unknown", "not_applicable"}
 LOAD_GUIDE_RE = re.compile(r"\d+(?:[.,]\d+)?\s*(?:km|キロ|分|時間|mile|miles|mi)", re.I)
 VISIBLE_SLIDE_FIELDS = {
     "eyebrow", "title", "subtitle", "date", "headline", "body", "lead", "bullets",
@@ -82,6 +84,12 @@ def validate_approval(work_state: object) -> list[dict]:
         return issues
 
     phase = str(work_state.get("phase", "")).strip()
+    if phase == "revision_approved":
+        revision = work_state.get("revision")
+        required = ("source_artifact", "scope", "user_reply")
+        if not isinstance(revision, dict) or any(not str(revision.get(field, "")).strip() for field in required):
+            add_issue(issues, "FAIL", "REVISION_NOT_APPROVED", f"A bounded revision needs {', '.join(required)}")
+        return issues
     approval = work_state.get("approval")
     if phase not in PRODUCTION_PHASES or not isinstance(approval, dict):
         add_issue(issues, "FAIL", "PRODUCTION_NOT_APPROVED", "Production phase is not approved")
@@ -91,6 +99,160 @@ def validate_approval(work_state: object) -> list[dict]:
     user_reply = str(approval.get("user_reply", "")).strip()
     if status not in APPROVAL_STATUSES or not user_reply:
         add_issue(issues, "FAIL", "PRODUCTION_NOT_APPROVED", "Approval needs an approved or waived status and the user's exact reply")
+    return issues
+
+
+def validate_high_stakes_semantics(deck: dict, slides: list[dict]) -> list[dict]:
+    """Require visible, traceable support for high-stakes instructions."""
+    issues: list[dict] = []
+    if deck.get("high_stakes") is not True:
+        return issues
+    safety = deck.get("safety")
+    if not isinstance(safety, dict):
+        return issues
+
+    appendix_ids: set[str] = set()
+    for slide in slides:
+        if isinstance(slide, dict) and slide.get("layout") == "sources_appendix":
+            for source in slide.get("sources", []):
+                if isinstance(source, dict) and str(source.get("id", "")).strip():
+                    appendix_ids.add(str(source["id"]).strip())
+    evidence_source_ids: set[str] = set()
+
+    condition_status = str(safety.get("condition_status", "")).strip()
+    if condition_status not in CONDITION_STATUSES:
+        add_issue(issues, "FAIL", "MISSING_CONDITION_STATUS", f"condition_status must be one of {', '.join(sorted(CONDITION_STATUSES))}")
+
+    if safety.get("progressive_plan") is True:
+        plan_status = str(safety.get("plan_status", "")).strip()
+        if plan_status not in {"executable", "provisional"}:
+            add_issue(issues, "FAIL", "MISSING_PLAN_STATUS", "A progressive plan needs plan_status: executable or provisional")
+        if condition_status in {"symptomatic", "unknown"} and plan_status != "provisional":
+            add_issue(issues, "FAIL", "UNSAFE_PLAN_STATUS", "A symptomatic or unknown current condition must keep the plan provisional")
+        if plan_status == "provisional":
+            required_status = ("plan_status_text", "clearance_condition", "status_slide")
+            if any(not str(safety.get(field, "")).strip() for field in required_status):
+                add_issue(issues, "FAIL", "INCOMPLETE_PROVISIONAL_STATUS", f"A provisional plan needs {', '.join(required_status)}")
+            else:
+                status_slide = safety.get("status_slide")
+                if not isinstance(status_slide, int) or not 1 <= status_slide <= len(slides):
+                    add_issue(issues, "FAIL", "INVALID_STATUS_SLIDE", "status_slide must identify a valid slide")
+                else:
+                    shown = visible_slide_text(slides[status_slide - 1])
+                    for field in ("plan_status_text", "clearance_condition"):
+                        if str(safety[field]).strip() not in shown:
+                            add_issue(issues, "FAIL", "PROVISIONAL_STATUS_NOT_VISIBLE", f"{field} must be visible on status_slide")
+
+        phases = safety.get("phase_guidance", [])
+        phase_types = {str(item.get("phase_type", "")).strip() for item in phases if isinstance(item, dict)}
+        for phase_index, phase in enumerate(phases if isinstance(phases, list) else [], 1):
+            if not isinstance(phase, dict):
+                continue
+            phase_slide = phase.get("slide")
+            if not isinstance(phase_slide, int) or not 1 <= phase_slide <= len(slides):
+                continue
+            shown = visible_slide_text(slides[phase_slide - 1])
+            visible_fields = ("period", "long_session_distance_or_time", "purpose", "checkpoint", "progression_condition", "hold_or_regress_condition")
+            missing = [field for field in visible_fields if str(phase.get(field, "")).strip() not in shown]
+            if missing:
+                add_issue(issues, "FAIL", "PHASE_GUIDANCE_NOT_VISIBLE", f"Phase guidance {phase_index} must visibly show: {', '.join(missing)}")
+
+        sessions = safety.get("session_guidance", [])
+        for session_index, session in enumerate(sessions if isinstance(sessions, list) else [], 1):
+            if not isinstance(session, dict):
+                continue
+            basis_type = str(session.get("basis_type", "")).strip()
+            if basis_type not in BASIS_TYPES:
+                add_issue(issues, "FAIL", "INVALID_SESSION_BASIS", f"Session guidance {session_index} needs a supported basis_type")
+            source_ids = session.get("source_ids", [])
+            if not isinstance(source_ids, list):
+                add_issue(issues, "FAIL", "INVALID_SESSION_SOURCES", f"Session guidance {session_index} source_ids must be an array")
+            else:
+                evidence_source_ids.update(str(item).strip() for item in source_ids if str(item).strip())
+                if basis_type == "authoritative_source" and not source_ids:
+                    add_issue(issues, "FAIL", "MISSING_SESSION_SOURCE", f"Session guidance {session_index} needs source_ids")
+            session_slide = session.get("slide")
+            if not isinstance(session_slide, int) or not 1 <= session_slide <= len(slides):
+                add_issue(issues, "FAIL", "SESSION_GUIDANCE_SLIDE", f"Session guidance {session_index} must identify a valid slide")
+            else:
+                shown = visible_slide_text(slides[session_slide - 1])
+                for field in ("session_type", "pace_or_effort", "purpose", "adjustment_condition"):
+                    if str(session.get(field, "")).strip() not in shown:
+                        add_issue(issues, "FAIL", "SESSION_GUIDANCE_NOT_VISIBLE", f"Session guidance {session_index} must visibly show {field}")
+
+        if safety.get("event_preparation") is True:
+            if "recovery" not in phase_types:
+                add_issue(issues, "FAIL", "MISSING_EVENT_RECOVERY_PHASE", "Event preparation needs an explicit recovery phase before taper")
+            if "taper" not in phase_types:
+                add_issue(issues, "FAIL", "MISSING_TAPER_PHASE", "Event preparation needs an explicit taper phase")
+            taper_days = safety.get("taper_days")
+            if not isinstance(taper_days, int) or not 14 <= taper_days <= 21:
+                add_issue(issues, "FAIL", "INVALID_TAPER_LENGTH", "Event preparation needs taper_days between 14 and 21")
+
+    claim_evidence = deck.get("claim_evidence")
+    if not isinstance(claim_evidence, list) or not claim_evidence:
+        add_issue(issues, "FAIL", "MISSING_CLAIM_EVIDENCE", "A high-stakes deck needs explicit claim_evidence records")
+    else:
+        for evidence_index, evidence in enumerate(claim_evidence, 1):
+            required = ("claim", "visible_text", "slide", "basis_type", "support")
+            if not isinstance(evidence, dict) or any(not str(evidence.get(field, "")).strip() for field in required):
+                add_issue(issues, "FAIL", "INCOMPLETE_CLAIM_EVIDENCE", f"Claim evidence {evidence_index} needs {', '.join(required)}")
+                continue
+            basis_type = str(evidence.get("basis_type", "")).strip()
+            if basis_type not in BASIS_TYPES:
+                add_issue(issues, "FAIL", "INVALID_CLAIM_BASIS", f"Claim evidence {evidence_index} has unsupported basis_type")
+            source_ids = evidence.get("source_ids", [])
+            if not isinstance(source_ids, list):
+                add_issue(issues, "FAIL", "INVALID_CLAIM_SOURCES", f"Claim evidence {evidence_index} source_ids must be an array")
+            else:
+                evidence_source_ids.update(str(item).strip() for item in source_ids if str(item).strip())
+                if basis_type == "authoritative_source" and not source_ids:
+                    add_issue(issues, "FAIL", "MISSING_CLAIM_SOURCE", f"Claim evidence {evidence_index} needs at least one source ID")
+            evidence_slide = evidence.get("slide")
+            if not isinstance(evidence_slide, int) or not 1 <= evidence_slide <= len(slides):
+                add_issue(issues, "FAIL", "CLAIM_EVIDENCE_SLIDE", f"Claim evidence {evidence_index} must identify a valid slide")
+            elif str(evidence.get("visible_text", "")).strip() not in visible_slide_text(slides[evidence_slide - 1]):
+                add_issue(issues, "FAIL", "CLAIM_NOT_VISIBLE", f"Claim evidence {evidence_index} visible_text is not shown on its slide")
+
+    if safety.get("event_preparation") is True:
+        event_facts = deck.get("event_facts")
+        required_event = ("official_event_name", "start_time", "cutoff", "timing_basis", "course_summary", "strategy_slide", "source_ids")
+        if not isinstance(event_facts, dict) or any(not event_facts.get(field) for field in required_event):
+            add_issue(issues, "FAIL", "INCOMPLETE_EVENT_FACTS", f"Event preparation needs event_facts with {', '.join(required_event)}")
+        else:
+            source_ids = event_facts.get("source_ids", [])
+            if isinstance(source_ids, list):
+                evidence_source_ids.update(str(item).strip() for item in source_ids if str(item).strip())
+            strategy_slide = event_facts.get("strategy_slide")
+            if not isinstance(strategy_slide, int) or not 1 <= strategy_slide <= len(slides):
+                add_issue(issues, "FAIL", "INVALID_EVENT_STRATEGY_SLIDE", "event_facts.strategy_slide must identify a valid slide")
+            else:
+                strategy = slides[strategy_slide - 1]
+                shown = visible_slide_text(strategy)
+                for field in ("official_event_name", "start_time", "cutoff", "timing_basis", "course_summary"):
+                    if str(event_facts.get(field, "")).strip() not in shown:
+                        add_issue(issues, "FAIL", "EVENT_FACT_NOT_VISIBLE", f"event_facts.{field} must be visible on strategy_slide")
+                if strategy.get("layout") in {"text_focus", "single_message"} or strategy.get("visual_role") in {"none", "decoration"}:
+                    add_issue(issues, "FAIL", "WEAK_EVENT_STRATEGY_VISUAL", "The event strategy slide needs a meaningful process, comparison, table, chart, or decision visual")
+
+    if safety.get("comparable_performance_data") is True:
+        comparison = deck.get("current_target_comparison")
+        required = ("current_value", "target_value", "meaning", "slide")
+        if not isinstance(comparison, dict) or any(not str(comparison.get(field, "")).strip() for field in required):
+            add_issue(issues, "FAIL", "MISSING_CURRENT_TARGET_COMPARISON", f"Comparable performance data needs {', '.join(required)}")
+        else:
+            comparison_slide = comparison.get("slide")
+            if not isinstance(comparison_slide, int) or not 1 <= comparison_slide <= len(slides):
+                add_issue(issues, "FAIL", "INVALID_COMPARISON_SLIDE", "current_target_comparison.slide must identify a valid slide")
+            else:
+                shown = visible_slide_text(slides[comparison_slide - 1])
+                for field in ("current_value", "target_value", "meaning"):
+                    if str(comparison.get(field, "")).strip() not in shown:
+                        add_issue(issues, "FAIL", "COMPARISON_NOT_VISIBLE", f"current_target_comparison.{field} must be visible on its slide")
+
+    missing_sources = evidence_source_ids - appendix_ids
+    if missing_sources:
+        add_issue(issues, "FAIL", "UNRESOLVED_EVIDENCE_SOURCE", f"Evidence records are missing appendix entries: {', '.join(sorted(missing_sources))}")
     return issues
 
 
@@ -202,6 +364,7 @@ def validate(deck: dict) -> list[dict]:
                             add_issue(issues, "FAIL", "MISSING_EASY_SESSION", "A beginner or return-from-injury plan needs an explicit easy or recovery session")
                         if intensities.count("quality") > 1:
                             add_issue(issues, "FAIL", "TOO_MANY_QUALITY_SESSIONS", "A beginner or return-from-injury plan should not prescribe more than one recurring quality session")
+    issues.extend(validate_high_stakes_semantics(deck, slides))
     body_limit = 120 if mode == "presented" else 220
     saw_source_marker = False
     saw_sources_slide = False
@@ -571,7 +734,7 @@ def main() -> int:
         return 2
 
     template = template_path.read_text(encoding="utf-8")
-    if "__DECK_TITLE__" not in template or "__SLIDES__" not in template or "__FONT_DATA__" not in template:
+    if any(marker not in template for marker in ("__DECK_TITLE__", "__SLIDES__", "__FONT_DATA__", "__DECK_DATA__")):
         print("Template markers are missing", file=sys.stderr)
         return 2
     font_path = template_path.parent / "fonts" / "NotoSansJP-Variable.ttf"
@@ -580,7 +743,8 @@ def main() -> int:
         return 2
     font_data = base64.b64encode(font_path.read_bytes()).decode("ascii")
     slides_html = "\n".join(render_slide(slide, i, len(deck["slides"]), input_path.parent) for i, slide in enumerate(deck["slides"], 1))
-    result = template.replace("__DECK_TITLE__", esc(deck.get("deck_title", "Slide Deck"))).replace("__FONT_DATA__", font_data).replace("__SLIDES__", slides_html)
+    deck_data = json.dumps(deck, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
+    result = template.replace("__DECK_TITLE__", esc(deck.get("deck_title", "Slide Deck"))).replace("__FONT_DATA__", font_data).replace("__SLIDES__", slides_html).replace("__DECK_DATA__", deck_data)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(result, encoding="utf-8", newline="\n")
     print(json.dumps({"status": "PASS", "html": str(output_path), "report": str(report_path), "slide_count": len(deck["slides"]), "warnings": report["warning_count"]}, ensure_ascii=False))

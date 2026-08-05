@@ -21,8 +21,63 @@ def valid_deck() -> dict:
     duration = "88日（約13週間）"
     phases = [
         ("基礎", "1〜3週", "base", "17〜18kmを上限に維持"),
-        ("持久力", "4〜9週", "build", "18〜24kmの条件付き範囲"),
-        ("調整", "10〜13週", "taper", "10〜18kmへ段階的に短縮"),
+        ("持久力", "4〜8週", "build", "18〜24kmの条件付き範囲"),
+        ("回復", "9〜10週", "recovery", "14〜18kmへ短縮"),
+        ("調整", "11〜13週", "taper", "10〜16kmへ段階的に短縮"),
+    ]
+    phase_items = []
+    for name, period, phase_type, load in phases:
+        purpose = f"{name}期の目的"
+        checkpoint = f"{name}期の確認点"
+        progression = f"{name}期を進める条件"
+        hold = f"{name}期を維持・後退する条件"
+        phase_items.append(
+            {
+                "name": name,
+                "period": period,
+                "phase_type": phase_type,
+                "long_session_distance_or_time": load,
+                "purpose": purpose,
+                "checkpoint": checkpoint,
+                "progression_condition": progression,
+                "hold_or_regress_condition": hold,
+                "slide": 3,
+            }
+        )
+    session_items = [
+        {
+            "session_type": "イージー走",
+            "pace_or_effort": "会話できる強度",
+            "purpose": "回復と土台",
+            "adjustment_condition": "違和感時は休む",
+            "intensity_class": "easy",
+            "basis": "体感強度を使用",
+            "basis_type": "effort_only",
+            "source_ids": [],
+            "slide": 4,
+        },
+        {
+            "session_type": "質練習",
+            "pace_or_effort": "確認済み範囲",
+            "purpose": "目標ペースへの適応",
+            "adjustment_condition": "疲労時はイージーへ変更",
+            "intensity_class": "quality",
+            "basis": "利用者確認値",
+            "basis_type": "user_confirmed",
+            "source_ids": [],
+            "slide": 4,
+        },
+        {
+            "session_type": "ロング走",
+            "pace_or_effort": "会話できる強度",
+            "purpose": "長時間耐性",
+            "adjustment_condition": "痛みや回復遅延時は短縮",
+            "intensity_class": "long_easy",
+            "basis": "体感強度と現状距離",
+            "basis_type": "effort_only",
+            "source_ids": [],
+            "slide": 4,
+        },
     ]
     return {
         "deck_title": "テスト",
@@ -42,64 +97,81 @@ def valid_deck() -> dict:
             "novice_or_returning": True,
             "event_preparation": True,
             "current_condition": "軽い違和感あり",
+            "condition_status": "symptomatic",
+            "plan_status": "provisional",
+            "plan_status_text": "この計画は暫定案",
+            "clearance_condition": "痛みなく復帰条件を満たしてから開始",
+            "status_slide": 2,
+            "taper_days": 21,
+            "comparable_performance_data": True,
             "limitations": ["医療診断ではない"],
             "progression_conditions": ["痛みなく回復できる"],
             "recovery_conditions": ["3〜4週ごとに負荷を下げる"],
             "regression_conditions": ["違和感が残る場合は前段階へ戻る"],
             "stop_conditions": ["痛みが増す場合は中止"],
             "consultation_conditions": ["改善しない場合は専門家へ相談"],
-            "phase_guidance": [
-                {
-                    "name": name,
-                    "period": period,
-                    "phase_type": phase_type,
-                    "long_session_distance_or_time": load,
-                    "purpose": "段階の目的",
-                    "checkpoint": "痛みと回復を確認",
-                    "progression_condition": "痛みなく完了",
-                    "hold_or_regress_condition": "違和感時は維持または短縮",
-                    "slide": 2,
-                }
-                for name, period, phase_type, load in phases
-            ],
-            "session_guidance": [
-                {
-                    "session_type": "イージー走",
-                    "pace_or_effort": "会話できる強度",
-                    "purpose": "回復と土台",
-                    "adjustment_condition": "違和感時は休む",
-                    "intensity_class": "easy",
-                    "basis": "体感強度を使用",
-                },
-                {
-                    "session_type": "質練習",
-                    "pace_or_effort": "確認済み範囲",
-                    "purpose": "目標ペースへの適応",
-                    "adjustment_condition": "疲労時はイージーへ変更",
-                    "intensity_class": "quality",
-                    "basis": "利用者確認値",
-                },
-                {
-                    "session_type": "ロング走",
-                    "pace_or_effort": "会話できる強度",
-                    "purpose": "長時間耐性",
-                    "adjustment_condition": "痛みや回復遅延時は短縮",
-                    "intensity_class": "long_easy",
-                    "basis": "体感強度と現状距離",
-                },
-            ],
+            "phase_guidance": phase_items,
+            "session_guidance": session_items,
+        },
+        "claim_evidence": [
+            {
+                "claim": "公式記録は号砲基準",
+                "visible_text": "公式記録はグロスタイム（号砲基準）",
+                "slide": 5,
+                "basis_type": "authoritative_source",
+                "source_ids": ["S1"],
+                "support": "大会公式の開催要項が記録基準を示す",
+            }
+        ],
+        "event_facts": {
+            "official_event_name": "下関海響マラソン",
+            "start_time": "8:30スタート",
+            "cutoff": "制限時間6時間",
+            "timing_basis": "公式記録はグロスタイム（号砲基準）",
+            "course_summary": "後半のアップダウンに備える",
+            "strategy_slide": 5,
+            "source_ids": ["S1"],
+        },
+        "current_target_comparison": {
+            "current_value": "ハーフ平均5:17/km",
+            "target_value": "目標平均5:41/km",
+            "meaning": "速度より持久力と故障管理が課題",
+            "slide": 2,
         },
         "slides": [
             {"layout": "cover", "title": "テスト", "date": "2026-08-05"},
+            {
+                "layout": "data_focus",
+                "job": "evidence",
+                "visual_role": "evidence",
+                "title": "現在地と目標を比べる",
+                "lead": f"{duration}・この計画は暫定案・痛みなく復帰条件を満たしてから開始",
+                "stats": [
+                    {"value": "ハーフ平均5:17/km", "label": "現在", "note": "実績"},
+                    {"value": "目標平均5:41/km", "label": "目標", "note": "速度より持久力と故障管理が課題"},
+                ],
+                "source": "出典: [S1]",
+            },
             {
                 "layout": "process",
                 "job": "instruction",
                 "visual_role": "explain",
                 "title": "段階別の負荷を確認する",
-                "lead": duration,
                 "steps": [
-                    {"label": name, "title": period, "body": load}
-                    for name, period, _, load in phases
+                    {
+                        "label": item["name"],
+                        "title": item["period"],
+                        "body": "・".join(
+                            [
+                                item["long_session_distance_or_time"],
+                                item["purpose"],
+                                item["checkpoint"],
+                                item["progression_condition"],
+                                item["hold_or_regress_condition"],
+                            ]
+                        ),
+                    }
+                    for item in phase_items
                 ],
                 "source": "出典: [S1]",
             },
@@ -108,8 +180,21 @@ def valid_deck() -> dict:
                 "job": "instruction",
                 "visual_role": "evidence",
                 "title": "週3回の役割を分ける",
-                "headers": ["種類", "強度"],
-                "rows": [["イージー", "会話強度"], ["質", "週1回"], ["ロング", "会話強度"]],
+                "headers": ["種類", "強度", "目的", "調整条件"],
+                "rows": [[item["session_type"], item["pace_or_effort"], item["purpose"], item["adjustment_condition"]] for item in session_items],
+                "source": "出典: [S1]",
+            },
+            {
+                "layout": "process",
+                "job": "instruction",
+                "visual_role": "explain",
+                "title": "当日は3区間で組み立てる",
+                "lead": "下関海響マラソン・8:30スタート・制限時間6時間・公式記録はグロスタイム（号砲基準）・後半のアップダウンに備える",
+                "steps": [
+                    {"label": "0–10km", "title": "抑える", "body": "余裕を守る"},
+                    {"label": "10–30km", "title": "整える", "body": "一定努力で進む"},
+                    {"label": "30km–", "title": "判断する", "body": "状態で調整する"},
+                ],
                 "source": "出典: [S1]",
             },
             {
@@ -153,8 +238,28 @@ def main() -> int:
     assert "TOO_MANY_QUALITY_SESSIONS" in hard_codes
 
     hidden = copy.deepcopy(good)
-    hidden["slides"][1]["steps"][1]["body"] = "表示から距離を削除"
+    hidden["slides"][2]["steps"][1]["body"] = "表示から距離を削除"
     assert "PHASE_GUIDANCE_NOT_VISIBLE" in codes(hidden)
+
+    unsupported = copy.deepcopy(good)
+    unsupported["claim_evidence"][0]["source_ids"] = []
+    assert "MISSING_CLAIM_SOURCE" in codes(unsupported)
+
+    weak_strategy = copy.deepcopy(good)
+    weak_strategy["slides"][4]["layout"] = "text_focus"
+    assert "WEAK_EVENT_STRATEGY_VISUAL" in codes(weak_strategy)
+
+    revision_state = {
+        "phase": "revision_approved",
+        "revision": {
+            "source_artifact": "existing.html",
+            "scope": "7ページ目を3区間の図へ修正",
+            "user_reply": "7ページ目を修正してください",
+        },
+    }
+    assert not MODULE.validate_approval(revision_state)
+    revision_state["revision"]["scope"] = ""
+    assert MODULE.validate_approval(revision_state)[0]["code"] == "REVISION_NOT_APPROVED"
 
     print("PASS: build_deck validation regression checks")
     return 0

@@ -9,7 +9,22 @@ Use the bundled deterministic path instead of writing a complete HTML/CSS/JavaSc
 - `assets/deck-schema-example.json`: compact content model and supported fields.
 - `assets/work-state-example.json`: production phase and approval receipt required by the build gate.
 - `scripts/build_deck.py`: validates the content model and creates one self-contained HTML file.
+- `scripts/recover_deck.py`: restores `deck.json` from HTML created by the current skill.
 - `scripts/render_deck.mjs`: opens the HTML, tests navigation, renders every slide, makes a contact sheet, and exports PDF in one run.
+
+Every newly built HTML embeds its editable content model in `slide-deck-data`. This is not displayed in the slides and lets a later chat revise the deck without repeating research or reconstructing every page.
+
+## Existing HTML and PDF
+
+Choose the path from the supplied artifacts before asking questions or rebuilding.
+
+- Existing task folder with `deck.json` and `work-state.json`: use those files as the editing source.
+- Current slide-system HTML only: recover the model with `python scripts/recover_deck.py --html EXISTING.html --output WORK_DIR/deck.json`.
+- Current HTML and PDF: edit the model recovered from HTML. Use PDF only as the visual reference for the previous delivered state.
+- Older HTML without `slide-deck-data`: inspect it, reconstruct a compact model, present the reconstruction and requested changes for confirmation, then build.
+- PDF only: render and inspect every page, reconstruct a compact model, and obtain confirmation before building. Never directly edit PDF content.
+
+For a bounded correction to an existing deck, preserve unaffected pages and sources. Update HTML first and stop; create PDF on the next reply in the staged profile. Repeat research only for claims changed by the correction.
 
 ## Build
 

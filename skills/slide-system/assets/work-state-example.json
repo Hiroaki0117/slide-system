@@ -5,6 +5,11 @@
     "status": "pending",
     "user_reply": ""
   },
+  "revision": {
+    "source_artifact": "",
+    "scope": "",
+    "user_reply": ""
+  },
   "confirmed_conditions": {},
   "sources": [],
   "unresolved_assumptions": [],
