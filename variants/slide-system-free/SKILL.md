@@ -46,6 +46,8 @@ Do not explicitly reopen or reload `SKILL.md` during the same task. Do not read 
 
 After explicit production approval, read each needed reference at most once and store decisions in `work-state.json`.
 
+For a dated, high-stakes exercise roadmap, use the compact roadmap builder in Stage A. This specialized path is self-contained and overrides the reference-reading list below: do not open bundled references, scripts, the HTML template, or the font before the first HTML is saved. The adapter expands the compact brief into the same full validation model and runs the unchanged strict validator.
+
 - Read `references/content.md`, `references/layouts.md`, and `references/warm-clean.md` once for a new default-theme deck.
 - Read `references/source-safety.md` once for research, health, legal, financial, safety, or rights-sensitive claims.
 - Read `references/html-pdf.md` once before building. The staged workflow below overrides its instruction to continue immediately from HTML to rendering.
@@ -90,11 +92,13 @@ After approval, record `phase: "approved"`, `approval.status: "approved"`, and t
 In this turn only:
 
 1. Create `work-state.json` from the approved conditions and exact user replies. Then verify only the minimum necessary unstable and high-stakes facts.
-2. Create a compact 6–8 slide content model with one job and one primary claim per slide. Before compressing, list the mandatory coverage and confirm that none is lost; use 9–10 slides when safety, source traceability, phase-specific load guidance, or the user's decision criteria do not fit legibly in 8. Do not rely on a later correction turn to add essential content.
-3. Run the bundled static builder with `--work-state`. Resolve every static `FAIL` in one batch.
-4. Save `deck-draft.html`, `deck.json`, static QA, and `work-state.json` in the user-accessible output directory.
+2. For a dated high-stakes exercise roadmap, copy `assets/free-roadmap-brief-example.json`, replace its example values with the approved facts and minimum verified sources, and run `scripts/build_free_roadmap.py` once. Treat the script as an opaque executable: never open or inspect any `.py`, `.mjs`, template HTML, bundled font, or generated full `deck.json` before returning the first HTML.
+3. For other deck types, create a compact 6–8 slide content model and run the standard static builder. Use 9–10 slides when required content cannot fit legibly. Do not rely on a later correction turn to add essential content.
+4. Save `deck-draft.html`, `deck.json`, static QA, and `work-state.json` in the user-accessible output directory. The compact builder must create HTML whether its report says `PASS` or `DRAFT`.
 5. Confirm that the HTML navigation includes `PDF保存`. Set `phase: "html_delivered"`, store the HTML path, and set the next action to `PDF化`.
 6. Return the HTML draft to the user and stop the turn.
+
+If the compact builder reports `DRAFT`, return that HTML immediately and say it is a visible, non-executable validation draft. Do not inspect source code, rebuild, research again, or retry in the same turn. A `DRAFT` is not completion; its banner and QA report preserve the unresolved issue for the next chat or turn.
 
 Do not run `render_deck.mjs`, create screenshots, export PDF, or start visual correction in Stage A. Do not use remaining capacity to continue automatically.
 
@@ -110,6 +114,7 @@ Preserve capacity for the downloadable HTML.
 - Do not open commercial clinic, product, coaching-blog, calculator, or search-summary pages when an official, clinical, or primary source is available.
 - Do not research race-prediction formulas unless the user explicitly requests a prediction. A current-versus-target pace comparison can be calculated directly and labelled with its limitation.
 - Do not run separate searches for every slide or every weekly distance. Treat an individualized weekly schedule as a conditional proposal based on confirmed baseline and recovery, not as a sourced universal rule.
+- Do not inspect builder or validator source code to understand a report. Use the report code and return the generated HTML checkpoint first.
 - If the budget cannot support a claim, omit the claim, use non-numeric conditional wording, or mark it unresolved. Do not continue searching and risk losing the HTML checkpoint.
 - Do not emit routine progress narration. Save the HTML before any optional work.
 

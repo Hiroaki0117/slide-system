@@ -25,6 +25,11 @@ def main() -> int:
         "at most one grouped source-opening operation",
         "Do not research race-prediction formulas",
         "Save the HTML before any optional work",
+        "assets/free-roadmap-brief-example.json",
+        "scripts/build_free_roadmap.py",
+        "Treat the script as an opaque executable",
+        "The compact builder must create HTML whether its report says `PASS` or `DRAFT`",
+        "Do not inspect builder or validator source code",
     ]
     missing = [item for item in required if item not in text]
     assert not missing, f"Missing free-plan turn-gate contract: {missing}"

@@ -884,6 +884,28 @@ def render_slide(slide: dict, index: int, total: int, base_dir: Path) -> str:
     )
 
 
+def build_html_document(deck: dict, input_path: Path, template_path: Path, draft_notice: str = "") -> str:
+    """Render a deck after validation, or a visibly marked non-executable draft."""
+    template = template_path.read_text(encoding="utf-8")
+    markers = ("__DECK_TITLE__", "__SLIDES__", "__FONT_DATA__", "__DECK_DATA__", "__DRAFT_BANNER__")
+    if any(marker not in template for marker in markers):
+        raise ValueError("Template markers are missing")
+    font_path = template_path.parent / "fonts" / "NotoSansJP-Variable.ttf"
+    if not font_path.is_file():
+        raise FileNotFoundError(f"Bundled font is missing: {font_path}")
+    font_data = base64.b64encode(font_path.read_bytes()).decode("ascii")
+    slides_html = "\n".join(render_slide(slide, i, len(deck["slides"]), input_path.parent) for i, slide in enumerate(deck["slides"], 1))
+    deck_data = json.dumps(deck, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
+    banner = f'<div class="draft-banner" role="status">{esc(draft_notice)}</div>' if draft_notice else ""
+    return (
+        template.replace("__DECK_TITLE__", esc(deck.get("deck_title", "Slide Deck")))
+        .replace("__FONT_DATA__", font_data)
+        .replace("__SLIDES__", slides_html)
+        .replace("__DECK_DATA__", deck_data)
+        .replace("__DRAFT_BANNER__", banner)
+    )
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input", required=True)
@@ -939,18 +961,11 @@ def main() -> int:
         print(json.dumps(report, ensure_ascii=False))
         return 2
 
-    template = template_path.read_text(encoding="utf-8")
-    if any(marker not in template for marker in ("__DECK_TITLE__", "__SLIDES__", "__FONT_DATA__", "__DECK_DATA__")):
-        print("Template markers are missing", file=sys.stderr)
+    try:
+        result = build_html_document(deck, input_path, template_path)
+    except Exception as exc:
+        print(str(exc), file=sys.stderr)
         return 2
-    font_path = template_path.parent / "fonts" / "NotoSansJP-Variable.ttf"
-    if not font_path.is_file():
-        print(f"Bundled font is missing: {font_path}", file=sys.stderr)
-        return 2
-    font_data = base64.b64encode(font_path.read_bytes()).decode("ascii")
-    slides_html = "\n".join(render_slide(slide, i, len(deck["slides"]), input_path.parent) for i, slide in enumerate(deck["slides"], 1))
-    deck_data = json.dumps(deck, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
-    result = template.replace("__DECK_TITLE__", esc(deck.get("deck_title", "Slide Deck"))).replace("__FONT_DATA__", font_data).replace("__SLIDES__", slides_html).replace("__DECK_DATA__", deck_data)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(result, encoding="utf-8", newline="\n")
     print(json.dumps({"status": "PASS", "html": str(output_path), "report": str(report_path), "slide_count": len(deck["slides"]), "warnings": report["warning_count"]}, ensure_ascii=False))

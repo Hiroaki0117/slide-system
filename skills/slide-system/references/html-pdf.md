@@ -7,8 +7,10 @@ Use the bundled deterministic path instead of writing a complete HTML/CSS/JavaSc
 - `assets/deck-template.html`: warm_clean styling, fixed layout classes, navigation, page numbering, responsive scaling, embedded-font marker, and print rules.
 - `assets/fonts/NotoSansJP-Variable.ttf`: bundled Japanese font embedded into every final HTML/PDF deck.
 - `assets/deck-schema-example.json`: compact content model and supported fields.
+- `assets/free-roadmap-brief-example.json`: free-plan compact input for dated high-stakes exercise roadmaps.
 - `assets/work-state-example.json`: production phase and approval receipt required by the build gate.
 - `scripts/build_deck.py`: validates the content model and creates one self-contained HTML file.
+- `scripts/build_free_roadmap.py`: expands the compact roadmap brief, runs the same strict validator, and always saves either a validated HTML or a visibly marked non-executable draft.
 - `scripts/recover_deck.py`: restores `deck.json` from HTML created by the current skill.
 - `scripts/render_deck.mjs`: opens the HTML, tests navigation, renders every slide, makes a contact sheet, and exports PDF in one run.
 - `scripts/export_pdf.mjs`: resource-saving conversion-only path. It writes the PDF first, then checks page count, 16:9 size, font loading, and hidden controls.
@@ -54,6 +56,16 @@ node scripts/export_pdf.mjs --html OUTPUT_DIR/deck-draft.html --pdf OUTPUT_DIR/d
 ```
 
 This is conversion-only. Do not recover or rebuild the deck, repeat research, render screenshots, or create a contact sheet before the PDF exists. If execution is unavailable, the user can open the HTML and choose `PDF保存`, or use Chrome/Edge `Ctrl+P` and select `PDFに保存`.
+
+## Compact roadmap build for the free profile
+
+For a dated high-stakes exercise roadmap, edit only a copied compact brief and execute:
+
+```text
+python scripts/build_free_roadmap.py --brief WORK_DIR/roadmap-brief.json --work-state WORK_DIR/work-state.json --template assets/deck-template.html --output OUTPUT_DIR/deck-draft.html --deck-output WORK_DIR/deck.json --report WORK_DIR/static-qa.json
+```
+
+Do not open the Python, JavaScript, template, font, or generated full model before the first HTML is returned. `PASS` means the unchanged strict validator accepted the expanded model. `DRAFT` still creates an HTML checkpoint with a visible non-executable banner; return it and defer correction instead of retrying until the session ends.
 
 ## Full render and visual QA
 
