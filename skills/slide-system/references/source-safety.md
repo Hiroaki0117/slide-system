@@ -22,7 +22,8 @@ Use this reference when research, rights, or high-stakes guidance is involved.
 - For an exercise plan with an injury history, ask whether pain is currently present before production. If pain is present or status is unknown, do not present the plan as cleared for execution; show a stop condition and recommend qualified medical assessment.
 - Do not add remembered numeric rules, pace predictions, progression percentages, exercise prescriptions, or return-to-running thresholds without an authoritative source that directly supports them.
 - Match the strength of each claim to the evidence. A calculator, prediction formula, benchmark, or single past result may support a rough estimate, but not a categorical statement that an outcome is achievable.
-- Before building, record every material high-stakes recommendation in top-level `claim_evidence`. Read the cited source and describe what it directly supports. A related source, title match, or citation in the footer is not enough.
+- Before building, record every material high-stakes recommendation in top-level `claim_evidence`. Read the cited source and describe what it directly supports. Also record `evidence_design` and `claim_strength`; observational evidence permits association or inference wording, not a causal promise. A related source, title match, or citation in the footer is not enough.
+- A page-level source marker must map to evidence recorded for that same page. Do not cite an official event page for a training pace, or a return-to-run guideline for an unsupported weekly distance progression.
 - Show the inputs, assumptions, and main limitation beside a prediction or derived number.
 - Do not convert population-level guidance into a fixed individualized schedule without the user's current condition, baseline, response, and recovery information.
 - For a progressive plan, include the starting condition, progression condition, recovery or easier period, regression condition, and stop or consultation condition. If any safety-critical condition is unknown, label the plan as provisional rather than executable.
@@ -36,15 +37,20 @@ Use this reference when research, rights, or high-stakes guidance is involved.
 - `long_session_distance_or_time` must contain a numeric distance or time and a conditional range, current-load ceiling, or maintenance instruction. A vague phrase such as `少しずつ延ばす` is not sufficient.
 - Record `session_guidance` for every recurring session type. Each entry needs `session_type`, `pace_or_effort`, `purpose`, `adjustment_condition`, `intensity_class`, and `basis` before building.
 - Also record `basis_type`, `source_ids`, and `slide` for every recurring session. Use `user_confirmed`, `calculation`, `authoritative_source`, `effort_only`, or `inference`. An `authoritative_source` basis requires a source ID whose content directly supports the prescription.
+- When `basis_type` is `user_confirmed`, save the user's exact wording as `confirmation_quote` and copy that wording into `work-state.confirmed_conditions`. A derived target metric may be labelled as a calculation, but calculation alone must not prescribe a recurring workout pace.
 - State the pace or effort for long sessions, easy or recovery sessions, and quality sessions separately. Keep long-session pace distinct from goal-pace segments unless an authoritative source and the confirmed condition support combining them.
 - Use a subjective effort or talk-test description alongside a numeric pace. Avoid false precision when weather, terrain, fatigue, injury status, or recent training makes the number uncertain.
 - Do not make all regular sessions demanding. Show where recovery occurs and what condition changes a demanding session into easy work or rest.
 - For beginners or return from injury, set `novice_or_returning: true`. Include at least one `easy` or `recovery` session and no more than one `quality` session among the recurring weekly sessions.
 - If current pain is present, recurrent, focal, or not clearly improving, do not present progression as cleared. Put assessment or consultation before distance or intensity progression and keep any plan provisional.
+- For `symptomatic` or `unknown`, record visible `pre_clearance_actions` and `action_slide`. Add a visible `execution_condition` to every phase and recurring session so no later page reads as unconditional permission to run. Support the stop or consultation action with `kind: safety` claim evidence.
 - Record `condition_status` as `pain_free`, `symptomatic`, `unknown`, or `not_applicable`. A symptomatic or unknown progressive plan must use `plan_status: provisional`, visibly show `plan_status_text` and `clearance_condition`, and identify `status_slide`.
 - Event preparation needs distinct recovery and taper phases. Record `taper_days`; normally keep it within 14–21 days unless directly supported evidence and confirmed circumstances justify otherwise.
 - Record official start, cutoff, timing basis, course implication, strategy slide, and official source IDs in top-level `event_facts` when they affect the requested outcome.
-- If the supplied current performance and target have comparable units, set `comparable_performance_data: true` and record `current_target_comparison` so both values and their interpretation are visible together.
+- Add `goal_basis` and `pace_buffer_note` to `event_facts` when the requested result depends on gross/net timing or start-line delay.
+- Record `event_strategy` with at least three visible segments plus fueling, equipment, rehearsal, source IDs, and its slide. An official-facts table alone does not satisfy this requirement.
+- For a dated event plan, record `weekly_long_sessions` for every remaining week. Each entry needs `week`, `period`, `distance_or_time`, `condition`, `recovery_week`, and `slide`; include at least one easier recovery week before taper.
+- If the supplied current performance and target have comparable units, set `comparable_performance_data: true` and record `current_target_comparison` so both values use the same unit, `comparison_basis` is explicit, and the interpretation is visible together.
 
 Use this compact model shape before building:
 

@@ -11,6 +11,7 @@ import mimetypes
 import re
 import sys
 from datetime import date
+from math import ceil
 from pathlib import Path
 
 
@@ -256,6 +257,209 @@ def validate_high_stakes_semantics(deck: dict, slides: list[dict]) -> list[dict]
     return issues
 
 
+def validate_v024_semantics(deck: dict, slides: list[dict]) -> list[dict]:
+    """Reject the content failures found in the v0.2.3 free-plan field test."""
+    issues: list[dict] = []
+    if deck.get("high_stakes") is not True:
+        return issues
+
+    safety = deck.get("safety")
+    if not isinstance(safety, dict):
+        return issues
+
+    appendix_ids: set[str] = set()
+    for slide in slides:
+        if isinstance(slide, dict) and slide.get("layout") == "sources_appendix":
+            for source in slide.get("sources", []):
+                if isinstance(source, dict) and str(source.get("id", "")).strip():
+                    appendix_ids.add(str(source["id"]).strip())
+
+    allowed_by_slide: dict[int, set[str]] = {}
+
+    def allow(slide_number: object, source_ids: object) -> None:
+        if not isinstance(slide_number, int) or not isinstance(source_ids, list):
+            return
+        allowed_by_slide.setdefault(slide_number, set()).update(
+            str(item).strip() for item in source_ids if str(item).strip()
+        )
+
+    claim_evidence = deck.get("claim_evidence", [])
+    if isinstance(claim_evidence, list):
+        for evidence_index, evidence in enumerate(claim_evidence, 1):
+            if not isinstance(evidence, dict):
+                continue
+            required = ("evidence_design", "claim_strength")
+            missing = [field for field in required if not str(evidence.get(field, "")).strip()]
+            if missing:
+                add_issue(issues, "FAIL", "INCOMPLETE_EVIDENCE_STRENGTH", f"Claim evidence {evidence_index} needs {', '.join(missing)}")
+            if str(evidence.get("evidence_design", "")).strip() == "observational" and str(evidence.get("claim_strength", "")).strip() not in {"association", "inference"}:
+                add_issue(issues, "FAIL", "CAUSAL_OVERCLAIM", f"Claim evidence {evidence_index} is observational and cannot use causal claim strength")
+            allow(evidence.get("slide"), evidence.get("source_ids", []))
+
+    sessions = safety.get("session_guidance", [])
+    if isinstance(sessions, list):
+        for session_index, session in enumerate(sessions, 1):
+            if not isinstance(session, dict):
+                continue
+            basis_type = str(session.get("basis_type", "")).strip()
+            if basis_type == "calculation":
+                add_issue(issues, "FAIL", "CALCULATION_ONLY_PRESCRIPTION", f"Session guidance {session_index} cannot prescribe a recurring workout from a calculation alone")
+            if basis_type == "user_confirmed" and not str(session.get("confirmation_quote", "")).strip():
+                add_issue(issues, "FAIL", "MISSING_CONFIRMATION_QUOTE", f"Session guidance {session_index} marked user_confirmed needs confirmation_quote")
+            allow(session.get("slide"), session.get("source_ids", []))
+
+    condition_status = str(safety.get("condition_status", "")).strip()
+    if condition_status in {"symptomatic", "unknown"} and safety.get("progressive_plan") is True:
+        actions = safety.get("pre_clearance_actions")
+        action_slide = safety.get("action_slide")
+        if not isinstance(actions, list) or not any(str(item).strip() for item in actions) or not isinstance(action_slide, int):
+            add_issue(issues, "FAIL", "MISSING_PRE_CLEARANCE_ACTIONS", "A symptomatic or unknown plan needs visible pre_clearance_actions and action_slide")
+        elif not 1 <= action_slide <= len(slides):
+            add_issue(issues, "FAIL", "INVALID_ACTION_SLIDE", "safety.action_slide must identify a valid slide")
+        else:
+            shown = visible_slide_text(slides[action_slide - 1])
+            for action in actions:
+                if str(action).strip() not in shown:
+                    add_issue(issues, "FAIL", "PRE_CLEARANCE_ACTION_NOT_VISIBLE", "Every pre-clearance action must be visible on action_slide")
+            safety_evidence = [
+                item for item in claim_evidence
+                if isinstance(item, dict) and item.get("kind") == "safety" and item.get("slide") == action_slide
+            ] if isinstance(claim_evidence, list) else []
+            if not safety_evidence:
+                add_issue(issues, "FAIL", "UNSOURCED_SAFETY_ACTION", "The visible stop or consultation action needs kind: safety claim evidence on action_slide")
+
+        for collection_name in ("phase_guidance", "session_guidance"):
+            collection = safety.get(collection_name, [])
+            for item_index, item in enumerate(collection if isinstance(collection, list) else [], 1):
+                if not isinstance(item, dict):
+                    continue
+                condition = str(item.get("execution_condition", "")).strip()
+                slide_number = item.get("slide")
+                if not condition:
+                    add_issue(issues, "FAIL", "MISSING_EXECUTION_CONDITION", f"{collection_name} {item_index} needs a post-clearance execution_condition")
+                elif isinstance(slide_number, int) and 1 <= slide_number <= len(slides) and condition not in visible_slide_text(slides[slide_number - 1]):
+                    add_issue(issues, "FAIL", "EXECUTION_CONDITION_NOT_VISIBLE", f"{collection_name} {item_index} execution_condition must be visible on its slide")
+
+    timeline = deck.get("timeline")
+    if deck.get("dated_roadmap") is True and safety.get("progressive_plan") is True and safety.get("event_preparation") is True and isinstance(timeline, dict):
+        weekly = safety.get("weekly_long_sessions")
+        try:
+            expected_weeks = ceil((date.fromisoformat(str(timeline["target_date"])) - date.fromisoformat(str(timeline["current_date"]))).days / 7)
+        except (KeyError, TypeError, ValueError):
+            expected_weeks = 0
+        if not isinstance(weekly, list) or len(weekly) != expected_weeks:
+            add_issue(issues, "FAIL", "INCOMPLETE_WEEKLY_LONG_PLAN", f"The plan needs one long-session entry for each of {expected_weeks} weeks")
+        else:
+            seen_weeks: set[int] = set()
+            recovery_before_taper = False
+            for item_index, item in enumerate(weekly, 1):
+                required = ("week", "period", "distance_or_time", "condition", "slide", "recovery_week")
+                if not isinstance(item, dict) or any(field not in item or (field != "recovery_week" and not str(item.get(field, "")).strip()) for field in required):
+                    add_issue(issues, "FAIL", "INCOMPLETE_WEEKLY_LONG_SESSION", f"Weekly long-session entry {item_index} needs {', '.join(required)}")
+                    continue
+                week = item.get("week")
+                if not isinstance(week, int) or week < 1 or week > expected_weeks or week in seen_weeks:
+                    add_issue(issues, "FAIL", "INVALID_WEEKLY_LONG_WEEK", f"Weekly long-session entry {item_index} has an invalid or duplicate week")
+                else:
+                    seen_weeks.add(week)
+                if item.get("recovery_week") is True and week < max(expected_weeks - 2, 1):
+                    recovery_before_taper = True
+                slide_number = item.get("slide")
+                if not isinstance(slide_number, int) or not 1 <= slide_number <= len(slides):
+                    add_issue(issues, "FAIL", "WEEKLY_LONG_SLIDE", f"Weekly long-session entry {item_index} must identify a valid slide")
+                else:
+                    shown = visible_slide_text(slides[slide_number - 1])
+                    for field in ("period", "distance_or_time", "condition"):
+                        if str(item.get(field, "")).strip() not in shown:
+                            add_issue(issues, "FAIL", "WEEKLY_LONG_NOT_VISIBLE", f"Weekly long-session entry {item_index} must visibly show {field}")
+            if seen_weeks != set(range(1, expected_weeks + 1)):
+                add_issue(issues, "FAIL", "MISSING_WEEKLY_LONG_WEEK", "Weekly long-session week numbers must be complete and consecutive")
+            if not recovery_before_taper:
+                add_issue(issues, "FAIL", "MISSING_WEEKLY_RECOVERY", "The weekly long-session plan needs an easier recovery week before taper")
+
+    if safety.get("event_preparation") is True:
+        event_facts = deck.get("event_facts")
+        if isinstance(event_facts, dict):
+            required = ("goal_basis", "pace_buffer_note")
+            missing = [field for field in required if not str(event_facts.get(field, "")).strip()]
+            if missing:
+                add_issue(issues, "FAIL", "INCOMPLETE_EVENT_GOAL_BASIS", f"event_facts needs {', '.join(missing)}")
+            slide_number = event_facts.get("strategy_slide")
+            if isinstance(slide_number, int) and 1 <= slide_number <= len(slides):
+                shown = visible_slide_text(slides[slide_number - 1])
+                for field in required:
+                    value = str(event_facts.get(field, "")).strip()
+                    if value and value not in shown:
+                        add_issue(issues, "FAIL", "EVENT_GOAL_BASIS_NOT_VISIBLE", f"event_facts.{field} must be visible on strategy_slide")
+            allow(slide_number, event_facts.get("source_ids", []))
+
+        strategy = deck.get("event_strategy")
+        if not isinstance(strategy, dict):
+            add_issue(issues, "FAIL", "MISSING_EVENT_STRATEGY", "Event preparation needs a structured event_strategy")
+        else:
+            required = ("slide", "segments", "fueling", "equipment", "rehearsal", "source_ids")
+            if any(field not in strategy or not strategy.get(field) for field in required):
+                add_issue(issues, "FAIL", "INCOMPLETE_EVENT_STRATEGY", f"event_strategy needs {', '.join(required)}")
+            segments = strategy.get("segments", [])
+            if not isinstance(segments, list) or len(segments) < 3:
+                add_issue(issues, "FAIL", "WEAK_EVENT_STRATEGY", "event_strategy needs at least three visible segments")
+            slide_number = strategy.get("slide")
+            allow(slide_number, strategy.get("source_ids", []))
+            if isinstance(slide_number, int) and 1 <= slide_number <= len(slides):
+                shown = visible_slide_text(slides[slide_number - 1])
+                for segment in segments if isinstance(segments, list) else []:
+                    if not isinstance(segment, dict) or any(not str(segment.get(field, "")).strip() for field in ("label", "approach")):
+                        add_issue(issues, "FAIL", "INCOMPLETE_EVENT_SEGMENT", "Each event segment needs label and approach")
+                        continue
+                    for field in ("label", "approach"):
+                        if str(segment[field]).strip() not in shown:
+                            add_issue(issues, "FAIL", "EVENT_STRATEGY_NOT_VISIBLE", f"Event segment {field} must be visible on event_strategy.slide")
+                for field in ("fueling", "equipment", "rehearsal"):
+                    value = str(strategy.get(field, "")).strip()
+                    if value and value not in shown:
+                        add_issue(issues, "FAIL", "EVENT_STRATEGY_NOT_VISIBLE", f"event_strategy.{field} must be visible on its slide")
+                if slides[slide_number - 1].get("layout") in {"text_focus", "single_message", "table"}:
+                    add_issue(issues, "FAIL", "WEAK_EVENT_STRATEGY_VISUAL", "Event strategy must visibly show segments, not only a facts table or text block")
+
+    if safety.get("comparable_performance_data") is True:
+        comparison = deck.get("current_target_comparison")
+        if isinstance(comparison, dict):
+            basis = str(comparison.get("comparison_basis", "")).strip()
+            if not basis:
+                add_issue(issues, "FAIL", "MISSING_COMPARISON_BASIS", "current_target_comparison needs a like-for-like comparison_basis")
+            slide_number = comparison.get("slide")
+            if basis and isinstance(slide_number, int) and 1 <= slide_number <= len(slides) and basis not in visible_slide_text(slides[slide_number - 1]):
+                add_issue(issues, "FAIL", "COMPARISON_BASIS_NOT_VISIBLE", "current_target_comparison.comparison_basis must be visible")
+
+    for slide_number, slide in enumerate(slides, 1):
+        if not isinstance(slide, dict) or slide.get("layout") == "sources_appendix":
+            continue
+        cited = set(SOURCE_ID_RE.findall(str(slide.get("source", ""))))
+        unrelated = cited - allowed_by_slide.get(slide_number, set())
+        if unrelated:
+            add_issue(issues, "FAIL", "UNMAPPED_SLIDE_SOURCE", f"Slide citations are not mapped to evidence for this slide: {', '.join(sorted(unrelated))}", slide_number)
+
+    unresolved = set().union(*allowed_by_slide.values()) - appendix_ids if allowed_by_slide else set()
+    if unresolved:
+        add_issue(issues, "FAIL", "UNRESOLVED_MAPPED_SOURCE", f"Mapped evidence is missing appendix entries: {', '.join(sorted(unresolved))}")
+    return issues
+
+
+def validate_confirmation_receipts(deck: dict, work_state: object) -> list[dict]:
+    """Require an exact user reply for every value labelled user_confirmed."""
+    issues: list[dict] = []
+    confirmed_text = json.dumps(work_state.get("confirmed_conditions", []), ensure_ascii=False) if isinstance(work_state, dict) else ""
+    safety = deck.get("safety", {})
+    sessions = safety.get("session_guidance", []) if isinstance(safety, dict) else []
+    for session_index, session in enumerate(sessions if isinstance(sessions, list) else [], 1):
+        if not isinstance(session, dict) or session.get("basis_type") != "user_confirmed":
+            continue
+        quote = str(session.get("confirmation_quote", "")).strip()
+        if not quote or quote not in confirmed_text:
+            add_issue(issues, "FAIL", "UNVERIFIED_USER_CONFIRMATION", f"Session guidance {session_index} confirmation_quote is not present in work-state.confirmed_conditions")
+    return issues
+
+
 def validate(deck: dict) -> list[dict]:
     issues: list[dict] = []
     slides = deck.get("slides")
@@ -365,6 +569,7 @@ def validate(deck: dict) -> list[dict]:
                         if intensities.count("quality") > 1:
                             add_issue(issues, "FAIL", "TOO_MANY_QUALITY_SESSIONS", "A beginner or return-from-injury plan should not prescribe more than one recurring quality session")
     issues.extend(validate_high_stakes_semantics(deck, slides))
+    issues.extend(validate_v024_semantics(deck, slides))
     body_limit = 120 if mode == "presented" else 220
     saw_source_marker = False
     saw_sources_slide = False
@@ -713,6 +918,7 @@ def main() -> int:
     try:
         deck = json.loads(input_path.read_text(encoding="utf-8"))
         issues = validate(deck)
+        issues.extend(validate_confirmation_receipts(deck, work_state))
     except Exception as exc:
         issues = [{"level": "FAIL", "code": "INPUT_ERROR", "message": str(exc)}]
         report_path.parent.mkdir(parents=True, exist_ok=True)

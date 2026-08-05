@@ -134,6 +134,7 @@
     .slide.active { display: block; }
     .controls { position: fixed; z-index: 99; left: 50%; bottom: 18px; display: flex; gap: 10px; align-items: center; transform: translateX(-50%); padding: 8px 12px; border-radius: 999px; background: rgba(63,54,57,.9); color: #fff; font: 600 14px/1 var(--font); }
     .controls button { width: 34px; height: 30px; border: 0; border-radius: 999px; color: #fff; background: rgba(255,255,255,.15); cursor: pointer; font-size: 17px; }
+    .controls .print-button { width: auto; padding: 0 14px; font-size: 13px; font-weight: 700; }
     .controls button:hover { background: rgba(255,255,255,.28); }
     @media print {
       @page { size: 1600px 900px; margin: 0; }
@@ -156,6 +157,7 @@ __SLIDES__
     <button type="button" id="prev" aria-label="前へ">‹</button>
     <span id="indicator">1 / 1</span>
     <button type="button" id="next" aria-label="次へ">›</button>
+    <button type="button" id="print" class="print-button" aria-label="PDFとして保存">PDF保存</button>
   </nav>
   <script type="application/json" id="slide-deck-data">__DECK_DATA__</script>
   <script>
@@ -174,6 +176,7 @@ __SLIDES__
     }
     document.getElementById('prev').addEventListener('click', () => showSlide(current - 1));
     document.getElementById('next').addEventListener('click', () => showSlide(current + 1));
+    document.getElementById('print').addEventListener('click', () => window.print());
     document.addEventListener('keydown', event => {
       if (['ArrowRight', 'PageDown', ' '].includes(event.key)) showSlide(current + 1);
       if (['ArrowLeft', 'PageUp'].includes(event.key)) showSlide(current - 1);

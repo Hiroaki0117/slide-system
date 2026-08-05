@@ -19,6 +19,7 @@ SPEC.loader.exec_module(MODULE)
 
 def valid_deck() -> dict:
     duration = "88日（約13週間）"
+    execution = "痛みなく復帰条件を満たした後に実施"
     phases = [
         ("基礎", "1〜3週", "base", "17〜18kmを上限に維持"),
         ("持久力", "4〜8週", "build", "18〜24kmの条件付き範囲"),
@@ -42,6 +43,7 @@ def valid_deck() -> dict:
                 "progression_condition": progression,
                 "hold_or_regress_condition": hold,
                 "slide": 3,
+                "execution_condition": execution,
             }
         )
     session_items = [
@@ -54,7 +56,8 @@ def valid_deck() -> dict:
             "basis": "体感強度を使用",
             "basis_type": "effort_only",
             "source_ids": [],
-            "slide": 4,
+            "slide": 5,
+            "execution_condition": execution,
         },
         {
             "session_type": "質練習",
@@ -64,8 +67,10 @@ def valid_deck() -> dict:
             "intensity_class": "quality",
             "basis": "利用者確認値",
             "basis_type": "user_confirmed",
+            "confirmation_quote": "質練習は確認済み範囲で行っています",
             "source_ids": [],
-            "slide": 4,
+            "slide": 5,
+            "execution_condition": execution,
         },
         {
             "session_type": "ロング走",
@@ -76,7 +81,8 @@ def valid_deck() -> dict:
             "basis": "体感強度と現状距離",
             "basis_type": "effort_only",
             "source_ids": [],
-            "slide": 4,
+            "slide": 5,
+            "execution_condition": execution,
         },
     ]
     return {
@@ -110,18 +116,58 @@ def valid_deck() -> dict:
             "regression_conditions": ["違和感が残る場合は前段階へ戻る"],
             "stop_conditions": ["痛みが増す場合は中止"],
             "consultation_conditions": ["改善しない場合は専門家へ相談"],
+            "pre_clearance_actions": ["ランニングを再開せず専門家へ相談"],
+            "action_slide": 2,
             "phase_guidance": phase_items,
             "session_guidance": session_items,
+            "weekly_long_sessions": [
+                {
+                    "week": week,
+                    "period": f"第{week}週",
+                    "distance_or_time": f"{16 + (week % 4)}km",
+                    "condition": execution,
+                    "recovery_week": week in {4, 8},
+                    "slide": 4,
+                }
+                for week in range(1, 14)
+            ],
         },
         "claim_evidence": [
             {
                 "claim": "公式記録は号砲基準",
                 "visible_text": "公式記録はグロスタイム（号砲基準）",
-                "slide": 5,
+                "slide": 6,
                 "basis_type": "authoritative_source",
                 "source_ids": ["S1"],
                 "support": "大会公式の開催要項が記録基準を示す",
-            }
+                "evidence_design": "official_rule",
+                "claim_strength": "fact",
+            },
+            {
+                "kind": "safety",
+                "claim": "症状がある間は走らない",
+                "visible_text": "ランニングを再開せず専門家へ相談",
+                "slide": 2,
+                "basis_type": "authoritative_source",
+                "source_ids": ["S2"],
+                "support": "復帰前の評価条件を示す",
+                "evidence_design": "clinical_guideline",
+                "claim_strength": "recommendation",
+            },
+            *[
+                {
+                    "kind": "safety",
+                    "claim": "復帰条件後に実施",
+                    "visible_text": execution,
+                    "slide": slide,
+                    "basis_type": "authoritative_source",
+                    "source_ids": ["S2"],
+                    "support": "復帰前の評価条件を示す",
+                    "evidence_design": "clinical_guideline",
+                    "claim_strength": "recommendation",
+                }
+                for slide in (3, 4, 5)
+            ],
         ],
         "event_facts": {
             "official_event_name": "下関海響マラソン",
@@ -129,13 +175,28 @@ def valid_deck() -> dict:
             "cutoff": "制限時間6時間",
             "timing_basis": "公式記録はグロスタイム（号砲基準）",
             "course_summary": "後半のアップダウンに備える",
-            "strategy_slide": 5,
+            "strategy_slide": 6,
+            "source_ids": ["S1"],
+            "goal_basis": "サブ4はグロスタイム4時間未満",
+            "pace_buffer_note": "5:41/kmちょうどではスタートロスの余裕がない",
+        },
+        "event_strategy": {
+            "slide": 6,
+            "segments": [
+                {"label": "0–10km", "approach": "余裕を守る"},
+                {"label": "10–30km", "approach": "一定努力で進む"},
+                {"label": "30km–", "approach": "状態で調整する"},
+            ],
+            "fueling": "補給は練習で試した物だけを使う",
+            "equipment": "靴と装備は本番前に固定する",
+            "rehearsal": "ロング走で補給と装備をリハーサルする",
             "source_ids": ["S1"],
         },
         "current_target_comparison": {
             "current_value": "ハーフ平均5:17/km",
             "target_value": "目標平均5:41/km",
             "meaning": "速度より持久力と故障管理が課題",
+            "comparison_basis": "平均ペース同士の比較",
             "slide": 2,
         },
         "slides": [
@@ -145,12 +206,12 @@ def valid_deck() -> dict:
                 "job": "evidence",
                 "visual_role": "evidence",
                 "title": "現在地と目標を比べる",
-                "lead": f"{duration}・この計画は暫定案・痛みなく復帰条件を満たしてから開始",
+                "lead": f"{duration}・この計画は暫定案・痛みなく復帰条件を満たしてから開始・平均ペース同士の比較・ランニングを再開せず専門家へ相談",
                 "stats": [
                     {"value": "ハーフ平均5:17/km", "label": "現在", "note": "実績"},
                     {"value": "目標平均5:41/km", "label": "目標", "note": "速度より持久力と故障管理が課題"},
                 ],
-                "source": "出典: [S1]",
+                "source": "出典: [S2]",
             },
             {
                 "layout": "process",
@@ -168,12 +229,22 @@ def valid_deck() -> dict:
                                 item["checkpoint"],
                                 item["progression_condition"],
                                 item["hold_or_regress_condition"],
+                                item["execution_condition"],
                             ]
                         ),
                     }
                     for item in phase_items
                 ],
-                "source": "出典: [S1]",
+                "source": "出典: [S2]（実行条件のみ）",
+            },
+            {
+                "layout": "table",
+                "job": "instruction",
+                "visual_role": "evidence",
+                "title": "毎週のロング走を確認する",
+                "headers": ["週", "期間", "距離", "条件"],
+                "rows": [[f"第{week}週", f"第{week}週", f"{16 + (week % 4)}km", execution] for week in range(1, 14)],
+                "source": "出典: [S2]（実行条件のみ）",
             },
             {
                 "layout": "table",
@@ -181,15 +252,15 @@ def valid_deck() -> dict:
                 "visual_role": "evidence",
                 "title": "週3回の役割を分ける",
                 "headers": ["種類", "強度", "目的", "調整条件"],
-                "rows": [[item["session_type"], item["pace_or_effort"], item["purpose"], item["adjustment_condition"]] for item in session_items],
-                "source": "出典: [S1]",
+                "rows": [[item["session_type"], f'{item["pace_or_effort"]}・{item["execution_condition"]}', item["purpose"], item["adjustment_condition"]] for item in session_items],
+                "source": "出典: [S2]（実行条件のみ）",
             },
             {
                 "layout": "process",
                 "job": "instruction",
                 "visual_role": "explain",
                 "title": "当日は3区間で組み立てる",
-                "lead": "下関海響マラソン・8:30スタート・制限時間6時間・公式記録はグロスタイム（号砲基準）・後半のアップダウンに備える",
+                "lead": "下関海響マラソン・8:30スタート・制限時間6時間・公式記録はグロスタイム（号砲基準）・後半のアップダウンに備える・サブ4はグロスタイム4時間未満・5:41/kmちょうどではスタートロスの余裕がない・補給は練習で試した物だけを使う・靴と装備は本番前に固定する・ロング走で補給と装備をリハーサルする",
                 "steps": [
                     {"label": "0–10km", "title": "抑える", "body": "余裕を守る"},
                     {"label": "10–30km", "title": "整える", "body": "一定努力で進む"},
@@ -206,6 +277,13 @@ def valid_deck() -> dict:
                         "title": "検証用資料",
                         "publisher": "検証",
                         "url": "https://example.com",
+                        "checked": "2026-08-05",
+                    },
+                    {
+                        "id": "S2",
+                        "title": "検証用安全資料",
+                        "publisher": "検証",
+                        "url": "https://example.org",
                         "checked": "2026-08-05",
                     }
                 ],
@@ -245,8 +323,38 @@ def main() -> int:
     unsupported["claim_evidence"][0]["source_ids"] = []
     assert "MISSING_CLAIM_SOURCE" in codes(unsupported)
 
+    unrelated = copy.deepcopy(good)
+    unrelated["slides"][2]["source"] = "出典: [S1]"
+    assert "UNMAPPED_SLIDE_SOURCE" in codes(unrelated)
+
+    calculated = copy.deepcopy(good)
+    calculated["safety"]["session_guidance"][0]["basis_type"] = "calculation"
+    assert "CALCULATION_ONLY_PRESCRIPTION" in codes(calculated)
+
+    no_week = copy.deepcopy(good)
+    no_week["safety"]["weekly_long_sessions"].pop()
+    assert "INCOMPLETE_WEEKLY_LONG_PLAN" in codes(no_week)
+
+    no_recovery = copy.deepcopy(good)
+    for item in no_recovery["safety"]["weekly_long_sessions"]:
+        item["recovery_week"] = False
+    assert "MISSING_WEEKLY_RECOVERY" in codes(no_recovery)
+
+    no_strategy = copy.deepcopy(good)
+    del no_strategy["event_strategy"]
+    assert "MISSING_EVENT_STRATEGY" in codes(no_strategy)
+
+    causal = copy.deepcopy(good)
+    causal["claim_evidence"][0]["evidence_design"] = "observational"
+    causal["claim_evidence"][0]["claim_strength"] = "causal"
+    assert "CAUSAL_OVERCLAIM" in codes(causal)
+
+    receipt_state = {"confirmed_conditions": ["質練習は確認済み範囲で行っています"]}
+    assert not MODULE.validate_confirmation_receipts(good, receipt_state)
+    assert "UNVERIFIED_USER_CONFIRMATION" in {item["code"] for item in MODULE.validate_confirmation_receipts(good, {"confirmed_conditions": []})}
+
     weak_strategy = copy.deepcopy(good)
-    weak_strategy["slides"][4]["layout"] = "text_focus"
+    weak_strategy["slides"][5]["layout"] = "text_focus"
     assert "WEAK_EVENT_STRATEGY_VISUAL" in codes(weak_strategy)
 
     revision_state = {

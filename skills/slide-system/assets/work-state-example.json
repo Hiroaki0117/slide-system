@@ -1,6 +1,16 @@
 {
   "phase": "questions_pending",
   "delivery_profile": "standard",
+  "conversation_gate": {
+    "last_completed": "none",
+    "next_required": "blocking_question_or_confirmation",
+    "tools_allowed": false
+  },
+  "tool_budget": {
+    "grouped_search_operations": 1,
+    "grouped_source_open_operations": 1,
+    "maximum_source_pages": 4
+  },
   "approval": {
     "status": "pending",
     "user_reply": ""
@@ -10,7 +20,9 @@
     "scope": "",
     "user_reply": ""
   },
-  "confirmed_conditions": {},
+  "confirmed_conditions": [
+    "利用者の回答を必要な範囲だけ原文のまま保存する"
+  ],
   "sources": [],
   "unresolved_assumptions": [],
   "slide_jobs": [],

@@ -5,6 +5,9 @@
     "status": "approved",
     "user_reply": "TEST FIXTURE: その内容でお願いします"
   },
+  "confirmed_conditions": [
+    "TEST FIXTURE: 利用者が確認した条件"
+  ],
   "pdf_request": {
     "user_reply": ""
   }

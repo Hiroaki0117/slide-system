@@ -41,6 +41,7 @@ def main() -> int:
                     "phase": "approved",
                     "delivery_profile": "staged",
                     "approval": {"status": "approved", "user_reply": "その内容でお願いします"},
+                    "confirmed_conditions": ["質練習は確認済み範囲で行っています"],
                 },
                 ensure_ascii=False,
                 indent=2,

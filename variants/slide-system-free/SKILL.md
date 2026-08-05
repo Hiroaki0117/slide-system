@@ -18,6 +18,23 @@ Create usable Japanese slides from ordinary, incomplete requests while guarantee
 - Treat an existing artifact as a revision source, not automatically as a request for a new deck. Follow `references/html-pdf.md` for HTML/PDF recovery.
 - Set `delivery_profile: "staged"` in `work-state.json` from preflight through completion.
 
+## Mandatory turn gate — highest priority
+
+Before every tool call, classify the conversation from the immediately preceding assistant action. This gate overrides every later workflow or reference instruction.
+
+If the preceding assistant message asked a blocking question and the user's newest message answers it:
+
+1. Do not call any tool. Do not search the web, open files, run code, create files, reload this skill, or read a reference.
+2. Do not research, calculate recommendations, build the content model, or design the training plan internally.
+3. Using only the request, already inspected material, and the new answer, present the compact production conditions from step 3 and end the turn.
+4. If the answer itself reveals one new blocking uncertainty, ask only that one follow-up question and end the turn, still without tools.
+
+The next visible assistant response after a blocking answer must therefore be either another single blocking question or the production conditions. Any intervening tool call is a workflow failure.
+
+If the preceding assistant message presented production conditions, accept only an explicit choice approving or revising those conditions. Do not treat a question answer, `続けてください`, or a general acknowledgement from an earlier turn as approval.
+
+Do not explicitly reopen or reload `SKILL.md` during the same task. Do not read bundled references before production approval; route to the minimum required references once during Stage A.
+
 ## Free-plan defaults
 
 - Use self-contained slides, `warm_clean`, Japanese, and 16:9 unless the user explicitly supplies another template or format.
@@ -27,20 +44,19 @@ Create usable Japanese slides from ordinary, incomplete requests while guarantee
 - Research only claims needed for the deck. Normally use 2–4 authoritative sources, prioritizing supplied material, official sources, recognized clinical guidance, and primary research. Add more only when safety or factual coverage requires it.
 - Deliver HTML first and PDF in the next turn even when both were requested initially. State this staged delivery in the production confirmation.
 
-Read each needed reference once and store decisions in `work-state.json`.
-Read `references/content.md` for narrative, audience, density, cover, and ending.
-Read `references/layouts.md` before assigning layouts.
-Read `references/warm-clean.md` when using the default theme.
-Read `references/source-safety.md` for research, health, legal, financial, safety, or rights-sensitive claims.
-Read `references/visuals.md` only when a supplied or necessary visual is used.
-Read `references/html-pdf.md` before building. The staged workflow below overrides its instruction to continue immediately from HTML to rendering.
-Read `references/pptx.md` only when PowerPoint is explicitly requested; explain that PPTX may require more turns.
+After explicit production approval, read each needed reference at most once and store decisions in `work-state.json`.
+
+- Read `references/content.md`, `references/layouts.md`, and `references/warm-clean.md` once for a new default-theme deck.
+- Read `references/source-safety.md` once for research, health, legal, financial, safety, or rights-sensitive claims.
+- Read `references/html-pdf.md` once before building. The staged workflow below overrides its instruction to continue immediately from HTML to rendering.
+- Read `references/visuals.md` only when a supplied or necessary visual is used.
+- Read `references/pptx.md` only when PowerPoint is explicitly requested; explain that PPTX may require more turns.
 
 ## Workflow
 
 ### 1. Inspect and preflight
 
-Open supplied files, infer audience and purpose, choose the smallest sufficient story, and check output capability. Before approval, allow only the minimum lookup needed to identify material, verify an event or date, or form accurate production conditions.
+Open supplied files once, infer audience and purpose, and check output capability. Before approval, do not design the detailed story or research content topics. Allow at most one official-fact lookup only when an event, date, organization, or current rule must be verified to ask the blocking question or state accurate production conditions. Do not search medical treatment, training methods, tapering, nutrition, formulas, or other slide content before approval.
 
 If existing HTML or PDF is supplied, classify it before the new-deck workflow:
 
@@ -53,7 +69,7 @@ If existing HTML or PDF is supplied, classify it before the new-deck workflow:
 
 If a missing answer changes safety, rights, factual accuracy, scope, or deliverables, ask only that question and stop. Set `phase: "questions_pending"`. For an injury history, ask whether pain is currently present before proposing an individualized plan.
 
-After the answer, do not start research or production and do not infer approval.
+After the answer, apply the mandatory turn gate: use no tools, present production conditions, and stop. Keep the phase conversational until approval; do not spend a tool call merely to write `work-state.json`.
 
 ### 3. Present production conditions and stop
 
@@ -73,29 +89,44 @@ After approval, record `phase: "approved"`, `approval.status: "approved"`, and t
 
 In this turn only:
 
-1. Verify the minimum necessary unstable and high-stakes facts.
+1. Create `work-state.json` from the approved conditions and exact user replies. Then verify only the minimum necessary unstable and high-stakes facts.
 2. Create a compact 6–8 slide content model with one job and one primary claim per slide. Before compressing, list the mandatory coverage and confirm that none is lost; use 9–10 slides when safety, source traceability, phase-specific load guidance, or the user's decision criteria do not fit legibly in 8. Do not rely on a later correction turn to add essential content.
 3. Run the bundled static builder with `--work-state`. Resolve every static `FAIL` in one batch.
 4. Save `deck-draft.html`, `deck.json`, static QA, and `work-state.json` in the user-accessible output directory.
-5. Set `phase: "html_delivered"`, store the HTML path, and set the next action to `PDF化と最終QA`.
+5. Confirm that the HTML navigation includes `PDF保存`. Set `phase: "html_delivered"`, store the HTML path, and set the next action to `PDF化`.
 6. Return the HTML draft to the user and stop the turn.
 
 Do not run `render_deck.mjs`, create screenshots, export PDF, or start visual correction in Stage A. Do not use remaining capacity to continue automatically.
 
-The Stage A response must clearly say that the HTML is a usable draft, visual/PDF QA remains, and the user can reply naturally with `PDFもお願いします` or `続けてください`.
+The Stage A response must clearly say that the HTML is a usable draft, PDF確認 remains, and the user can reply naturally with `PDFもお願いします` or use the HTML's `PDF保存` button if the session limit is near.
 
-### 5. Stage B: render, correct, and deliver PDF
+### Stage A tool budget
+
+Preserve capacity for the downloadable HTML.
+
+- Reuse supplied facts and any official event fact already verified during preflight.
+- Use at most one grouped web-search operation with up to four precise queries, followed by at most one grouped source-opening operation with up to four authoritative pages.
+- Prefer an official event page, a recognized clinical guideline, a primary or peer-reviewed taper source, and a recognized endurance-nutrition consensus when those topics are material.
+- Do not open commercial clinic, product, coaching-blog, calculator, or search-summary pages when an official, clinical, or primary source is available.
+- Do not research race-prediction formulas unless the user explicitly requests a prediction. A current-versus-target pace comparison can be calculated directly and labelled with its limitation.
+- Do not run separate searches for every slide or every weekly distance. Treat an individualized weekly schedule as a conditional proposal based on confirmed baseline and recovery, not as a sourced universal rule.
+- If the budget cannot support a claim, omit the claim, use non-numeric conditional wording, or mark it unresolved. Do not continue searching and risk losing the HTML checkpoint.
+- Do not emit routine progress narration. Save the HTML before any optional work.
+
+### 5. Stage B: fast PDF export and delivery
 
 Start only after Stage A has delivered the HTML and the user asks to continue or create the PDF. Record `phase: "pdf_requested"` and the exact reply in `pdf_request.user_reply`.
 
-1. Read the existing `work-state.json`, `deck.json`, and HTML first. Do not repeat research or rebuild from scratch.
-2. Pass `work-state.json` to the bundled renderer. The renderer must reject `html_delivered` or a missing `pdf_request.user_reply`.
-3. Run the bundled renderer once to test navigation and font loading, render all slides and a contact sheet, and export PDF.
-4. Inspect the contact sheet and all detected failures. Make one consolidated correction batch, then rerun the affected validation.
-5. If another correction batch is necessary, save current artifacts and state, return the newest files as incomplete drafts, and stop. Resume on the next user reply.
-6. When all mandatory checks pass, set `phase: "complete"` and return the final HTML and PDF with a concise QA result.
+1. Read only the existing `work-state.json` and HTML path needed for conversion. Do not reread source material, research, recover the model, rebuild content, or re-evaluate the story.
+2. Pass `work-state.json` to `scripts/export_pdf.mjs`. It must reject `html_delivered` or a missing `pdf_request.user_reply`.
+3. Export the full PDF before screenshots or contact-sheet work. Verify bundled-font loading, hidden navigation controls, 16:9 page size, and HTML/PDF page-count parity.
+4. Return the existing HTML and newly created PDF immediately after these checks. Set `phase: "complete"` and give only a concise conversion result.
 
-Never claim completion if PDF generation, page-count parity, font loading, overflow, title wrapping, sources, or mandatory safety checks remain unresolved.
+Do not run `render_deck.mjs`, create per-page screenshots, make a contact sheet, repeat research, or alter slide content before the downloadable PDF exists. Full visual QA is an optional later `仕上げQA` turn, not a prerequisite for free-plan PDF delivery.
+
+If code execution cannot finish, do not restart production. Tell the user to open the delivered HTML and choose `PDF保存`, or use Chrome/Edge `Ctrl+P` and select `PDFに保存`. A new chat may also receive the HTML with `内容は変えずPDF化のみ`.
+
+Never claim PDF conversion completion if PDF generation, page-count parity, font loading, hidden controls, or 16:9 page size remain unresolved. Content, sources, overflow, and title wrapping must already have passed Stage A static/HTML checks; do not spend the PDF-only turn redoing them.
 
 ## Content and safety controls
 
@@ -103,20 +134,25 @@ Never claim completion if PDF generation, page-count parity, font loading, overf
 - Put assumptions and the main limitation beside a derived number.
 - For progressive roadmaps, show starting, progression, recovery, regression, and stop or consultation conditions.
 - For high-stakes claims, create `claim_evidence` records before building. Each record must name the visible claim text, slide, basis type, source IDs, and exactly what the source supports. A source title or nearby citation is not evidence that the source supports the recommendation.
+- Record `evidence_design` and `claim_strength`. Observational evidence may support association or inference wording, not causal improvement wording.
 - For a date-driven roadmap, set `dated_roadmap: true`, calculate the exact remaining days from ISO dates, and show one consistent natural rounding such as `88日（約13週間）`. Do not shorten 12 weeks and 4 days to `約12週間`.
 - For progressive exercise roadmaps, include `safety.phase_guidance`. Every phase needs its period, a numeric long-session distance or time guide, purpose, checkpoint, progression condition, hold or regression condition, and the slide number where the period and load guide are visibly shown.
 - A fixed single prescription is prohibited, but omission of load guidance is also prohibited. Use conditional ranges, an explicit current-load ceiling, or time ranges. Do not replace them with only `少しずつ延ばす`.
 - For exercise roadmaps, show the pace or effort, purpose, adjustment condition, intensity class, and basis for every recurring session type. Include long-session pace explicitly and distinguish it from goal-pace practice.
 - Record each recurring session's `basis_type`, `source_ids`, and slide. If a pace is not user-confirmed or directly supported, use effort or talk-test wording instead of inventing a numeric range.
+- A `user_confirmed` session value needs `confirmation_quote` copied exactly into `work-state.confirmed_conditions`. A calculated target pace may be shown as a comparison, but calculation alone cannot prescribe a recurring workout pace.
 - For a beginner or return-from-injury plan, set `safety.novice_or_returning: true`, keep at least one recurring session explicitly easy or recovery-oriented, and normally use no more than one quality session per week.
 - Do not invent a numeric workout pace from distance and frequency alone. Use a user-confirmed pace, a traceable calculation or authoritative source, or an effort/talk-test range marked provisional.
 - When an official result uses gun time, distinguish gross and net goals in the production conditions and final deck. Include official start, cutoff, and timing basis when they affect the requested outcome.
 - For event preparation, record official event facts and course implications from official sources, include an explicit recovery phase, and use a 14–21 day taper unless a directly supporting source and confirmed circumstances justify another range.
-- When current and target performance are comparable, show both values and the meaning of their difference on the same slide.
-- When a current injury symptom is present or unknown, label the plan visibly as provisional and put the clearance condition before the training schedule.
+- When current and target performance are comparable, show both values in the same unit, the comparison basis, and the meaning of their difference on the same slide.
+- For a dated event roadmap, list every remaining week's long-session distance or time, period, execution condition, and recovery-week flag. Phase endpoints alone are insufficient.
+- When a current injury symptom is present or unknown, label the plan visibly as provisional, show sourced pre-clearance actions, and put a visible post-clearance execution condition on every phase and recurring session. Do not place unconditional running instructions elsewhere.
 - A race strategy with three or more stages must use a process, comparison, table, chart, or decision visual. A short bullet list with unused space is not sufficient.
+- Event preparation needs at least three visible race segments plus fueling, equipment, and rehearsal. An official-facts table alone is not a race strategy. State whether the goal uses gross or net time and note any start-line buffer implication.
 - Do not use slide count as a reason to omit current-versus-target comparison, recovery periods, event-specific constraints, or final-use preparation such as pacing, fueling, equipment, and rehearsal when they affect the requested outcome.
 - Use source IDs such as `[S1]` on claim and instruction slides and ensure every ID resolves to one complete appendix entry. Do not put a publisher in a page footer unless that exact source appears in the appendix.
+- Every page-level source ID must map to evidence recorded for that same page. A source that merely exists in the appendix cannot support an unrelated training, safety, or taper claim.
 - For high-stakes decks, set `high_stakes: true` and provide the required safety model and sources before building.
 - Do not reduce source quality, minimum type size, contrast, safe margins, or final factual checks to save resources.
 
