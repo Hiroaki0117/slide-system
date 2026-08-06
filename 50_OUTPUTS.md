@@ -1,8 +1,8 @@
 ---
 spec_name: slide-system-outputs
-version: 0.1.1
+version: 0.1.2
 status: draft
-updated: 2026-08-04
+updated: 2026-08-06
 language: ja
 default_profile: html_pdf
 ---
@@ -101,10 +101,12 @@ claude-slide-system.pdf
 - `SHOULD`: 現在のページ番号と総ページ数を表示する。
 - `MUST`: PDF出力時に、1スライドを1ページとして扱える印刷設定を持つ。
 - `MUST`: PDF出力時に、ナビゲーションや操作説明などの不要なUIを非表示にする。
+- `MUST`: 検証未完了のHTMLではPDF保存操作を無効化し、完成版と誤認させない。
 
 ### 6.2 PDF
 
 - HTMLからPDFを生成します。
+- 検証未完了を示す表示があるHTMLからはPDFを生成しません。
 - 背景色、背景画像、文字色を保持します。
 - スライド外の余白やブラウザUIを含めません。
 - ページ順とページ数をHTMLに一致させます。

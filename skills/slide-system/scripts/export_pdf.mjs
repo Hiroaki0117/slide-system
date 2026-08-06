@@ -70,6 +70,14 @@ async function main() {
   page.on("console", message => { if (message.type() === "error") consoleErrors.push(message.text()); });
   page.on("pageerror", error => consoleErrors.push(error.message));
   await page.goto(pathToFileURL(htmlPath).href, { waitUntil: "networkidle" });
+  const draftNotice = await page.evaluate(() => {
+    const banner = document.querySelector(".draft-banner");
+    return banner ? String(banner.textContent || "").trim() : "";
+  });
+  if (draftNotice) {
+    await browser.close();
+    throw new Error(`DRAFT_NOT_APPROVED: ${draftNotice}`);
+  }
   const checks = await page.evaluate(async () => {
     await document.fonts.ready;
     const slideCount = window.deckSlideCount || document.querySelectorAll(".slide").length;

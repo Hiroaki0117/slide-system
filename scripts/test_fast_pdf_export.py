@@ -22,6 +22,12 @@ def run(command: list[str], env: dict[str, str] | None = None) -> None:
         raise RuntimeError(f"Command failed ({completed.returncode}): {' '.join(command)}\n{completed.stdout}\n{completed.stderr}")
 
 
+def run_failure(command: list[str], env: dict[str, str] | None = None) -> subprocess.CompletedProcess[str]:
+    completed = subprocess.run(command, cwd=ROOT, env=env, text=True, capture_output=True, encoding="utf-8")
+    assert completed.returncode != 0, f"Command unexpectedly passed: {' '.join(command)}"
+    return completed
+
+
 def main() -> int:
     with tempfile.TemporaryDirectory(prefix="slide-system-fast-pdf-") as temporary:
         work = Path(temporary)
@@ -70,6 +76,26 @@ def main() -> int:
         assert report["controls_hidden"] is True, report
         assert report["aspect_16_9"] is True, report
         assert pdf_path.stat().st_size > 10_000, pdf_path.stat().st_size
+
+        draft_html = work / "draft.html"
+        draft_pdf = work / "draft.pdf"
+        draft_report = work / "draft-pdf-qa.json"
+        draft_html.write_text(
+            html_path.read_text(encoding="utf-8").replace(
+                "<body>", '<body><div class="draft-banner">検証未完了ドラフト</div>', 1
+            ),
+            encoding="utf-8",
+        )
+        failed = run_failure([
+            os.environ.get("SLIDE_SYSTEM_NODE", "node"),
+            str(SKILL / "scripts" / "export_pdf.mjs"),
+            "--html", str(draft_html),
+            "--pdf", str(draft_pdf),
+            "--report", str(draft_report),
+            "--work-state", str(state_path),
+        ], env=env)
+        assert "DRAFT_NOT_APPROVED" in failed.stderr
+        assert not draft_pdf.exists()
 
     print("PASS: fast PDF export integration check")
     return 0

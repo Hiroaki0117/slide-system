@@ -654,10 +654,20 @@ def validate(deck: dict) -> list[dict]:
             steps = slide.get("steps", [])
             if not isinstance(steps, list) or not 3 <= len(steps) <= 6:
                 add_issue(issues, "FAIL", "PROCESS_STEPS", "Process needs three to six steps", index)
+            lead_text = str(slide.get("lead", "")).strip()
+            if len(lead_text) > 120:
+                add_issue(issues, "FAIL", "PROCESS_LEAD_DENSITY", "Process lead exceeds 120 characters; keep the lead to key conditions and move details into the steps", index)
+            for step in steps if isinstance(steps, list) else []:
+                title_text = re.sub(r"\s+", "", str(step.get("title", "")))
+                body_text = re.sub(r"\s+", "", str(step.get("body", "")))
+                if title_text and title_text == body_text:
+                    add_issue(issues, "FAIL", "DUPLICATE_PROCESS_COPY", "Process step title and body must not repeat the same sentence", index)
         elif layout == "data_focus":
             stats = slide.get("stats", [])
             if not isinstance(stats, list) or not 1 <= len(stats) <= 4:
                 add_issue(issues, "FAIL", "STAT_COUNT", "Data focus needs one to four stats", index)
+            if len(str(slide.get("lead", "")).strip()) > 140:
+                add_issue(issues, "FAIL", "DATA_FOCUS_LEAD_DENSITY", "Data-focus lead exceeds 140 characters; shorten the context before the key numbers", index)
         elif layout == "bar_chart":
             bars = slide.get("bars", [])
             maximum = slide.get("max_value")
@@ -887,7 +897,10 @@ def render_slide(slide: dict, index: int, total: int, base_dir: Path) -> str:
 def build_html_document(deck: dict, input_path: Path, template_path: Path, draft_notice: str = "") -> str:
     """Render a deck after validation, or a visibly marked non-executable draft."""
     template = template_path.read_text(encoding="utf-8")
-    markers = ("__DECK_TITLE__", "__SLIDES__", "__FONT_DATA__", "__DECK_DATA__", "__DRAFT_BANNER__")
+    markers = (
+        "__DECK_TITLE__", "__SLIDES__", "__FONT_DATA__", "__DECK_DATA__",
+        "__DRAFT_BANNER__", "__PRINT_DISABLED__", "__PRINT_LABEL__",
+    )
     if any(marker not in template for marker in markers):
         raise ValueError("Template markers are missing")
     font_path = template_path.parent / "fonts" / "NotoSansJP-Variable.ttf"
@@ -897,12 +910,16 @@ def build_html_document(deck: dict, input_path: Path, template_path: Path, draft
     slides_html = "\n".join(render_slide(slide, i, len(deck["slides"]), input_path.parent) for i, slide in enumerate(deck["slides"], 1))
     deck_data = json.dumps(deck, ensure_ascii=False, separators=(",", ":")).replace("<", "\\u003c")
     banner = f'<div class="draft-banner" role="status">{esc(draft_notice)}</div>' if draft_notice else ""
+    print_disabled = 'disabled aria-disabled="true" title="検証完了後に利用できます"' if draft_notice else ""
+    print_label = "PDF保存不可" if draft_notice else "PDF保存"
     return (
         template.replace("__DECK_TITLE__", esc(deck.get("deck_title", "Slide Deck")))
         .replace("__FONT_DATA__", font_data)
         .replace("__SLIDES__", slides_html)
         .replace("__DECK_DATA__", deck_data)
         .replace("__DRAFT_BANNER__", banner)
+        .replace("__PRINT_DISABLED__", print_disabled)
+        .replace("__PRINT_LABEL__", print_label)
     )
 
 

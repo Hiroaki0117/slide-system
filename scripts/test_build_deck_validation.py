@@ -260,11 +260,11 @@ def valid_deck() -> dict:
                 "job": "instruction",
                 "visual_role": "explain",
                 "title": "当日は3区間で組み立てる",
-                "lead": "下関海響マラソン・8:30スタート・制限時間6時間・公式記録はグロスタイム（号砲基準）・後半のアップダウンに備える・サブ4はグロスタイム4時間未満・5:41/kmちょうどではスタートロスの余裕がない・補給は練習で試した物だけを使う・靴と装備は本番前に固定する・ロング走で補給と装備をリハーサルする",
+                "lead": "下関海響マラソン・8:30スタート・制限時間6時間・公式記録はグロスタイム（号砲基準）・サブ4はグロスタイム4時間未満・5:41/kmちょうどではスタートロスの余裕がない",
                 "steps": [
-                    {"label": "0–10km", "title": "抑える", "body": "余裕を守る"},
-                    {"label": "10–30km", "title": "整える", "body": "一定努力で進む"},
-                    {"label": "30km–", "title": "判断する", "body": "状態で調整する"},
+                    {"label": "0–10km", "title": "抑える", "body": "余裕を守る・後半のアップダウンに備える"},
+                    {"label": "10–30km", "title": "整える", "body": "一定努力で進む・補給は練習で試した物だけを使う"},
+                    {"label": "30km–", "title": "判断する", "body": "状態で調整する・靴と装備は本番前に固定する・ロング走で補給と装備をリハーサルする"},
                 ],
                 "source": "出典: [S1]",
             },
@@ -356,6 +356,18 @@ def main() -> int:
     weak_strategy = copy.deepcopy(good)
     weak_strategy["slides"][5]["layout"] = "text_focus"
     assert "WEAK_EVENT_STRATEGY_VISUAL" in codes(weak_strategy)
+
+    dense_process = copy.deepcopy(good)
+    dense_process["slides"][5]["lead"] = "長" * 121
+    assert "PROCESS_LEAD_DENSITY" in codes(dense_process)
+
+    duplicate_process = copy.deepcopy(good)
+    duplicate_process["slides"][5]["steps"][0]["body"] = duplicate_process["slides"][5]["steps"][0]["title"]
+    assert "DUPLICATE_PROCESS_COPY" in codes(duplicate_process)
+
+    dense_data_focus = copy.deepcopy(good)
+    dense_data_focus["slides"][1]["lead"] = "長" * 141
+    assert "DATA_FOCUS_LEAD_DENSITY" in codes(dense_data_focus)
 
     revision_state = {
         "phase": "revision_approved",

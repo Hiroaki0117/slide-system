@@ -32,6 +32,8 @@ def main() -> int:
         "Do not inspect builder or validator source code",
         "user_review_points",
         "do not automatically rewrite those content decisions",
+        "DRAFT_NOT_APPROVED",
+        "keep the lead to 120 characters or fewer",
     ]
     missing = [item for item in required if item not in text]
     assert not missing, f"Missing free-plan turn-gate contract: {missing}"

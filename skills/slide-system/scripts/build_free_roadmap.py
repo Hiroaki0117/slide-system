@@ -198,10 +198,13 @@ def expand(brief: dict) -> dict:
     }
     event_lead = "・".join([
         event_facts["official_event_name"], event_facts["start_time"], event_facts["cutoff"],
-        event_facts["timing_basis"], event_facts["course_summary"], event_facts["goal_basis"],
-        event_facts["pace_buffer_note"], event_strategy["fueling"], event_strategy["equipment"],
-        event_strategy["rehearsal"],
+        event_facts["timing_basis"], event_facts["goal_basis"], event_facts["pace_buffer_note"],
     ])
+    event_step_bodies = [
+        event_facts["course_summary"],
+        event_strategy["fueling"],
+        f'{event_strategy["equipment"]}・{event_strategy["rehearsal"]}',
+    ]
 
     safety_id = text(safety_source.get("id"))
     taper_id = text(taper_source.get("id"))
@@ -286,8 +289,8 @@ def expand(brief: dict) -> dict:
             "layout": "process", "job": "instruction", "visual_role": "explain",
             "title": "当日は3区間以上で組み立てる", "lead": event_lead,
             "steps": [
-                {"label": item["label"], "title": item["approach"], "body": item["approach"]}
-                for item in event_strategy["segments"]
+                {"label": item["label"], "title": item["approach"], "body": event_step_bodies[index] if index < len(event_step_bodies) else ""}
+                for index, item in enumerate(event_strategy["segments"])
             ],
             "source": f"出典: [{event_id}] [{nutrition_id}]",
         },

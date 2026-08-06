@@ -1,8 +1,8 @@
 ---
 spec_name: slide-system-layouts
-version: 0.1.0
+version: 0.1.1
 status: draft
-updated: 2026-08-04
+updated: 2026-08-06
 language: ja
 layout_strategy: hybrid
 base_family_count: 12
@@ -361,6 +361,9 @@ initial_layout_count: 16
 
 - 横型は3〜5ステップ、縦型は3〜6ステップを目安とする。
 - 1ステップには1つの行動または状態を書く。
+- 導入文は120文字以内を目安とし、主要条件だけを残す。
+- ステップの見出しと説明で同じ文を繰り返さない。
+- 導入文が上限を超える場合は、詳細を対応するステップへ移すか、スライドを分割する。
 
 ### 7.9 `data_focus`
 
@@ -393,6 +396,7 @@ initial_layout_count: 16
 収容量:
 
 - 主要なグラフまたは表1点と、1つの読み取り結果に限定する。
+- 主要数値の前に置く導入文は140文字以内を目安とする。
 - 表の行列数は試作後に確定し、詳細表は`sources_appendix`へ分ける。
 
 ### 7.10 `exercise`

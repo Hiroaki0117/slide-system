@@ -98,7 +98,7 @@ In this turn only:
 5. Confirm that the HTML navigation includes `PDF保存`. Set `phase: "html_delivered"`, store the HTML path, and set the next action to `PDF化`.
 6. Return the HTML draft, then copy the compact builder's `user_review_points` into the response as three short confirmation points. Ask the user to check the proposed distances, recurring-session intensity, and start/stop conditions; do not automatically rewrite those content decisions. Then stop the turn.
 
-If the compact builder reports `DRAFT`, return that HTML immediately and say it is a visible, non-executable validation draft. Do not inspect source code, rebuild, research again, or retry in the same turn. A `DRAFT` is not completion; its banner and QA report preserve the unresolved issue for the next chat or turn.
+If the compact builder reports `DRAFT`, return that HTML immediately and say it is a visible, non-executable validation draft. Its PDF button is disabled. Ask only for the correction needed by the report; do not offer or create PDF. Do not inspect source code, rebuild, research again, or retry in the same turn. A `DRAFT` is not completion; its banner and QA report preserve the unresolved issue for the next chat or turn.
 
 Do not run `render_deck.mjs`, create screenshots, export PDF, or start visual correction in Stage A. Do not use remaining capacity to continue automatically.
 
@@ -131,7 +131,9 @@ Do not run `render_deck.mjs`, create per-page screenshots, make a contact sheet,
 
 If code execution cannot finish, do not restart production. Tell the user to open the delivered HTML and choose `PDF保存`, or use Chrome/Edge `Ctrl+P` and select `PDFに保存`. A new chat may also receive the HTML with `内容は変えずPDF化のみ`.
 
-Never claim PDF conversion completion if PDF generation, page-count parity, font loading, hidden controls, or 16:9 page size remain unresolved. Content, sources, overflow, and title wrapping must already have passed Stage A static/HTML checks; do not spend the PDF-only turn redoing them.
+Never export a PDF from HTML that contains the `検証未完了ドラフト` banner. `export_pdf.mjs` must reject it with `DRAFT_NOT_APPROVED`; manual PDF fallback applies only to a validated HTML whose `PDF保存` button is enabled.
+
+Never claim PDF conversion completion if PDF generation, page-count parity, font loading, hidden controls, or 16:9 page size remain unresolved. Content, sources, overflow, title wrapping, and layout-specific text density must already have passed Stage A static/HTML checks; do not spend the PDF-only turn redoing them.
 
 ## Content and safety controls
 
@@ -154,6 +156,7 @@ Never claim PDF conversion completion if PDF generation, page-count parity, font
 - For a dated event roadmap, list every remaining week's long-session distance or time, period, execution condition, and recovery-week flag. Phase endpoints alone are insufficient.
 - When a current injury symptom is present or unknown, label the plan visibly as provisional, show sourced pre-clearance actions, and put a visible post-clearance execution condition on every phase and recurring session. Do not place unconditional running instructions elsewhere.
 - A race strategy with three or more stages must use a process, comparison, table, chart, or decision visual. A short bullet list with unused space is not sufficient.
+- In a `process` slide, keep the lead to 120 characters or fewer and move supporting details into the relevant steps. Do not repeat the same sentence as both a step title and body. In a `data_focus` slide, keep the lead to 140 characters or fewer.
 - Event preparation needs at least three visible race segments plus fueling, equipment, and rehearsal. An official-facts table alone is not a race strategy. State whether the goal uses gross or net time and note any start-line buffer implication.
 - Do not use slide count as a reason to omit current-versus-target comparison, recovery periods, event-specific constraints, or final-use preparation such as pacing, fueling, equipment, and rehearsal when they affect the requested outcome.
 - Use source IDs such as `[S1]` on claim and instruction slides and ensure every ID resolves to one complete appendix entry. Do not put a publisher in a page footer unless that exact source appears in the appendix.

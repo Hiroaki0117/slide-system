@@ -63,6 +63,7 @@ def main() -> int:
         assert report["user_review_points"] == result["user_review_points"]
         assert "検証未完了ドラフト" not in html
         assert "slide-deck-data" in html and "__DRAFT_BANNER__" not in html
+        assert ">PDF保存</button>" in html and "PDF保存不可" not in html
 
         compact = json.loads(json.dumps(valid, ensure_ascii=False))
         compact["phases"] = compact["phases"][1:]
@@ -78,6 +79,7 @@ def main() -> int:
         assert len(result["user_review_points"]) == 1
         assert report["quality_gate"] == "NOT_RUN_INPUT_INCOMPLETE"
         assert "検証未完了ドラフト" in html
+        assert "PDF保存不可" in html and "aria-disabled=\"true\"" in html
         assert report["issues"][0]["code"] == "COMPACT_INPUT_ERROR"
 
     print("PASS: free-plan compact roadmap builder")

@@ -15,7 +15,7 @@ Use the bundled deterministic path instead of writing a complete HTML/CSS/JavaSc
 - `scripts/render_deck.mjs`: opens the HTML, tests navigation, renders every slide, makes a contact sheet, and exports PDF in one run.
 - `scripts/export_pdf.mjs`: resource-saving conversion-only path. It writes the PDF first, then checks page count, 16:9 size, font loading, and hidden controls.
 
-Every generated HTML includes a `PDF保存` button. It calls the browser print dialog and is hidden automatically in print/PDF output. This is the no-code fallback when a free session cannot execute the converter.
+Every validated HTML includes a `PDF保存` button. It calls the browser print dialog and is hidden automatically in print/PDF output. A validation draft instead shows a disabled `PDF保存不可` button so an unresolved artifact cannot be mistaken for final output.
 
 Every newly built HTML embeds its editable content model in `slide-deck-data`. This is not displayed in the slides and lets a later chat revise the deck without repeating research or reconstructing every page.
 
@@ -55,7 +55,7 @@ After the user accepts the HTML and requests PDF, use:
 node scripts/export_pdf.mjs --html OUTPUT_DIR/deck-draft.html --pdf OUTPUT_DIR/deck-draft.pdf --report WORK_DIR/pdf-export-qa.json --work-state WORK_DIR/work-state.json
 ```
 
-This is conversion-only. Do not recover or rebuild the deck, repeat research, render screenshots, or create a contact sheet before the PDF exists. If execution is unavailable, the user can open the HTML and choose `PDF保存`, or use Chrome/Edge `Ctrl+P` and select `PDFに保存`.
+This is conversion-only. It rejects an HTML containing a visible draft banner with `DRAFT_NOT_APPROVED`. Do not recover or rebuild the deck, repeat research, render screenshots, or create a contact sheet before the PDF exists. For validated HTML only, if execution is unavailable, the user can open the HTML and choose `PDF保存`, or use Chrome/Edge `Ctrl+P` and select `PDFに保存`.
 
 ## Compact roadmap build for the free profile
 
