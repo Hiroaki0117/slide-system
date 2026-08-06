@@ -56,7 +56,7 @@ If a missing answer materially changes safety, rights, factual accuracy, scope, 
 
 Set `work-state.json` to `phase: "questions_pending"`. After the user answers, update the conditions, but do not infer approval from that answer. If another blocking answer is still required, ask it and stop again.
 
-When health or safety changes the recommendation, ask one concise question about the missing condition. For an injury history, ask whether pain is currently present before proposing an individualized plan.
+When health or safety changes the recommendation, ask one concise question about the missing current condition before proposing individualized guidance.
 
 ### 3. Present production conditions and stop
 

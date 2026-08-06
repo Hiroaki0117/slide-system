@@ -1,77 +1,93 @@
 {
-  "deck_title": "資料タイトル",
-  "audience": "この資料を読む主な対象者",
-  "purpose": "読み終えた後に理解・判断・実行できること",
+  "deck_title": "問い合わせ対応の改善提案",
+  "audience": "カスタマーサポート部門の意思決定者",
+  "purpose": "対応時間を短縮する改善案を比較し、次の実行方針を決める",
   "mode": "standalone",
   "high_stakes": false,
   "slides": [
     {
       "layout": "cover",
-      "eyebrow": "CATEGORY × PURPOSE",
-      "title": "資料タイトル",
-      "subtitle": "必要な場合だけ使う短い補足",
-      "date": "2026-08-04"
+      "eyebrow": "SERVICE × IMPROVEMENT",
+      "title": "問い合わせ対応の改善提案",
+      "subtitle": "現状・選択肢・90日間の進め方",
+      "date": "2026-08-07"
     },
     {
       "layout": "single_message",
       "job": "claim",
       "visual_role": "explain",
-      "title": "最初に結論をつかむ",
-      "headline": "1つ",
-      "body": "このページでは、最も重要な数字や言葉を大きく見せ、その意味を隣で説明します。"
+      "title": "最初に変えるべきは受付後の振り分けです",
+      "headline": "迷う時間を減らす",
+      "body": "問い合わせ内容を早い段階で分類し、担当者が判断に使う情報を揃えます。"
     },
     {
       "layout": "data_focus",
       "job": "evidence",
       "visual_role": "evidence",
-      "title": "数字から現在地が分かる",
-      "lead": "重要な数字は、意味と次の判断を添えて示します。",
+      "title": "現状は初動と引き継ぎに時間がかかっています",
+      "lead": "依頼者提供の直近集計から、改善対象を3点に絞ります。",
       "stats": [
-        { "value": "89日", "label": "残り期間", "note": "約12.7週" },
-        { "value": "5:41/km", "label": "目標ペース", "note": "平均の目安" }
+        { "value": "18時間", "label": "平均初回応答", "note": "営業時間ベース" },
+        { "value": "2.4回", "label": "平均引き継ぎ", "note": "1件あたり" },
+        { "value": "31%", "label": "情報の再確認", "note": "対象案件の割合" }
       ],
-      "insight": "主要数値から読み取れる結論を1つ示します。",
-      "condition": "数値を使う前提または実行条件を短く示します。",
-      "source": "出典: 依頼者提供情報、公式情報"
+      "insight": "受付時の情報不足が、その後の待ち時間を増やしています。",
+      "condition": "数値は依頼者提供データであり、対象期間を表紙または注記で明示します。"
+    },
+    {
+      "layout": "comparison",
+      "job": "compare",
+      "visual_role": "evidence",
+      "title": "3案を効果と導入負荷で比較します",
+      "columns": [
+        {
+          "heading": "入力項目の見直し",
+          "body": "不足情報を減らし、初回の確認往復を抑えます。"
+        },
+        {
+          "heading": "自動振り分け",
+          "body": "分類ルールを使い、適切な担当へ早く届けます。"
+        },
+        {
+          "heading": "回答テンプレート",
+          "body": "頻出質問の品質と作成速度を揃えます。"
+        }
+      ]
     },
     {
       "layout": "process",
       "job": "explain",
       "visual_role": "explain",
-      "title": "段階を踏むことで無理なく進める",
+      "title": "90日間を3段階に分けて進めます",
+      "lead": "小さく試し、判断材料を揃えてから対象を広げます。",
       "steps": [
-        { "label": "01", "title": "整える", "body": "前提と安全条件を確認する" },
-        { "label": "02", "title": "伸ばす", "body": "必要な能力を段階的に高める" },
-        { "label": "03", "title": "仕上げる", "body": "本番条件に合わせて調整する" }
+        { "label": "1–30日", "title": "整理", "body": "問い合わせ分類と必要情報を定義する" },
+        { "label": "31–60日", "title": "試行", "body": "1チームで運用し、時間と手戻りを測る" },
+        { "label": "61–90日", "title": "拡張判断", "body": "効果と負荷を確認し、次の対象を決める" }
       ]
     },
     {
-      "layout": "bar_chart",
-      "job": "evidence",
-      "visual_role": "evidence",
-      "title": "変化はグラフで見せる",
-      "max_value": 30,
-      "bars": [
-        { "label": "第1期", "value": 18, "display": "18 km" },
-        { "label": "第2期", "value": 24, "display": "24 km" },
-        { "label": "第3期", "value": 30, "display": "30 km" }
-      ],
-      "note": "数値、単位、期間、出典を確認してから使用します。"
-    },
-    {
-      "layout": "text_focus",
+      "layout": "decision_flow",
       "job": "instruction",
-      "visual_role": "none",
-      "visual_reason": "短い判断基準を読み取ることが目的で、追加図解が理解を改善しないため",
-      "title": "次の一歩を明確にする",
-      "lead": "結論の後に、実行条件と見直し条件を示します。",
-      "bullets": ["今週の行動を1つ決める", "確認日を決める", "中止・見直し条件を共有する"]
+      "visual_role": "explain",
+      "title": "試行結果で拡張か見直しかを決めます",
+      "question": "初回応答と手戻りの両方が改善したか",
+      "yes_label": "YES",
+      "yes_action": "対象チームを広げ、運用ルールを標準化する",
+      "no_label": "NO",
+      "no_action": "入力項目と分類ルールを見直し、再試行する",
+      "footer": "判断日と担当者を開始前に決めます。"
     },
     {
-      "layout": "sources_appendix",
-      "title": "出典",
-      "sources": [
-        { "id": "S1", "title": "資料名", "publisher": "発行元", "url": "https://example.com", "checked": "2026-08-04" }
+      "layout": "summary_action",
+      "job": "summary",
+      "visual_role": "explain",
+      "title": "今週は試行条件を確定します",
+      "headline": "まず1チームで検証する",
+      "actions": [
+        "対象となる問い合わせ分類を3つ選ぶ",
+        "現状値と90日後の判断指標を確定する",
+        "試行責任者と週次確認日を決める"
       ]
     }
   ]
