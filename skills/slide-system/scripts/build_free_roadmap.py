@@ -15,7 +15,7 @@ import build_deck as engine
 DRAFT_NOTICE = "検証未完了ドラフト｜実行用ではありません。内容と安全条件の確認が必要です。"
 DEFAULT_REVIEW_POINTS = [
     "各週のロング走距離・時間が本人の意図と体調に合っているか",
-    "火曜・木曜・土曜の練習強度と役割が本人の認識と合っているか",
+    "火曜・木曜・土曜の現状、維持・変更・中止の判断、提案と理由が本人の意図に合っているか",
     "現在の状態に対する開始条件・中止条件が明確か",
 ]
 SESSION_ROW_CHAR_LIMIT = 90
@@ -26,6 +26,11 @@ INTENSITY_LABELS = {
     "quality": "質練習",
     "long_easy": "ロング・低強度",
     "other": "調整",
+}
+DECISION_LABELS = {
+    "maintain": "維持",
+    "change": "変更",
+    "stop": "中止",
 }
 
 
@@ -159,11 +164,33 @@ def expand(brief: dict) -> dict:
 
     session_guidance = []
     session_rows = []
-    for item in sessions:
+    for item_index, item in enumerate(sessions, 1):
+        required_session_fields = (
+            "current_method", "current_basis_type", "recommendation_decision", "proposed_method",
+            "decision_reason", "progression",
+        )
+        missing_session_fields = [field for field in required_session_fields if not text(item.get(field), "")]
+        if missing_session_fields:
+            raise ValueError(f"sessions[{item_index}] needs: {', '.join(missing_session_fields)}")
+        decision = text(item.get("recommendation_decision"), "")
+        if decision not in DECISION_LABELS:
+            raise ValueError(f"sessions[{item_index}].recommendation_decision must be maintain, change, or stop")
+        current_basis_type = text(item.get("current_basis_type"), "")
+        if current_basis_type not in engine.BASIS_TYPES:
+            raise ValueError(f"sessions[{item_index}].current_basis_type is unsupported")
+        confirmation_quote = text(item.get("confirmation_quote"), "")
+        if current_basis_type == "user_confirmed" and not confirmation_quote:
+            raise ValueError(f"sessions[{item_index}] needs confirmation_quote for user-confirmed current_method")
         session = {
             "session_type": text(item.get("session_type")),
-            "pace_or_effort": text(item.get("pace_or_effort")),
+            "current_method": text(item.get("current_method")),
+            "current_basis_type": current_basis_type,
+            "recommendation_decision": decision,
+            "recommendation_label": DECISION_LABELS[decision],
+            "pace_or_effort": text(item.get("proposed_method")),
+            "progression": text(item.get("progression")),
             "purpose": text(item.get("purpose")),
+            "decision_reason": text(item.get("decision_reason")),
             "adjustment_condition": text(item.get("adjustment_condition")),
             "intensity_class": text(item.get("intensity_class")),
             "basis": text(item.get("basis")),
@@ -172,12 +199,13 @@ def expand(brief: dict) -> dict:
             "slide": 0,
             "execution_condition": execution,
         }
-        if session["basis_type"] == "user_confirmed":
-            session["confirmation_quote"] = text(item.get("confirmation_quote"))
+        if current_basis_type == "user_confirmed" or session["basis_type"] == "user_confirmed":
+            session["confirmation_quote"] = confirmation_quote
         session_guidance.append(session)
         session_rows.append([
-            session["session_type"], session["pace_or_effort"],
-            session["purpose"], session["adjustment_condition"],
+            session["session_type"], session["current_method"],
+            f'{session["recommendation_label"]}｜{session["pace_or_effort"]}｜{session["progression"]}',
+            f'{session["purpose"]}｜{session["decision_reason"]}｜{session["adjustment_condition"]}',
         ])
 
     session_row_lengths = [sum(len(str(value)) for value in row) for row in session_rows]
@@ -214,10 +242,10 @@ def expand(brief: dict) -> dict:
         "rehearsal": text(event.get("rehearsal")),
         "source_ids": [text(event_source.get("id")), text(nutrition_source.get("id"))],
     }
-    event_lead = "・".join([
-        event_facts["official_event_name"], event_facts["start_time"], event_facts["cutoff"],
-        event_facts["timing_basis"], event_facts["goal_basis"],
-    ])
+    event_lead = (
+        f'{event_facts["official_event_name"]}｜{event_facts["start_time"]}｜{event_facts["goal_basis"]}\n'
+        f'{event_facts["cutoff"]}｜{event_facts["timing_basis"]}'
+    )
     event_step_bodies = [
         f'{event_facts["course_summary"]}・{event_facts["pace_buffer_note"]}',
         event_strategy["fueling"],
@@ -313,7 +341,7 @@ def expand(brief: dict) -> dict:
             "columns": [
                 {
                     "heading": session["session_type"],
-                    "body": f'{session["purpose"]}\n強度｜{INTENSITY_LABELS.get(session["intensity_class"], "調整")}',
+                    "body": f'{session["recommendation_label"]}｜{session["purpose"]}\n強度｜{INTENSITY_LABELS.get(session["intensity_class"], "調整")}',
                 }
                 for session in session_guidance
             ],
@@ -324,9 +352,21 @@ def expand(brief: dict) -> dict:
                 "layout": "comparison", "job": "instruction", "visual_role": "explain",
                 "title": session["session_type"], "lead": execution,
                 "columns": [
-                    {"heading": "実施方法", "body": session["pace_or_effort"]},
-                    {"heading": "目的", "body": session["purpose"], "tone": "mint"},
-                    {"heading": "変更条件", "body": session["adjustment_condition"], "tone": "neutral"},
+                    {"heading": "現状", "body": session["current_method"]},
+                    {
+                        "heading": f'提案｜{session["recommendation_label"]}',
+                        "body": f'{session["pace_or_effort"]}\n進め方｜{session["progression"]}',
+                        "tone": "mint",
+                    },
+                    {
+                        "heading": "理由・調整",
+                        "body": (
+                            f'目的｜{session["purpose"]}\n'
+                            f'理由｜{session["decision_reason"]}\n'
+                            f'調整｜{session["adjustment_condition"]}'
+                        ),
+                        "tone": "neutral",
+                    },
                 ],
                 "source": f"出典: [{safety_id}]（実行条件のみ）",
             })
@@ -334,7 +374,7 @@ def expand(brief: dict) -> dict:
         slides.append({
             "layout": "table", "job": "instruction", "visual_role": "evidence",
             "title": "週3回の役割と強度を分ける", "lead": execution,
-            "content_role": "session_overview", "headers": ["種類", "強度", "目的", "調整条件"],
+            "content_role": "session_overview", "headers": ["種類", "現状", "提案", "目的・理由・調整"],
             "rows": session_rows, "source": f"出典: [{safety_id}]（実行条件のみ）",
         })
     slides.extend([

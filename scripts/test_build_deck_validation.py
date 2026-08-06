@@ -49,8 +49,14 @@ def valid_deck() -> dict:
     session_items = [
         {
             "session_type": "イージー走",
+            "current_method": "現在は短いジョグ",
+            "current_basis_type": "inference",
+            "recommendation_decision": "change",
+            "recommendation_label": "変更",
             "pace_or_effort": "会話できる強度",
+            "progression": "状態に応じて時間を延ばす",
             "purpose": "回復と土台",
+            "decision_reason": "質練習と負荷を分けるため",
             "adjustment_condition": "違和感時は休む",
             "intensity_class": "easy",
             "basis": "体感強度を使用",
@@ -61,8 +67,14 @@ def valid_deck() -> dict:
         },
         {
             "session_type": "質練習",
+            "current_method": "確認済み範囲",
+            "current_basis_type": "user_confirmed",
+            "recommendation_decision": "maintain",
+            "recommendation_label": "維持",
             "pace_or_effort": "確認済み範囲",
+            "progression": "期間後半は量だけを短く調整",
             "purpose": "目標ペースへの適応",
+            "decision_reason": "週1回の質練習として継続するため",
             "adjustment_condition": "疲労時はイージーへ変更",
             "intensity_class": "quality",
             "basis": "利用者確認値",
@@ -74,8 +86,14 @@ def valid_deck() -> dict:
         },
         {
             "session_type": "ロング走",
+            "current_method": "直近距離を上限に実施",
+            "current_basis_type": "inference",
+            "recommendation_decision": "change",
+            "recommendation_label": "変更",
             "pace_or_effort": "会話できる強度",
+            "progression": "回復週を挟んで距離を延ばす",
             "purpose": "長時間耐性",
+            "decision_reason": "段階的に距離耐性を作るため",
             "adjustment_condition": "痛みや回復遅延時は短縮",
             "intensity_class": "long_easy",
             "basis": "体感強度と現状距離",
@@ -251,8 +269,13 @@ def valid_deck() -> dict:
                 "job": "instruction",
                 "visual_role": "evidence",
                 "title": "週3回の役割を分ける",
-                "headers": ["種類", "強度", "目的", "調整条件"],
-                "rows": [[item["session_type"], f'{item["pace_or_effort"]}・{item["execution_condition"]}', item["purpose"], item["adjustment_condition"]] for item in session_items],
+                "headers": ["種類", "現状", "提案", "目的・理由・調整"],
+                "rows": [[
+                    item["session_type"],
+                    f'{item["current_method"]}・{item["execution_condition"]}',
+                    f'{item["recommendation_label"]}・{item["pace_or_effort"]}・{item["progression"]}',
+                    f'{item["purpose"]}・{item["decision_reason"]}・{item["adjustment_condition"]}',
+                ] for item in session_items],
                 "source": "出典: [S2]（実行条件のみ）",
             },
             {
@@ -331,6 +354,14 @@ def main() -> int:
     calculated = copy.deepcopy(good)
     calculated["safety"]["session_guidance"][0]["basis_type"] = "calculation"
     assert "CALCULATION_ONLY_PRESCRIPTION" in codes(calculated)
+
+    repeated = copy.deepcopy(good)
+    repeated["safety"]["session_guidance"][0]["pace_or_effort"] = repeated["safety"]["session_guidance"][0]["current_method"]
+    assert "SESSION_PROPOSAL_REPEATS_CURRENT" in codes(repeated)
+
+    invalid_decision = copy.deepcopy(good)
+    invalid_decision["safety"]["session_guidance"][0]["recommendation_decision"] = "copy"
+    assert "INVALID_SESSION_DECISION" in codes(invalid_decision)
 
     no_week = copy.deepcopy(good)
     no_week["safety"]["weekly_long_sessions"].pop()

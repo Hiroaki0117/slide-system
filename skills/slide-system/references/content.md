@@ -38,7 +38,7 @@ Do not mix audience levels within one main narrative. Put specialist detail in a
 - Treat forecasts and formula-derived values as estimates. State what the calculation does not account for on the same slide.
 - For a roadmap, show not only phases or target values but also the conditions for advancing, holding, stepping back, and stopping. When the requested outcome depends on progressive load, each phase needs a numeric range or an explicit current-load ceiling; `少しずつ増やす` alone is not a usable load guide.
 - Check dates and remaining periods from exact dates before rounding, and use the nearest natural unit consistently throughout the deck.
-- For a recurring practice plan, show each session type's purpose, pace or effort range, volume or duration, and adjustment condition. Do not show distance alone.
+- For a recurring practice plan, separate the user-supplied current method from the recommendation. Show the decision to maintain, change, or stop; the proposed pace or effort and progression; purpose; rationale; and adjustment condition. A copied current method is not a recommendation unless it is explicitly labelled `maintain` with a reason.
 - Distinguish easy or recovery work, long-duration work, quality work, and goal-specific practice. Do not let a compact table imply that every session is hard or that an entire long session should use goal pace.
 - Derive numeric pace ranges only from confirmed inputs and a traceable method. When evidence does not support a precise pace, use effort, talk-test, or heart-rate guidance and label it as a provisional range.
 

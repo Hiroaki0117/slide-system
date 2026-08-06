@@ -67,7 +67,7 @@ python scripts/build_free_roadmap.py --brief WORK_DIR/roadmap-brief.json --work-
 
 Do not open the Python, JavaScript, template, font, or generated full model before the first HTML is returned. `PASS` means the unchanged strict validator accepted the expanded model. `DRAFT` still creates an HTML checkpoint with a visible non-executable banner; return it and defer correction instead of retrying until the session ends.
 
-When a phase table contains more than four rows, the compact builder splits it into front and back slides and shifts all evidence references automatically. After a `PASS`, return the report's `user_review_points` with the HTML so the user can confirm proposed distances, session intensity, and start/stop conditions before requesting PDF.
+When a phase table contains more than four rows, the compact builder splits it into front and back slides and shifts all evidence references automatically. After a `PASS`, return the report's `user_review_points` with the HTML so the user can confirm proposed distances; each recurring session's current method, decision, proposal, and rationale; and start/stop conditions before requesting PDF.
 
 ## Full render and visual QA
 

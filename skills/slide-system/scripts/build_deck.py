@@ -39,6 +39,7 @@ SOURCE_ID_RE = re.compile(r"\[([A-Za-z][A-Za-z0-9_-]*)\]")
 APPROVAL_STATUSES = {"approved", "waived"}
 PRODUCTION_PHASES = {"approved", "building", "qa", "revision_approved"}
 SESSION_INTENSITIES = {"easy", "recovery", "quality", "long_easy", "other"}
+SESSION_DECISIONS = {"maintain", "change", "stop"}
 PHASE_TYPES = {"base", "build", "peak", "recovery", "taper", "other"}
 BASIS_TYPES = {"user_confirmed", "calculation", "authoritative_source", "effort_only", "inference"}
 CONDITION_STATUSES = {"pain_free", "symptomatic", "unknown", "not_applicable"}
@@ -63,6 +64,10 @@ def text_len(value: object) -> int:
     if isinstance(value, list):
         return sum(text_len(v) for v in value)
     return len(str(value).strip())
+
+
+def normalized_copy(value: object) -> str:
+    return re.sub(r"[\s、。・,，.（）()〜~→\-｜|]+", "", str(value or "")).lower()
 
 
 def visible_slide_text(slide: object) -> str:
@@ -178,7 +183,10 @@ def validate_high_stakes_semantics(deck: dict, slides: list[dict]) -> list[dict]
                 add_issue(issues, "FAIL", "SESSION_GUIDANCE_SLIDE", f"Session guidance {session_index} must identify a valid slide")
             else:
                 shown = visible_slide_text(slides[session_slide - 1])
-                for field in ("session_type", "pace_or_effort", "purpose", "adjustment_condition"):
+                for field in (
+                    "session_type", "current_method", "recommendation_label", "pace_or_effort",
+                    "progression", "purpose", "decision_reason", "adjustment_condition",
+                ):
                     if str(session.get(field, "")).strip() not in shown:
                         add_issue(issues, "FAIL", "SESSION_GUIDANCE_NOT_VISIBLE", f"Session guidance {session_index} must visibly show {field}")
 
@@ -303,10 +311,20 @@ def validate_v024_semantics(deck: dict, slides: list[dict]) -> list[dict]:
             if not isinstance(session, dict):
                 continue
             basis_type = str(session.get("basis_type", "")).strip()
+            current_basis_type = str(session.get("current_basis_type", "")).strip()
             if basis_type == "calculation":
                 add_issue(issues, "FAIL", "CALCULATION_ONLY_PRESCRIPTION", f"Session guidance {session_index} cannot prescribe a recurring workout from a calculation alone")
-            if basis_type == "user_confirmed" and not str(session.get("confirmation_quote", "")).strip():
-                add_issue(issues, "FAIL", "MISSING_CONFIRMATION_QUOTE", f"Session guidance {session_index} marked user_confirmed needs confirmation_quote")
+            if current_basis_type and current_basis_type not in BASIS_TYPES:
+                add_issue(issues, "FAIL", "INVALID_CURRENT_SESSION_BASIS", f"Session guidance {session_index} has unsupported current_basis_type")
+            if (basis_type == "user_confirmed" or current_basis_type == "user_confirmed") and not str(session.get("confirmation_quote", "")).strip():
+                add_issue(issues, "FAIL", "MISSING_CONFIRMATION_QUOTE", f"Session guidance {session_index} with a user-confirmed value needs confirmation_quote")
+            decision = str(session.get("recommendation_decision", "")).strip()
+            if decision not in SESSION_DECISIONS:
+                add_issue(issues, "FAIL", "INVALID_SESSION_DECISION", f"Session guidance {session_index} needs recommendation_decision: maintain, change, or stop")
+            current_method = normalized_copy(session.get("current_method"))
+            proposed_method = normalized_copy(session.get("pace_or_effort"))
+            if current_method and proposed_method and current_method == proposed_method and decision != "maintain":
+                add_issue(issues, "FAIL", "SESSION_PROPOSAL_REPEATS_CURRENT", f"Session guidance {session_index} repeats the current method without a maintain decision and rationale")
             allow(session.get("slide"), session.get("source_ids", []))
 
     condition_status = str(safety.get("condition_status", "")).strip()
@@ -453,7 +471,13 @@ def validate_confirmation_receipts(deck: dict, work_state: object) -> list[dict]
     safety = deck.get("safety", {})
     sessions = safety.get("session_guidance", []) if isinstance(safety, dict) else []
     for session_index, session in enumerate(sessions if isinstance(sessions, list) else [], 1):
-        if not isinstance(session, dict) or session.get("basis_type") != "user_confirmed":
+        if not isinstance(session, dict):
+            continue
+        user_confirmed = (
+            session.get("basis_type") == "user_confirmed"
+            or session.get("current_basis_type") == "user_confirmed"
+        )
+        if not user_confirmed:
             continue
         quote = str(session.get("confirmation_quote", "")).strip()
         if not quote or quote not in confirmed_text:
@@ -554,7 +578,11 @@ def validate(deck: dict) -> list[dict]:
                 if not isinstance(session_guidance, list) or not session_guidance:
                     add_issue(issues, "FAIL", "MISSING_SESSION_GUIDANCE", "A progressive exercise plan needs session guidance with pace or effort, purpose, and adjustment conditions")
                 else:
-                    required = ("session_type", "pace_or_effort", "purpose", "adjustment_condition", "intensity_class", "basis")
+                    required = (
+                        "session_type", "current_method", "current_basis_type", "recommendation_decision", "recommendation_label",
+                        "pace_or_effort", "progression", "purpose", "decision_reason",
+                        "adjustment_condition", "intensity_class", "basis",
+                    )
                     intensities: list[str] = []
                     for session_index, session in enumerate(session_guidance, 1):
                         if not isinstance(session, dict) or any(not str(session.get(field, "")).strip() for field in required):

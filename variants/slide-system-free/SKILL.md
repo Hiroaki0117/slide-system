@@ -79,6 +79,7 @@ Present one compact confirmation containing:
 
 - audience and intended use;
 - proposed title, date, 6–8 slide story, and important assumptions;
+- for each recurring user-supplied activity, the decision `維持` / `変更` / `中止` and a one-line proposed change; do not present copied source notes as a recommendation;
 - `まずHTML下書きを納品し、次の返信でPDF化と最終確認を行う`;
 - safety or rights conditions already resolved;
 - the choices `この内容で制作する` and `内容を修正する`.
@@ -96,7 +97,7 @@ In this turn only:
 3. For other deck types, start from a compact 6–8 slide content model and run the standard static builder. Use 9–10 slides when required content cannot fit legibly, and exceed 10 when splitting is still necessary at the minimum type size. Slide count is the result of fitting one primary message per slide, never a fixed target. Do not rely on a later correction turn to add essential content.
 4. Save `deck-draft.html`, `deck.json`, static QA, and `work-state.json` in the user-accessible output directory. The compact builder must create HTML whether its report says `PASS` or `DRAFT`.
 5. Confirm that the HTML navigation includes `PDF保存`. Set `phase: "html_delivered"`, store the HTML path, and set the next action to `PDF化`.
-6. Return the HTML draft, then copy the compact builder's `user_review_points` into the response as three short confirmation points. Ask the user to check the proposed distances, recurring-session intensity, and start/stop conditions; do not automatically rewrite those content decisions. Then stop the turn.
+6. Return the HTML draft, then copy the compact builder's `user_review_points` into the response as three short confirmation points. Ask the user to check the proposed distances; each recurring session's current method, `維持` / `変更` / `中止` decision, proposal, and rationale; and start/stop conditions. Do not automatically rewrite those content decisions. Then stop the turn.
 
 If the compact builder reports `DRAFT`, return that HTML immediately and say it is a visible, non-executable validation draft. Its PDF button is disabled. Ask only for the correction needed by the report; do not offer or create PDF. Do not inspect source code, rebuild, research again, or retry in the same turn. A `DRAFT` is not completion; its banner and QA report preserve the unresolved issue for the next chat or turn.
 
@@ -145,7 +146,8 @@ Never claim PDF conversion completion if PDF generation, page-count parity, font
 - For a date-driven roadmap, set `dated_roadmap: true`, calculate the exact remaining days from ISO dates, and show one consistent natural rounding such as `88日（約13週間）`. Do not shorten 12 weeks and 4 days to `約12週間`.
 - For progressive exercise roadmaps, include `safety.phase_guidance`. Every phase needs its period, a numeric long-session distance or time guide, purpose, checkpoint, progression condition, hold or regression condition, and the slide number where the period and load guide are visibly shown.
 - A fixed single prescription is prohibited, but omission of load guidance is also prohibited. Use conditional ranges, an explicit current-load ceiling, or time ranges. Do not replace them with only `少しずつ延ばす`.
-- For exercise roadmaps, show the pace or effort, purpose, adjustment condition, intensity class, and basis for every recurring session type. Include long-session pace explicitly and distinguish it from goal-pace practice.
+- For exercise roadmaps, show the current method, `維持` / `変更` / `中止` decision, proposed pace or effort, phase progression, purpose, rationale, adjustment condition, intensity class, and basis for every recurring session type. Include long-session pace explicitly and distinguish it from goal-pace practice.
+- Never pass through a user-supplied recurring activity as if it were a new recommendation. Store it as `current_method`; store the recommendation separately as `proposed_method`. If they are the same, use `recommendation_decision: maintain` and explain why in `decision_reason`. Otherwise the static QA must fail with `SESSION_PROPOSAL_REPEATS_CURRENT`.
 - Record each recurring session's `basis_type`, `source_ids`, and slide. If a pace is not user-confirmed or directly supported, use effort or talk-test wording instead of inventing a numeric range.
 - A `user_confirmed` session value needs `confirmation_quote` copied exactly into `work-state.confirmed_conditions`. A calculated target pace may be shown as a comparison, but calculation alone cannot prescribe a recurring workout pace.
 - For a beginner or return-from-injury plan, set `safety.novice_or_returning: true`, keep at least one recurring session explicitly easy or recovery-oriented, and normally use no more than one quality session per week.
@@ -158,7 +160,7 @@ Never claim PDF conversion completion if PDF generation, page-count parity, font
 - When a current injury symptom is present or unknown, label the plan visibly as provisional, show sourced pre-clearance actions, and put a visible post-clearance execution condition on every phase and recurring session. Do not place unconditional running instructions elsewhere.
 - A race strategy with three or more stages must use a process, comparison, table, chart, or decision visual. A short bullet list with unused space is not sufficient.
 - In a `process` slide, keep the lead to 120 characters or fewer and move supporting details into the relevant steps. Do not repeat the same sentence as both a step title and body. For event strategy, keep labels within 30 characters, step titles within 46, and bodies within 72. In a `data_focus` slide, keep the lead, interpretation, and execution condition to 80 characters or fewer each.
-- For repeated recurring sessions, keep one shared execution condition instead of repeating it in every row. If any overview row exceeds 90 characters or the three-row cell total exceeds 180, let the compact builder create one short overview and one detail slide per session. Do not force the detail-slide count when the compact table already fits.
+- For repeated recurring sessions, keep one shared execution condition instead of repeating it in every row. Each overview or detail must distinguish `current_method` from the decision and proposal. If any overview row exceeds 90 characters or the three-row cell total exceeds 180, let the compact builder create one short overview and one detail slide per session. Do not force the detail-slide count when the compact table already fits.
 - Event preparation needs at least three visible race segments plus fueling, equipment, and rehearsal. An official-facts table alone is not a race strategy. State whether the goal uses gross or net time and note any start-line buffer implication.
 - Do not use slide count as a reason to omit current-versus-target comparison, recovery periods, event-specific constraints, or final-use preparation such as pacing, fueling, equipment, and rehearsal when they affect the requested outcome.
 - Do not use a slide-count ceiling as a reason to retain dense copy. Remove duplication first, then split overview from detail while preserving all required evidence and safety conditions.

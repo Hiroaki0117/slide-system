@@ -31,12 +31,15 @@ def main() -> int:
         "The compact builder must create HTML whether its report says `PASS` or `DRAFT`",
         "Do not inspect builder or validator source code",
         "user_review_points",
-        "do not automatically rewrite those content decisions",
+        "Do not automatically rewrite those content decisions",
         "DRAFT_NOT_APPROVED",
         "keep the lead to 120 characters or fewer",
         "Slide count is the result of fitting one primary message per slide",
         "current_label",
         "the three-row cell total exceeds 180",
+        "current_method",
+        "recommendation_decision: maintain",
+        "SESSION_PROPOSAL_REPEATS_CURRENT",
     ]
     missing = [item for item in required if item not in text]
     assert not missing, f"Missing free-plan turn-gate contract: {missing}"

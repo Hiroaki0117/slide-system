@@ -1,6 +1,6 @@
 ---
 spec_name: slide-system-layouts
-version: 0.1.2
+version: 0.1.3
 status: draft
 updated: 2026-08-06
 language: ja
@@ -325,6 +325,7 @@ initial_layout_count: 16
 
 - 2〜3対象、各1〜3項目を目安とする。
 - 3項目比較は、各対象の文章を2項目程度までに抑える。
+- 元資料の現状とAIの提案を比較する場合は、現状、判断付き提案、理由・調整を別領域に置き、元資料の再掲を提案として見せない。
 
 ### 7.8 `process`
 

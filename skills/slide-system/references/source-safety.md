@@ -35,9 +35,10 @@ Use this reference when research, rights, or high-stakes guidance is involved.
 - When the plan is tied to a known event or deadline, set top-level `dated_roadmap: true` and record `timeline.current_date`, `timeline.target_date`, `timeline.duration_text`, and the slide where that exact duration is visible.
 - Record `phase_guidance` for every phase. Each entry needs `name`, `period`, `long_session_distance_or_time`, `purpose`, `checkpoint`, `progression_condition`, `hold_or_regress_condition`, and the slide where the period and load guide are visible.
 - `long_session_distance_or_time` must contain a numeric distance or time and a conditional range, current-load ceiling, or maintenance instruction. A vague phrase such as `少しずつ延ばす` is not sufficient.
-- Record `session_guidance` for every recurring session type. Each entry needs `session_type`, `pace_or_effort`, `purpose`, `adjustment_condition`, `intensity_class`, and `basis` before building.
+- Record `session_guidance` for every recurring session type. Each entry needs `session_type`, `current_method`, `recommendation_decision`, `pace_or_effort`, `progression`, `purpose`, `decision_reason`, `adjustment_condition`, `intensity_class`, and `basis` before building.
+- Use `maintain`, `change`, or `stop` for `recommendation_decision`. Do not copy `current_method` into `pace_or_effort` with `change` or `stop`. If the proposal intentionally matches the current method, use `maintain` and state the reason.
 - Also record `basis_type`, `source_ids`, and `slide` for every recurring session. Use `user_confirmed`, `calculation`, `authoritative_source`, `effort_only`, or `inference`. An `authoritative_source` basis requires a source ID whose content directly supports the prescription.
-- When `basis_type` is `user_confirmed`, save the user's exact wording as `confirmation_quote` and copy that wording into `work-state.confirmed_conditions`. A derived target metric may be labelled as a calculation, but calculation alone must not prescribe a recurring workout pace.
+- Record the current method's basis separately as `current_basis_type`. When either `current_basis_type` or `basis_type` is `user_confirmed`, save the user's exact wording as `confirmation_quote` and copy that wording into `work-state.confirmed_conditions`. A derived target metric may be labelled as a calculation, but calculation alone must not prescribe a recurring workout pace.
 - State the pace or effort for long sessions, easy or recovery sessions, and quality sessions separately. Keep long-session pace distinct from goal-pace segments unless an authoritative source and the confirmed condition support combining them.
 - Use a subjective effort or talk-test description alongside a numeric pace. Avoid false precision when weather, terrain, fatigue, injury status, or recent training makes the number uncertain.
 - Do not make all regular sessions demanding. Show where recovery occurs and what condition changes a demanding session into easy work or rest.
@@ -97,12 +98,19 @@ Use this compact model shape before building:
     "session_guidance": [
       {
         "session_type": "recurring session name",
+        "current_method": "method copied from the user's source notes",
+        "current_basis_type": "user_confirmed | inference",
+        "recommendation_decision": "maintain | change | stop",
+        "recommendation_label": "visible localized decision label",
         "pace_or_effort": "numeric range plus effort cue, or effort cue alone",
+        "progression": "how the proposal changes across phases or conditions",
         "purpose": "why this session exists",
+        "decision_reason": "why the current method is maintained, changed, or stopped",
         "adjustment_condition": "when to change it to easier work or rest",
         "intensity_class": "easy | recovery | quality | long_easy | other",
         "basis": "specific explanation of the basis",
         "basis_type": "user_confirmed | calculation | authoritative_source | effort_only | inference",
+        "confirmation_quote": "exact user wording when a current or proposed value is user-confirmed",
         "source_ids": ["S2"],
         "slide": 5
       }
