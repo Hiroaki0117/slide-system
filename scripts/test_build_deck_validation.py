@@ -259,6 +259,7 @@ def valid_deck() -> dict:
                 "layout": "process",
                 "job": "instruction",
                 "visual_role": "explain",
+                "content_role": "event_strategy",
                 "title": "当日は3区間で組み立てる",
                 "lead": "下関海響マラソン・8:30スタート・制限時間6時間・公式記録はグロスタイム（号砲基準）・サブ4はグロスタイム4時間未満・5:41/kmちょうどではスタートロスの余裕がない",
                 "steps": [
@@ -366,8 +367,26 @@ def main() -> int:
     assert "DUPLICATE_PROCESS_COPY" in codes(duplicate_process)
 
     dense_data_focus = copy.deepcopy(good)
-    dense_data_focus["slides"][1]["lead"] = "長" * 141
+    dense_data_focus["slides"][1]["lead"] = "長" * 81
     assert "DATA_FOCUS_LEAD_DENSITY" in codes(dense_data_focus)
+
+    dense_stat = copy.deepcopy(good)
+    dense_stat["slides"][1]["stats"][0]["value"] = "長" * 19
+    assert "DATA_FOCUS_VALUE_DENSITY" in codes(dense_stat)
+
+    dense_comparison = copy.deepcopy(good)
+    dense_comparison["slides"].insert(2, {
+        "layout": "comparison", "job": "compare", "visual_role": "evidence",
+        "title": "比較する", "columns": [
+            {"heading": "A", "body": "長" * 121},
+            {"heading": "B", "body": "短い"},
+        ],
+    })
+    assert "COMPARISON_COLUMN_DENSITY" in codes(dense_comparison)
+
+    dense_event_title = copy.deepcopy(good)
+    dense_event_title["slides"][5]["steps"][0]["title"] = "長" * 47
+    assert "PROCESS_TITLE_DENSITY" in codes(dense_event_title)
 
     revision_state = {
         "phase": "revision_approved",

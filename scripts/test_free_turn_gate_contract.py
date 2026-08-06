@@ -34,6 +34,9 @@ def main() -> int:
         "do not automatically rewrite those content decisions",
         "DRAFT_NOT_APPROVED",
         "keep the lead to 120 characters or fewer",
+        "Slide count is the result of fitting one primary message per slide",
+        "current_label",
+        "the three-row cell total exceeds 180",
     ]
     missing = [item for item in required if item not in text]
     assert not missing, f"Missing free-plan turn-gate contract: {missing}"

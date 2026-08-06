@@ -1,8 +1,8 @@
 ---
 spec_name: slide-system-content
-version: 0.1.0
+version: 0.1.1
 status: draft
-updated: 2026-08-04
+updated: 2026-08-06
 language: ja
 default_content_mode: standalone
 default_deck_type: explain
@@ -77,6 +77,7 @@ default_audience_profile: general
 - `transition`: 章や論点を切り替える
 
 - `MUST`: 1枚に設定する主要ジョブは1つとする。
+- `MUST`: 1枚で伝える主要メッセージは1つとする。
 - `MUST`: 主要ジョブの達成に不要な情報を同じスライドへ詰め込まない。
 - `MAY`: 主要ジョブを支える補助情報を含める。
 
@@ -115,6 +116,8 @@ default_audience_profile: general
 5. 内容に適したレイアウトへ変更する。
 
 最小文字サイズを下回る縮小で解決してはなりません。`standalone`では、付録へ移すと本文だけで理解できなくなる情報は、付録へ移さずスライドを分割します。
+
+ページ数は入力条件ではなく、上記の調整結果として決定します。規定枚数へ合わせるために内容を詰め込まず、概要と実施方法、比較値と解釈など異なる読み方を要求する情報は分けます。短い内容へ詳細ページを強制せず、概要だけで理解できない場合に限って詳細ページを追加します。
 
 ### 6.1 研修・教材の例外
 

@@ -18,6 +18,15 @@ DEFAULT_REVIEW_POINTS = [
     "火曜・木曜・土曜の練習強度と役割が本人の認識と合っているか",
     "現在の状態に対する開始条件・中止条件が明確か",
 ]
+SESSION_ROW_CHAR_LIMIT = 90
+SESSION_TABLE_CHAR_LIMIT = 180
+INTENSITY_LABELS = {
+    "easy": "イージー",
+    "recovery": "回復",
+    "quality": "質練習",
+    "long_easy": "ロング・低強度",
+    "other": "調整",
+}
 
 
 def text(value: object, fallback: str = "未設定") -> str:
@@ -127,9 +136,6 @@ def expand(brief: dict) -> dict:
     phase_slide_count = len(phase_sections)
     weekly_first_slide = 3 + phase_slide_count
     weekly_second_slide = weekly_first_slide + 1
-    session_slide = weekly_second_slide + 1
-    event_slide = session_slide + 1
-    safety_slide = event_slide + 1
 
     weekly_guidance = []
     week_rows_first = []
@@ -163,16 +169,28 @@ def expand(brief: dict) -> dict:
             "basis": text(item.get("basis")),
             "basis_type": text(item.get("basis_type")),
             "source_ids": item.get("source_ids", []),
-            "slide": session_slide,
+            "slide": 0,
             "execution_condition": execution,
         }
         if session["basis_type"] == "user_confirmed":
             session["confirmation_quote"] = text(item.get("confirmation_quote"))
         session_guidance.append(session)
         session_rows.append([
-            session["session_type"], f'{session["pace_or_effort"]}・{execution}',
+            session["session_type"], session["pace_or_effort"],
             session["purpose"], session["adjustment_condition"],
         ])
+
+    session_row_lengths = [sum(len(str(value)) for value in row) for row in session_rows]
+    session_requires_details = (
+        any(length > SESSION_ROW_CHAR_LIMIT for length in session_row_lengths)
+        or sum(session_row_lengths) > SESSION_TABLE_CHAR_LIMIT
+    )
+    session_overview_slide = weekly_second_slide + 1
+    session_detail_start = session_overview_slide + 1
+    for index, session in enumerate(session_guidance):
+        session["slide"] = session_detail_start + index if session_requires_details else session_overview_slide
+    event_slide = session_detail_start + len(session_guidance) if session_requires_details else session_overview_slide + 1
+    safety_slide = event_slide + 1
 
     event_facts = {
         "official_event_name": text(event.get("official_event_name")),
@@ -198,10 +216,10 @@ def expand(brief: dict) -> dict:
     }
     event_lead = "・".join([
         event_facts["official_event_name"], event_facts["start_time"], event_facts["cutoff"],
-        event_facts["timing_basis"], event_facts["goal_basis"], event_facts["pace_buffer_note"],
+        event_facts["timing_basis"], event_facts["goal_basis"],
     ])
     event_step_bodies = [
-        event_facts["course_summary"],
+        f'{event_facts["course_summary"]}・{event_facts["pace_buffer_note"]}',
         event_strategy["fueling"],
         f'{event_strategy["equipment"]}・{event_strategy["rehearsal"]}',
     ]
@@ -216,25 +234,30 @@ def expand(brief: dict) -> dict:
     claim_evidence.extend([
         evidence(safety_source, execution, weekly_first_slide, "週別計画前半の実行条件", "safety"),
         evidence(safety_source, execution, weekly_second_slide, "週別計画後半の実行条件", "safety"),
-        evidence(safety_source, execution, session_slide, "定例練習の実行条件", "safety"),
         evidence(safety_source, pre_clearance_action, safety_slide, "復帰前の行動", "safety"),
         evidence(event_source, event_facts["timing_basis"], event_slide, "公式記録基準"),
         evidence(nutrition_source, event_strategy["fueling"], event_slide, "補給の準備", "instruction"),
     ])
+    session_claim_slides = {session_overview_slide}
+    session_claim_slides.update(session["slide"] for session in session_guidance)
+    for slide_number in sorted(session_claim_slides):
+        claim_evidence.append(evidence(safety_source, execution, slide_number, "定例練習の実行条件", "safety"))
     if taper_visible_text:
         taper_slide = next(phase["slide"] for phase in phase_guidance if phase["phase_type"] == "taper")
         claim_evidence.append(evidence(taper_source, taper_visible_text, taper_slide, "調整期の考え方", "instruction"))
 
+    current_metric = text(comparison.get("current_metric"), text(comparison.get("current_value")))
+    target_metric = text(comparison.get("target_metric"), text(comparison.get("target_value")))
+    current_note = text(comparison.get("current_note"), "")
+    target_note = text(comparison.get("target_note"), "")
     comparison_model = {
-        "current_value": text(comparison.get("current_value")),
-        "target_value": text(comparison.get("target_value")),
+        "current_value": current_metric,
+        "target_value": target_metric,
         "meaning": text(comparison.get("meaning")),
         "comparison_basis": text(comparison.get("comparison_basis")),
         "slide": 2,
     }
-    comparison_lead = "・".join([
-        duration, plan_status_text, clearance, comparison_model["comparison_basis"], comparison_model["meaning"],
-    ])
+    comparison_lead = f"{duration}｜{plan_status_text}"
 
     slides = [
         {
@@ -246,9 +269,11 @@ def expand(brief: dict) -> dict:
             "layout": "data_focus", "job": "evidence", "visual_role": "evidence",
             "title": "現在地と目標を同じ単位で比べる", "lead": comparison_lead,
             "stats": [
-                {"value": comparison_model["current_value"], "label": "現在", "note": "確認済み実績"},
-                {"value": comparison_model["target_value"], "label": "目標", "note": comparison_model["meaning"]},
+                {"value": comparison_model["current_value"], "label": text(comparison.get("current_label"), "現在｜ハーフ実績"), "note": current_note},
+                {"value": comparison_model["target_value"], "label": text(comparison.get("target_label"), "目標｜サブ4"), "note": target_note},
             ],
+            "insight": f'{comparison_model["comparison_basis"]}｜{comparison_model["meaning"]}',
+            "condition": f"開始条件｜{clearance}",
             "source": f"出典: [{safety_id}]（復帰条件のみ）",
         },
     ]
@@ -280,13 +305,42 @@ def expand(brief: dict) -> dict:
             "headers": ["週", "期間", "距離・時間"],
             "rows": week_rows_second, "source": f"出典: [{safety_id}]（実行条件のみ）",
         },
-        {
+    ])
+    if session_requires_details:
+        slides.append({
+            "layout": "comparison", "job": "instruction", "visual_role": "explain",
+            "title": "週3回は目的と強度を分ける", "lead": execution,
+            "columns": [
+                {
+                    "heading": session["session_type"],
+                    "body": f'{session["purpose"]}\n強度｜{INTENSITY_LABELS.get(session["intensity_class"], "調整")}',
+                }
+                for session in session_guidance
+            ],
+            "source": f"出典: [{safety_id}]（実行条件のみ）",
+        })
+        for session in session_guidance:
+            slides.append({
+                "layout": "comparison", "job": "instruction", "visual_role": "explain",
+                "title": session["session_type"], "lead": execution,
+                "columns": [
+                    {"heading": "実施方法", "body": session["pace_or_effort"]},
+                    {"heading": "目的", "body": session["purpose"], "tone": "mint"},
+                    {"heading": "変更条件", "body": session["adjustment_condition"], "tone": "neutral"},
+                ],
+                "source": f"出典: [{safety_id}]（実行条件のみ）",
+            })
+    else:
+        slides.append({
             "layout": "table", "job": "instruction", "visual_role": "evidence",
-            "title": "週3回の役割と強度を分ける", "headers": ["種類", "強度", "目的", "調整条件"],
+            "title": "週3回の役割と強度を分ける", "lead": execution,
+            "content_role": "session_overview", "headers": ["種類", "強度", "目的", "調整条件"],
             "rows": session_rows, "source": f"出典: [{safety_id}]（実行条件のみ）",
-        },
+        })
+    slides.extend([
         {
             "layout": "process", "job": "instruction", "visual_role": "explain",
+            "content_role": "event_strategy",
             "title": "当日は3区間以上で組み立てる", "lead": event_lead,
             "steps": [
                 {"label": item["label"], "title": item["approach"], "body": event_step_bodies[index] if index < len(event_step_bodies) else ""}

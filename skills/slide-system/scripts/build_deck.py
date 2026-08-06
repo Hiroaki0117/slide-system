@@ -47,6 +47,7 @@ VISIBLE_SLIDE_FIELDS = {
     "eyebrow", "title", "subtitle", "date", "headline", "body", "lead", "bullets",
     "callout", "sections", "columns", "steps", "stats", "bars", "note", "headers",
     "rows", "question", "yes_action", "no_action", "prompt", "answer", "actions", "source",
+    "insight", "condition",
 }
 
 
@@ -650,6 +651,9 @@ def validate(deck: dict) -> list[dict]:
             columns = slide.get("columns", [])
             if not isinstance(columns, list) or len(columns) not in (2, 3):
                 add_issue(issues, "FAIL", "COMPARISON_COLUMNS", "Comparison needs two or three columns", index)
+            for column in columns if isinstance(columns, list) else []:
+                if text_len(column.get("body")) + text_len(column.get("bullets")) > 120:
+                    add_issue(issues, "FAIL", "COMPARISON_COLUMN_DENSITY", "Each comparison column must stay within 120 characters; split detail from overview", index)
         elif layout == "process":
             steps = slide.get("steps", [])
             if not isinstance(steps, list) or not 3 <= len(steps) <= 6:
@@ -658,6 +662,13 @@ def validate(deck: dict) -> list[dict]:
             if len(lead_text) > 120:
                 add_issue(issues, "FAIL", "PROCESS_LEAD_DENSITY", "Process lead exceeds 120 characters; keep the lead to key conditions and move details into the steps", index)
             for step in steps if isinstance(steps, list) else []:
+                if slide.get("content_role") == "event_strategy":
+                    if len(str(step.get("label", "")).strip()) > 30:
+                        add_issue(issues, "FAIL", "PROCESS_LABEL_DENSITY", "Event-strategy labels must stay within 30 characters", index)
+                    if len(str(step.get("title", "")).strip()) > 46:
+                        add_issue(issues, "FAIL", "PROCESS_TITLE_DENSITY", "Event-strategy step titles must stay within 46 characters", index)
+                    if len(str(step.get("body", "")).strip()) > 72:
+                        add_issue(issues, "FAIL", "PROCESS_BODY_DENSITY", "Event-strategy step bodies must stay within 72 characters", index)
                 title_text = re.sub(r"\s+", "", str(step.get("title", "")))
                 body_text = re.sub(r"\s+", "", str(step.get("body", "")))
                 if title_text and title_text == body_text:
@@ -666,8 +677,19 @@ def validate(deck: dict) -> list[dict]:
             stats = slide.get("stats", [])
             if not isinstance(stats, list) or not 1 <= len(stats) <= 4:
                 add_issue(issues, "FAIL", "STAT_COUNT", "Data focus needs one to four stats", index)
-            if len(str(slide.get("lead", "")).strip()) > 140:
-                add_issue(issues, "FAIL", "DATA_FOCUS_LEAD_DENSITY", "Data-focus lead exceeds 140 characters; shorten the context before the key numbers", index)
+            if len(str(slide.get("lead", "")).strip()) > 80:
+                add_issue(issues, "FAIL", "DATA_FOCUS_LEAD_DENSITY", "Data-focus lead exceeds 80 characters; keep only essential context before the key numbers", index)
+            for stat in stats if isinstance(stats, list) else []:
+                if len(str(stat.get("value", "")).strip()) > 18:
+                    add_issue(issues, "FAIL", "DATA_FOCUS_VALUE_DENSITY", "A large stat value must be a short number or keyword of 18 characters or fewer", index)
+                if len(str(stat.get("label", "")).strip()) > 24:
+                    add_issue(issues, "FAIL", "DATA_FOCUS_LABEL_DENSITY", "A stat label must stay within 24 characters", index)
+                if len(str(stat.get("note", "")).strip()) > 60:
+                    add_issue(issues, "FAIL", "DATA_FOCUS_NOTE_DENSITY", "A stat note must stay within 60 characters", index)
+            if len(str(slide.get("insight", "")).strip()) > 80:
+                add_issue(issues, "FAIL", "DATA_FOCUS_INSIGHT_DENSITY", "A data-focus insight must stay within 80 characters", index)
+            if len(str(slide.get("condition", "")).strip()) > 80:
+                add_issue(issues, "FAIL", "DATA_FOCUS_CONDITION_DENSITY", "A data-focus condition must stay within 80 characters", index)
         elif layout == "bar_chart":
             bars = slide.get("bars", [])
             maximum = slide.get("max_value")
@@ -689,6 +711,9 @@ def validate(deck: dict) -> list[dict]:
             if isinstance(rows, list) and len(rows) > 8:
                 add_issue(issues, "WARN", "TABLE_LENGTH", "More than eight rows may overflow", index)
             if isinstance(headers, list) and isinstance(rows, list):
+                table_text_length = sum(text_len(value) for row in rows if isinstance(row, list) for value in row)
+                if slide.get("content_role") == "session_overview" and table_text_length > 180:
+                    add_issue(issues, "FAIL", "SESSION_OVERVIEW_DENSITY", "A dense recurring-session table must split into one overview and separate detail slides", index)
                 for row in rows:
                     if not isinstance(row, list) or len(row) != len(headers):
                         add_issue(issues, "FAIL", "TABLE_SHAPE", "Each row must match the header count", index)
@@ -827,10 +852,12 @@ def render_body(slide: dict, base_dir: Path) -> str:
     if layout == "data_focus":
         stats = slide.get("stats", [])
         cards = "".join(
-            f'<article class="stat"><div class="stat-value">{esc(stat.get("value"))}</div><div class="stat-label">{esc(stat.get("label"))}</div><div class="stat-note">{esc(stat.get("note"))}</div></article>'
+            f'<article class="stat"><div class="stat-label">{esc(stat.get("label"))}</div><div class="stat-value">{esc(stat.get("value"))}</div><div class="stat-note">{esc(stat.get("note"))}</div></article>'
             for stat in stats
         )
-        return f'{title}{lead}<div class="stats" style="--stat-count:{len(stats)}">{cards}</div>{bullet_list(slide.get("bullets"))}'
+        insight = f'<div class="data-insight">{esc(slide.get("insight"))}</div>' if slide.get("insight") else ""
+        condition = f'<div class="data-condition">{esc(slide.get("condition"))}</div>' if slide.get("condition") else ""
+        return f'{title}{lead}<div class="stats" style="--stat-count:{len(stats)}">{cards}</div>{insight}{condition}{bullet_list(slide.get("bullets"))}'
 
     if layout == "bar_chart":
         maximum = float(slide.get("max_value", 1))

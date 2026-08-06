@@ -24,8 +24,12 @@
     "taper_days": 21
   },
   "comparison": {
-    "current_value": "ハーフ平均 5:17/km",
-    "target_value": "フル平均 約5:40/km",
+    "current_label": "現在｜ハーフ実績",
+    "current_metric": "1:51:19",
+    "current_note": "平均 5:17/km",
+    "target_label": "目標｜サブ4",
+    "target_metric": "4時間未満",
+    "target_note": "平均 約5:41/km",
     "comparison_basis": "平均ペース同士の比較",
     "meaning": "速度よりも42.195kmの持久力と故障管理が主要課題"
   },

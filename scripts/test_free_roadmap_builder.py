@@ -64,6 +64,23 @@ def main() -> int:
         assert "検証未完了ドラフト" not in html
         assert "slide-deck-data" in html and "__DRAFT_BANNER__" not in html
         assert ">PDF保存</button>" in html and "PDF保存不可" not in html
+        assert '<div class="stat-value">1:51:19</div>' in html
+        assert '<div class="stat-label">現在｜ハーフ実績</div>' in html
+        assert "SESSION_OVERVIEW_DENSITY" not in json.dumps(report, ensure_ascii=False)
+
+        dense = json.loads(json.dumps(valid, ensure_ascii=False))
+        dense["sessions"][0]["pace_or_effort"] = "1kmのウォームアップ後、会話できる強度を保ち、最後に1kmをゆっくり走って終える"
+        dense["sessions"][1]["pace_or_effort"] = "1kmごとに少しずつ強度を上げ、最後まで余裕を残せる範囲で終了する"
+        dense["sessions"][2]["pace_or_effort"] = "直近実績を上限の目安に、会話できる強度で距離より完了時の状態を優先する"
+        result, html, report = run_builder(work, dense, "dense-sessions")
+        assert result["status"] == "PASS" and result["slide_count"] == 13
+        dense_deck = json.loads(Path(result["deck"]).read_text(encoding="utf-8"))
+        assert dense_deck["slides"][6]["layout"] == "comparison"
+        assert dense_deck["slides"][6]["title"] == "週3回は目的と強度を分ける"
+        assert [slide["title"] for slide in dense_deck["slides"][7:10]] == [item["session_type"] for item in dense["sessions"]]
+        assert [item["slide"] for item in dense_deck["safety"]["session_guidance"]] == [8, 9, 10]
+        assert dense_deck["slides"][10]["content_role"] == "event_strategy"
+        assert dense_deck["slides"][-1]["layout"] == "sources_appendix"
 
         compact = json.loads(json.dumps(valid, ensure_ascii=False))
         compact["phases"] = compact["phases"][1:]

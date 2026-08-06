@@ -29,5 +29,9 @@ Choose a layout from the slide's narrative job and primary material. Do not inve
 - Do not switch layouts only to avoid repetition.
 - For overflow, remove duplication, shorten copy, move secondary detail, split the slide, then change layout.
 - Use a table for exact mappings; use a process only when sequence matters; use a diagram only when relationships are materially clearer than prose.
-- Keep a `process` lead to 120 characters or fewer and a `data_focus` lead to 140 characters or fewer. Move details into the relevant step instead of shrinking type.
+- Keep a `process` lead to 120 characters or fewer and a `data_focus` lead to 80 characters or fewer. Move details into the relevant step instead of shrinking type.
 - Do not repeat the same sentence as both a process-step title and body.
+- In `data_focus`, keep each large value to 18 characters or fewer. Separate the label, value, unit or context, interpretation, and execution condition instead of making a full sentence large.
+- Keep each comparison column to 120 characters or fewer. If the columns mix overview and operating detail, retain the overview and move each detailed item to its own slide.
+- Treat slide count as the result of fitting the content, not as a fixed target. Keep compact repeated items in one table; when a recurring-session row exceeds 90 characters or three rows exceed 180 cell characters, use one overview plus one detail slide per item.
+- On an event-strategy `process`, keep labels within 30 characters, step titles within 46, and step bodies within 72.
