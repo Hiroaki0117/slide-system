@@ -130,6 +130,10 @@ def codes(deck: dict) -> set[str]:
     return {issue["code"] for issue in MODULE.validate(deck) if issue["level"] == "FAIL"}
 
 
+def warning_codes(deck: dict) -> set[str]:
+    return {issue["code"] for issue in MODULE.validate(deck) if issue["level"] == "WARN"}
+
+
 def main() -> int:
     good = valid_deck()
     assert not codes(good), codes(good)
@@ -176,6 +180,29 @@ def main() -> int:
         ]
     })
     assert "COMPARISON_COLUMN_DENSITY" in codes(dense_comparison)
+
+    claim_level_source = copy.deepcopy(good)
+    claim_level_source["high_stakes"] = False
+    claim_level_source["slides"][1]["source_requirement"] = "authoritative"
+    claim_level_source["slides"][-1]["sources"][0]["source_class"] = "official"
+    assert "AUTHORITATIVE_SOURCE_REQUIRED" not in codes(claim_level_source)
+
+    secondary_only = copy.deepcopy(claim_level_source)
+    secondary_only["slides"][-1]["sources"][0]["source_class"] = "secondary"
+    assert "AUTHORITATIVE_SOURCE_REQUIRED" in codes(secondary_only)
+
+    missing_marker = copy.deepcopy(claim_level_source)
+    missing_marker["slides"][1].pop("source")
+    assert "REQUIRED_SLIDE_SOURCE" in codes(missing_marker)
+
+    repeated_layout = copy.deepcopy(good)
+    repeated_layout["slides"].insert(3, copy.deepcopy(repeated_layout["slides"][2]))
+    repeated_layout["slides"].insert(4, copy.deepcopy(repeated_layout["slides"][2]))
+    assert "REPEATED_LAYOUT_FAMILY" in warning_codes(repeated_layout)
+    for slide in repeated_layout["slides"]:
+        if slide.get("layout") == "process":
+            slide["layout_repeat_reason"] = "The shared frame enables direct stage comparison"
+    assert "REPEATED_LAYOUT_FAMILY" not in warning_codes(repeated_layout)
 
     revision_state = {
         "phase": "revision_approved",

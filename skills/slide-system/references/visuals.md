@@ -8,6 +8,7 @@ Choose one visual role for each content slide: `evidence`, `explain`, `context`,
 - Prefer a chart for quantitative patterns and a table for exact values.
 - Prefer a screenshot for interface demonstration.
 - Prefer a photo or illustration for a concrete subject, atmosphere, or human context.
+- For decks centered on concrete places, products, people, objects, or experiences, plan at least one contextual visual or map unless it would add no useful recognition, orientation, or decision support.
 - Use user-supplied visual material when requested and suitable.
 - Do not add an image only to fill whitespace.
 - Treat charts, timelines, process diagrams, meaningful callouts, and structured comparisons as visuals when they carry evidence or explanation; decorative circles do not count.
@@ -15,6 +16,7 @@ Choose one visual role for each content slide: `evidence`, `explain`, `context`,
 - Four consecutive `none` or `decoration` slides are not allowed. Reconsider the story, a chart, a diagram, a contextual image, or a stronger editorial composition.
 - For decks of six or more content slides, aim for meaningful `evidence`, `explain`, or `context` visuals on roughly one third or more of the content slides.
 - Do not turn every group into a bordered or rounded card. Card-like UI repetition is a design warning, not visual variety.
+- Reusing one layout three or more times is appropriate only when the shared frame enables direct comparison. Otherwise vary the visual grammar according to the material, such as map, timeline, table, text-visual, or decision flow. Record `layout_repeat_reason` when exact repetition is intentional.
 
 ## Integrity
 

@@ -33,6 +33,8 @@ ALLOWED_LAYOUTS = {
 }
 ALLOWED_JOBS = {"claim", "explain", "evidence", "compare", "instruction", "question", "exercise", "summary", "transition"}
 ALLOWED_VISUAL_ROLES = {"evidence", "explain", "context", "decoration", "none"}
+ALLOWED_SOURCE_REQUIREMENTS = {"none", "standard", "authoritative"}
+ALLOWED_SOURCE_CLASSES = {"user_supplied", "official", "primary", "secondary"}
 PLACEHOLDER_RE = re.compile(r"\b(?:TODO|TBD|LOREM|PLACEHOLDER)\b|仮(?:タイトル|本文|画像)|ここに", re.I)
 SOURCE_ID_RE = re.compile(r"\[([A-Za-z][A-Za-z0-9_-]*)\]")
 APPROVAL_STATUSES = {"approved", "waived"}
@@ -253,6 +255,9 @@ def validate(deck: dict) -> list[dict]:
     content_slide_count = 0
     referenced_source_ids: set[str] = set()
     appendix_source_ids: set[str] = set()
+    appendix_source_classes: dict[str, str] = {}
+    source_requirements: dict[int, tuple[str, set[str]]] = {}
+    layout_positions: dict[str, list[int]] = {}
 
     for index, slide in enumerate(slides, 1):
         if not isinstance(slide, dict):
@@ -279,6 +284,7 @@ def validate(deck: dict) -> list[dict]:
 
         if layout not in {"cover", "sources_appendix"}:
             content_slide_count += 1
+            layout_positions.setdefault(str(layout), []).append(index)
             job = str(slide.get("job", "")).strip()
             visual_role = str(slide.get("visual_role", "")).strip()
             if job not in ALLOWED_JOBS:
@@ -296,7 +302,15 @@ def validate(deck: dict) -> list[dict]:
                 consecutive_text_only = 0
             if high_stakes and job in {"claim", "instruction"} and not str(slide.get("source", "")).strip():
                 add_issue(issues, "FAIL", "HIGH_STAKES_SOURCE", "High-stakes claim and instruction slides need a short source marker", index)
-            referenced_source_ids.update(SOURCE_ID_RE.findall(str(slide.get("source", ""))))
+            cited_ids = set(SOURCE_ID_RE.findall(str(slide.get("source", ""))))
+            referenced_source_ids.update(cited_ids)
+            source_requirement = str(slide.get("source_requirement", "none")).strip()
+            if source_requirement not in ALLOWED_SOURCE_REQUIREMENTS:
+                add_issue(issues, "FAIL", "INVALID_SOURCE_REQUIREMENT", "source_requirement must be none, standard, or authoritative", index)
+            elif source_requirement != "none":
+                source_requirements[index] = (source_requirement, cited_ids)
+                if not cited_ids:
+                    add_issue(issues, "FAIL", "REQUIRED_SLIDE_SOURCE", "This slide requires a short source marker", index)
 
         bullets = slide.get("bullets", [])
         if isinstance(bullets, list) and len(bullets) > 4:
@@ -386,6 +400,11 @@ def validate(deck: dict) -> list[dict]:
                     if source_id in appendix_source_ids:
                         add_issue(issues, "FAIL", "DUPLICATE_SOURCE_ID", f"Duplicate source ID: {source_id}", index)
                     appendix_source_ids.add(source_id)
+                    source_class = str(source.get("source_class", "")).strip()
+                    if source_class and source_class not in ALLOWED_SOURCE_CLASSES:
+                        add_issue(issues, "FAIL", "INVALID_SOURCE_CLASS", f"Source {source_id} has an unsupported source_class", index)
+                    if source_class:
+                        appendix_source_classes[source_id] = source_class
                     for field in ("title", "publisher", "checked"):
                         if not str(source.get(field, "")).strip():
                             add_issue(issues, "FAIL", "INCOMPLETE_SOURCE", f"Source {source_id} needs {field}", index)
@@ -407,6 +426,22 @@ def validate(deck: dict) -> list[dict]:
     missing_source_ids = sorted(referenced_source_ids - appendix_source_ids)
     if missing_source_ids:
         add_issue(issues, "FAIL", "UNRESOLVED_SOURCE_ID", f"Source markers are missing from the appendix: {', '.join(missing_source_ids)}")
+    for slide_number, (requirement, cited_ids) in source_requirements.items():
+        if requirement == "authoritative" and cited_ids and not any(
+            appendix_source_classes.get(source_id) in {"official", "primary"} for source_id in cited_ids
+        ):
+            add_issue(issues, "FAIL", "AUTHORITATIVE_SOURCE_REQUIRED", "An authoritative slide needs at least one official or primary appendix source", slide_number)
+    for layout, positions in layout_positions.items():
+        if len(positions) < 3:
+            continue
+        repeated = [slides[position - 1] for position in positions]
+        if not all(str(slide.get("layout_repeat_reason", "")).strip() for slide in repeated):
+            add_issue(
+                issues,
+                "WARN",
+                "REPEATED_LAYOUT_FAMILY",
+                f"Layout {layout} appears {len(positions)} times; vary the visual grammar or record layout_repeat_reason on each repeated slide",
+            )
     if content_slide_count >= 6 and meaningful_visuals < max(2, round(content_slide_count * 0.35)):
         add_issue(issues, "WARN", "LOW_VISUAL_COVERAGE", "Too few content slides use evidence, explanation, or context visuals")
     return issues

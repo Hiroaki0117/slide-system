@@ -27,6 +27,7 @@ Choose a layout from the slide's narrative job and primary material. Do not inve
 - Do not fill empty space with decoration or unrelated images.
 - Use the same layout consecutively when the repeated structure helps understanding.
 - Do not switch layouts only to avoid repetition.
+- If one layout appears three or more times, keep it only when readers benefit from a deliberate like-for-like comparison. Otherwise choose a different visual grammar that better matches the material. Add `layout_repeat_reason` to the repeated slides when the repetition is intentional.
 - For overflow, remove duplication, shorten copy, move secondary detail, split the slide, then change layout.
 - Use a table for exact mappings; use a process only when sequence matters; use a diagram only when relationships are materially clearer than prose.
 - Keep a `process` lead to 120 characters or fewer and a `data_focus` lead to 80 characters or fewer. Move details into the relevant step instead of shrinking type.

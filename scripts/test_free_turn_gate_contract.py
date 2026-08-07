@@ -30,6 +30,10 @@ def main() -> int:
         "Name a table or diagram for its actual scope",
         "Do not embed rules for a single sample domain",
         "Do not hardcode domain prescriptions into the skill",
+        "source_requirement: \"standard\"",
+        "claim-level",
+        "layout_repeat_reason",
+        "at most three necessary assets",
         "HTML is the first deliverable",
         "PDF is created in a later turn",
     ]

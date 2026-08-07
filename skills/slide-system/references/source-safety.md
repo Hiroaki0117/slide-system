@@ -13,6 +13,15 @@ Prefer sources in this order:
 
 Do not treat a search summary, commercial blog, calculator, or remembered rule as authoritative when a stronger source is available.
 
+For current operating facts such as hours, access, eligibility, required items, or procedures, use the first-party official source when one exists. Check constraints that materially affect the stated audience, not only the headline description.
+
+Risk is claim-level, not only deck-level. A generally low-risk deck may still contain one safety, health, legal, financial, rights-sensitive, or current-procedure claim that needs stronger evidence. Mark that slide with:
+
+- `source_requirement: "standard"` for a material researched claim;
+- `source_requirement: "authoritative"` for current official requirements or high-impact guidance.
+
+For `authoritative`, at least one cited appendix source must use `source_class: "official"` or `source_class: "primary"`. Other supported classes are `user_supplied` and `secondary`.
+
 ## Claim-to-source mapping
 
 - Put a short source marker on the slide where a material external claim appears.

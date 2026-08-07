@@ -35,8 +35,8 @@ Read each needed reference once per task, record its decisions in `work-state.js
 Read `references/content.md` when selecting the narrative, audience level, deck type, density, cover, or ending.
 Read `references/layouts.md` before assigning layouts.
 Read `references/warm-clean.md` whenever the default theme is used or adapted.
-Read `references/source-safety.md` when facts require research, the topic is medical, legal, financial, safety-related, or source rights matter.
-Read `references/visuals.md` when using supplied or external photos, illustrations, icons, charts, tables, diagrams, or screenshots.
+Read `references/source-safety.md` when facts require research or any claim is current, medical, legal, financial, safety-related, or rights-sensitive, even if the deck as a whole is low-risk.
+Read `references/visuals.md` for every deck with six or more content slides, or when using supplied or external photos, illustrations, icons, charts, tables, diagrams, or screenshots.
 Read `references/pptx.md` only for PowerPoint output.
 Read `references/html-pdf.md` before building the default HTML/PDF output.
 

@@ -27,7 +27,7 @@ Apply explicit user instructions first. Otherwise:
 - HTML is the first deliverable. PDF is created in a later turn.
 - Start with 6–8 slides. Increase the count whenever required content would otherwise become dense. Page count is an outcome, not a target.
 - Use the bundled font, template, layouts, and scripts. Do not invent another framework or theme.
-- Prefer diagrams, comparisons, tables, charts, and restrained shapes. Do not search for decorative images.
+- Prefer diagrams, comparisons, tables, charts, and restrained shapes. For concrete places, products, people, objects, or experiences, use a small number of contextual photos, maps, screenshots, or icons when they materially improve recognition or planning. Do not search for decorative images.
 - Research only material claims. Prefer supplied material and authoritative primary sources.
 - Set `delivery_profile: "staged"` in `work-state.json`.
 
@@ -78,9 +78,12 @@ In the approval turn:
    - `references/layouts.md`
    - `references/warm-clean.md`
    - `references/html-pdf.md`
-   - `references/source-safety.md` only for researched, high-stakes, or rights-sensitive content
-   - `references/visuals.md` only when a supplied or necessary visual is used
+   - `references/source-safety.md` for researched facts or any current, safety, medical, legal, financial, or rights-sensitive claim, even when the deck as a whole is not high-stakes
+   - `references/visuals.md` for every deck with six or more content slides, or whenever a supplied or external visual is considered
 3. Verify the minimum necessary unstable or high-stakes facts.
+   - Prefer first-party official sources for current operating facts, requirements, access, eligibility, or procedures.
+   - Check audience-specific constraints that can change feasibility, not only headline facts.
+   - Mark each affected slide with `source_requirement: "standard"` or `"authoritative"`; this is claim-level and does not depend on the deck-wide `high_stakes` flag.
 4. Copy `assets/deck-schema-example.json` to the task directory and replace example content with the approved content.
 5. Run `scripts/build_deck.py` with the approved `work-state.json`.
 6. Save `deck.json`, `deck-draft.html`, static QA, and `work-state.json` in a user-accessible directory.
@@ -112,6 +115,7 @@ If conversion cannot finish, tell the user to open the HTML and use its PDF-save
 Preserve capacity for the HTML checkpoint.
 
 - Use one grouped search with up to four precise queries and one grouped opening of up to four authoritative pages.
+- Limit external visual search and download to at most three necessary assets in Stage A. Prefer supplied assets, simple diagrams, or one useful map over many decorative images.
 - Do not search separately for every slide or repeated item.
 - If evidence is insufficient, omit the claim, use qualified wording, or mark it unresolved.
 - Do not inspect builder source code in order to interpret a validation report.
@@ -132,6 +136,7 @@ These rules apply across topics. Do not embed rules for a single sample domain.
 - If several items share the same time axis, combine them into a readable cross-axis table before creating repetitive one-item-per-period slides.
 - Derived numbers must show their basis and limitation nearby.
 - Match claim strength to evidence. Observational evidence supports association or inference wording, not causal wording.
+- Treat evidence risk at claim level. A low-risk deck can still contain a safety, health, rights, or current-procedure slide that needs an authoritative source.
 - A dated roadmap must use exact ISO dates internally, show the exact remaining duration consistently, and avoid misleading rounding.
 - Important assumptions or execution conditions must be visible on the slide they constrain, not only in hidden data or an appendix.
 - If required content does not fit legibly, increase the page count. Never force a fixed slide count.
@@ -150,8 +155,10 @@ For medical, legal, financial, safety, or other high-impact content:
 ## Layout and visual controls
 
 - Use at least two layout families in decks of six or more slides.
+- When the same layout appears three or more times, use it only for a deliberate like-for-like comparison. Otherwise change the visual grammar to match the material. Resolve the validator warning or record a concise `layout_repeat_reason` on the repeated slides.
 - Do not allow four consecutive text-only or decoration-only content slides.
 - Use meaningful visuals for evidence, explanation, comparison, sequence, hierarchy, or decisions.
+- For a deck centered on concrete places, products, people, objects, or experiences, include at least one contextual visual or map unless a content-based reason is recorded in `visual_reason`.
 - Do not fill empty space with unrelated decoration.
 - Use solid warm_clean colors. Do not use gradients.
 - Keep text within safe margins and retain minimum type sizes.
