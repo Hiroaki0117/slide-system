@@ -1,0 +1,4 @@
+interface:
+  display_name: "Slide System Paid"
+  short_description: "00〜60仕様を完全QAまで実行するスライド制作"
+  default_prompt: "$slide-system-paidを使って、添付資料から完成品質のスライドを作成してください。"

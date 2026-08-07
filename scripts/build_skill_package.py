@@ -12,6 +12,15 @@ from pathlib import Path
 
 
 EXCLUDED_PARTS = {"__pycache__", ".git"}
+CANONICAL_SPEC_FILES = (
+    "00_MASTER.md",
+    "10_CONTENT.md",
+    "20_DESIGN.md",
+    "30_LAYOUTS.md",
+    "40_VISUALS.md",
+    "50_OUTPUTS.md",
+    "60_QA.md",
+)
 
 
 def copy_overlay(source: Path, destination: Path) -> None:
@@ -25,7 +34,14 @@ def copy_overlay(source: Path, destination: Path) -> None:
             shutil.copy2(item, target)
 
 
-def package(base: Path, variant: Path, output: Path, root_name: str, replace: bool = False) -> dict[str, object]:
+def package(
+    base: Path,
+    variant: Path,
+    output: Path,
+    root_name: str,
+    replace: bool = False,
+    canonical_spec_root: Path | None = None,
+) -> dict[str, object]:
     if output.exists() and not replace:
         raise FileExistsError(f"Output already exists: {output}")
     if output.exists():
@@ -42,6 +58,16 @@ def package(base: Path, variant: Path, output: Path, root_name: str, replace: bo
         staged = Path(temporary) / root_name
         shutil.copytree(base, staged)
         copy_overlay(variant, staged)
+        spec_count = 0
+        if canonical_spec_root is not None:
+            reference_dir = staged / "references"
+            reference_dir.mkdir(parents=True, exist_ok=True)
+            for filename in CANONICAL_SPEC_FILES:
+                source = canonical_spec_root / filename
+                if not source.is_file():
+                    raise FileNotFoundError(f"Canonical specification not found: {source}")
+                shutil.copy2(source, reference_dir / filename)
+                spec_count += 1
 
         files = [
             path
@@ -59,6 +85,7 @@ def package(base: Path, variant: Path, output: Path, root_name: str, replace: bo
         "output": str(output),
         "root": root_name,
         "file_count": len(files),
+        "canonical_spec_count": spec_count,
         "size_bytes": output.stat().st_size,
     }
 
@@ -69,6 +96,7 @@ def main() -> int:
     parser.add_argument("--variant", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
     parser.add_argument("--root-name", required=True)
+    parser.add_argument("--canonical-spec-root", type=Path)
     parser.add_argument("--replace", action="store_true")
     args = parser.parse_args()
 
@@ -78,6 +106,7 @@ def main() -> int:
         args.output.resolve(),
         args.root_name.strip(),
         args.replace,
+        args.canonical_spec_root.resolve() if args.canonical_spec_root else None,
     )
     print(json.dumps(result, ensure_ascii=False))
     return 0
