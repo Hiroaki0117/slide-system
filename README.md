@@ -2,7 +2,7 @@
 
 短い依頼と不完全な元資料から、毎回同じ制作ルールで読みやすいスライドを作るための仕様・Claudeスキル・ローカルハーネスです。
 
-現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 0で、制作履歴の作成、一覧、検索、再開位置の確認、HTML管理画面まで実装しています。
+現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 1で、制作履歴、承認済みBrief、Attempt・Step、状態遷移、再開、HTML管理画面まで実装しています。
 
 ## 最初に選ぶもの
 
@@ -12,7 +12,7 @@
 |---|---|---|
 | Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.13`で一区切り |
 | Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.0`、実機検証待ち |
-| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 0実装中 |
+| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 1基本機能完了 |
 
 Claude向けZIPとローカルハーネスは併存します。Claude Webだけで完結したい場合はZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
 
@@ -73,8 +73,16 @@ AI向けに完璧な依頼文を準備する必要はありません。不足情
 - 別セッションでの再開位置表示
 - ブラウザで見るローカル管理画面
 - `run.json`と`events.jsonl`の安全な保存
+- 7種類のJSON Schemaによる実検証
+- 制作条件と構成案の承認記録
+- AttemptとStepの作成・完了記録
+- Run単位の同時編集ロック
+- 更新前の`run.json`バックアップ
+- 仕様、設定、フォントのハッシュ記録
+- 決定的生成物用のローカルキャッシュ
+- QA、成果物、利用者承認がない完了操作の拒否
 
-次はAttempt、承認済みBrief、`deck.json`変換、HTML/PDF生成を接続します。現時点のハーネスCLIだけでは、まだスライド本体を生成しません。
+次は`warm_clean`のデザインパック化、ハーネスv1 `deck.json`の変換、HTML/PDF生成を接続します。現時点のハーネスCLIだけでは、まだスライド本体を生成しません。
 
 ### 必要な環境
 
@@ -178,6 +186,42 @@ slide-system open --no-browser
 ```
 
 生成された管理画面は`runs/index.html`です。`runs/`は個人の制作履歴を含むため、既定ではGit管理しません。
+
+### エージェント・開発者向けの状態管理
+
+通常、以下のコマンドはCodexまたはClaude Codeが実行します。初心者が状態名やAttempt番号を覚える必要はありません。
+
+JSONを共通スキーマで検証します。
+
+```powershell
+slide-system validate run ".\runs\run_20260810_001\run.json"
+```
+
+承認済みBriefを登録します。
+
+```powershell
+slide-system brief approve run_20260810_001 `
+  --file ".\approved-brief.json" `
+  --owner codex
+```
+
+新しい制作候補を作ります。
+
+```powershell
+slide-system attempt new run_20260810_001 `
+  --deck ".\deck.json" `
+  --reason "初稿" `
+  --owner codex
+```
+
+個別工程を記録します。
+
+```powershell
+slide-system step start run_20260810_001 --name validate_deck --owner codex
+slide-system step finish run_20260810_001 --step-id step-001 --owner codex
+```
+
+状態変更は定義済みの順序だけを許可します。完了済みRunは変更できません。
 
 ## ハーネスの完成形
 
@@ -288,6 +332,7 @@ python scripts/test_free_turn_gate_contract.py
 python scripts/test_free_package_generic.py dist/slide-system-free-v0.2.13.zip
 python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.0.zip
 python scripts/test_harness_phase0.py
+python scripts/test_harness_phase1.py
 ```
 
 Node.jsモジュールが通常とは異なる場所にある環境では、`NODE_PATH`の指定が必要になる場合があります。
@@ -376,7 +421,7 @@ PDFは編集データの正本ではありません。`deck.json`またはハー
 
 ## ロードマップ
 
-1. Run、Attempt、Stepと再開処理
+1. Run、Attempt、Stepと再開処理（基本機能完了）
 2. `warm_clean`デザインパック
 3. ハーネスv1 `deck.json`からHTML/PDF生成
 4. 自動QAと修正ループ
