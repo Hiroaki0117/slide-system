@@ -2,7 +2,7 @@
 
 短い依頼と不完全な元資料から、毎回同じ制作ルールで読みやすいスライドを作るための仕様・Claudeスキル・ローカルハーネスです。
 
-現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 3まで完了し、制作履歴、HTML/PDF生成、統合QA、修正Attemptまで実装しています。
+現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 4まで完了し、制作履歴、生成、統合QA、Codex・Claude Codeでの再開まで実装しています。
 
 ## 最初に選ぶもの
 
@@ -12,7 +12,7 @@
 |---|---|---|
 | Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.13`で一区切り |
 | Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.0`、実機検証待ち |
-| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 3完了 |
+| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 4完了 |
 
 Claude向けZIPとローカルハーネスは併存します。Claude Webだけで完結したい場合はZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
 
@@ -88,8 +88,9 @@ AI向けに完璧な依頼文を準備する必要はありません。不足情
 - HTML確認後だけPDFへ進む明示的な承認ゲート
 - 静的・全ページ視覚・PDF・テーマQAの統合レポート
 - QA FAIL時に直前Attemptを保持したまま修正Attemptを作成
+- Codex・Claude Code向けの状態別再開指示を自動生成
 
-次はCodexとClaude Codeが同じ状態・承認ゲート・再開指示を扱えるアダプターを追加します。
+次はローカル管理画面にRun詳細、Attempt比較、レビュー導線を追加します。
 
 ### 必要な環境
 
@@ -247,6 +248,17 @@ slide-system attempt revise run_20260810_001 `
 
 `--deck`を省略すると直前の`deck.json`を複製し、Attempt番号だけ安全に更新します。
 
+### Codex・Claude Codeで再開する
+
+別セッションの開始時には、現在のRun状態に合う再開指示を生成します。
+
+```powershell
+slide-system adapter prepare run_20260810_001 --adapter codex
+slide-system adapter prepare run_20260810_001 --adapter claude-code
+```
+
+生成先は各Runの`.state/resume-codex.md`または`.state/resume-claude-code.md`です。チャット履歴ではなく、`run.json`、承認済みBrief、最新Attempt、QAレポートを読む順番と、現在省略してはいけない承認ゲートが記載されます。
+
 個別工程を記録します。
 
 ```powershell
@@ -368,6 +380,7 @@ python scripts/test_harness_phase0.py
 python scripts/test_harness_phase1.py
 python scripts/test_harness_phase2.py
 python scripts/test_harness_phase3.py
+python scripts/test_harness_phase4.py
 ```
 
 Node.jsモジュールが通常とは異なる場所にある環境では、`NODE_PATH`の指定が必要になる場合があります。
@@ -460,7 +473,7 @@ PDFは編集データの正本ではありません。`deck.json`またはハー
 2. `warm_clean`デザインパック（完了）
 3. ハーネスv1 `deck.json`からHTML/PDF生成（完了）
 4. 自動QAと修正ループ（完了）
-5. Codex・Claude Codeアダプター
+5. Codex・Claude Codeアダプター（完了）
 6. ローカル管理画面の成果物・比較機能
 7. 複数題材のテストケースとベースライン
 8. Claude WebとのBundle連携
