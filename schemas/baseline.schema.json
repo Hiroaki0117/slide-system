@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slide-system.local/schemas/baseline.schema.json",
+  "title": "Slide System Approved Baseline",
+  "type": "object",
+  "required": ["schema_version", "case_id", "design_pack", "design_version", "source_run_id", "source_attempt", "approved_by", "approved_at", "artifacts", "hashes"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "case_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_-]*$" },
+    "design_pack": { "type": "string" },
+    "design_version": { "type": "string" },
+    "source_run_id": { "type": "string" },
+    "source_attempt": { "type": "integer", "minimum": 1 },
+    "approved_by": { "type": "string", "minLength": 1 },
+    "approved_at": { "type": "string", "format": "date-time" },
+    "note": { "type": "string" },
+    "artifacts": { "type": "object" },
+    "hashes": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string", "pattern": "^sha256:" } }
+  },
+  "additionalProperties": false
+}
