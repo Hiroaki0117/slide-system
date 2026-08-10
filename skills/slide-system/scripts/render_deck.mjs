@@ -153,6 +153,15 @@ async function main() {
         const lineHeight = Number.parseFloat(getComputedStyle(h2).lineHeight);
         titleWrap = Number.isFinite(lineHeight) && h2.getBoundingClientRect().height > lineHeight * 1.45;
       }
+      let messageWrapLines = 0;
+      const messageValue = slide.querySelector(".message-value");
+      if (messageValue) {
+        const lineHeight = Number.parseFloat(getComputedStyle(messageValue).lineHeight);
+        const height = messageValue.getBoundingClientRect().height;
+        if (Number.isFinite(lineHeight) && lineHeight > 0) {
+          messageWrapLines = Math.max(1, Math.round(height / lineHeight));
+        }
+      }
       let coverTitleOrphan = false;
       const h1 = slide.querySelector("h1");
       if (h1 && h1.firstChild?.nodeType === Node.TEXT_NODE) {
@@ -194,7 +203,7 @@ async function main() {
           if (Number.isFinite(size) && size + 0.1 < minimum) fontFailures.push(`${selector}:${size}px`);
         }
       }
-      return { overflow, titleWrap, coverTitleOrphan, fontFailures, width: slideRect.width, height: slideRect.height };
+      return { overflow, titleWrap, messageWrapLines, coverTitleOrphan, fontFailures, width: slideRect.width, height: slideRect.height };
     });
     const imagePath = path.join(renderDir, `slide-${String(index + 1).padStart(2, "0")}.png`);
     await page.locator(".slide.active").screenshot({ path: imagePath });
@@ -252,6 +261,7 @@ async function main() {
   for (const slide of slides) {
     if (slide.overflow.length) failures.push({ code: "OVERFLOW", slide: slide.number, details: slide.overflow });
     if (slide.titleWrap) failures.push({ code: "TITLE_WRAP", slide: slide.number });
+    if (slide.messageWrapLines > 3) failures.push({ code: "SINGLE_MESSAGE_WRAP", slide: slide.number, details: { lines: slide.messageWrapLines, maximum: 3 } });
     if (slide.coverTitleOrphan) failures.push({ code: "COVER_TITLE_ORPHAN", slide: slide.number });
     if (slide.fontFailures.length) failures.push({ code: "FONT_SIZE", slide: slide.number, details: slide.fontFailures });
     if (Math.round(slide.width) !== 1600 || Math.round(slide.height) !== 900) failures.push({ code: "SLIDE_SIZE", slide: slide.number, details: [slide.width, slide.height] });
