@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "id": "warm_clean",
+  "name": "Warm Clean",
+  "version": "1.0.0",
+  "description": "温かく、清潔感があり、親しみやすい編集的なデザイン",
+  "supports": {
+    "aspect_ratios": ["16:9"],
+    "languages": ["ja", "en"],
+    "output_profiles": ["html", "html_pdf"]
+  },
+  "entrypoints": {
+    "colors": "tokens/colors.json",
+    "typography": "tokens/typography.json",
+    "spacing": "tokens/spacing.json",
+    "shapes": "tokens/shapes.json",
+    "layouts": "layouts/layouts.json",
+    "components": "components/components.json",
+    "qa_rules": "qa/rules.json"
+  },
+  "renderer": {
+    "adapter": "legacy_warm_clean",
+    "template": "../../skills/slide-system/assets/deck-template.html",
+    "font": "../../skills/slide-system/assets/fonts/NotoSansJP-Variable.ttf"
+  },
+  "font_policy": {
+    "primary": "Slide Noto Sans JP",
+    "fallbacks": ["Noto Sans JP", "Yu Gothic", "Meiryo", "sans-serif"],
+    "verify_loaded_font": true
+  },
+  "fallback_layout": "standard"
+}

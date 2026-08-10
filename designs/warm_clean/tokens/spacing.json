@@ -1,0 +1,18 @@
+{
+  "slide": {
+    "width_px": 1600,
+    "height_px": 900,
+    "safe_left_px": 88,
+    "safe_right_px": 88,
+    "safe_top_px": 72,
+    "safe_bottom_px": 62
+  },
+  "scale_px": {
+    "xs": 8,
+    "sm": 16,
+    "md": 24,
+    "lg": 36,
+    "xl": 48,
+    "xxl": 72
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "layouts": [
+    { "id": "cover", "legacy_layout": "cover", "roles": ["cover"], "density": ["low"], "fallbacks": [] },
+    { "id": "agenda", "legacy_layout": "agenda", "roles": ["agenda"], "density": ["low", "medium"], "fallbacks": ["standard"] },
+    { "id": "section_divider", "legacy_layout": "section_divider", "roles": ["section"], "density": ["low"], "fallbacks": ["key_message"] },
+    { "id": "key_message", "legacy_layout": "single_message", "roles": ["content", "summary"], "density": ["low"], "fallbacks": ["standard"] },
+    { "id": "standard", "legacy_layout": "text_focus", "roles": ["content"], "density": ["low", "medium"], "fallbacks": ["standard_visual"] },
+    { "id": "standard_visual", "legacy_layout": "text_visual", "roles": ["content"], "density": ["low", "medium"], "fallbacks": ["standard"] },
+    { "id": "comparison", "legacy_layout": "comparison", "roles": ["content"], "density": ["low", "medium"], "fallbacks": ["standard"] },
+    { "id": "process", "legacy_layout": "process", "roles": ["content"], "density": ["low", "medium"], "fallbacks": ["standard"] },
+    { "id": "timeline", "legacy_layout": "process", "roles": ["content"], "density": ["low", "medium"], "fallbacks": ["process", "standard"] },
+    { "id": "data_focus", "legacy_layout": "data_focus", "roles": ["content"], "density": ["low", "medium"], "fallbacks": ["standard"] },
+    { "id": "bar_chart", "legacy_layout": "bar_chart", "roles": ["content"], "density": ["low", "medium"], "fallbacks": ["data_focus", "table"] },
+    { "id": "table", "legacy_layout": "table", "roles": ["content"], "density": ["medium", "high"], "fallbacks": ["standard"] },
+    { "id": "decision", "legacy_layout": "decision_flow", "roles": ["content"], "density": ["low", "medium"], "fallbacks": ["process"] },
+    { "id": "exercise", "legacy_layout": "exercise", "roles": ["exercise"], "density": ["low", "medium"], "fallbacks": ["standard"] },
+    { "id": "summary", "legacy_layout": "summary_action", "roles": ["summary"], "density": ["low", "medium"], "fallbacks": ["key_message"] },
+    { "id": "sources", "legacy_layout": "sources_appendix", "roles": ["sources"], "density": ["medium", "high"], "fallbacks": [] }
+  ]
+}

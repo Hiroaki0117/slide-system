@@ -1,0 +1,24 @@
+{
+  "background": {
+    "primary": "#FFF8F4",
+    "surface": "#FFFFFF",
+    "dark": "#3F3639"
+  },
+  "text": {
+    "primary": "#3F3639",
+    "secondary": "#665B5E",
+    "inverse": "#FFF8F4"
+  },
+  "accent": {
+    "coral_text": "#B94D48",
+    "coral": "#E96E68",
+    "coral_soft": "#FFD2C7",
+    "mint_soft": "#C5E7E1"
+  },
+  "divider": "#E8DFDC",
+  "semantic": {
+    "success": "#66B8AA",
+    "warning": "#D98C58",
+    "danger": "#B94D48"
+  }
+}

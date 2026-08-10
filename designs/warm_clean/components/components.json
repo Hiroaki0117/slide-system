@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "components": {
+    "metric": { "legacy_target": "stat", "maximum_per_slide": 4 },
+    "callout": { "legacy_target": "callout", "maximum_per_slide": 1 },
+    "comparison_item": { "legacy_target": "panel", "minimum_per_slide": 2, "maximum_per_slide": 3 },
+    "process_step": { "legacy_target": "step", "minimum_per_slide": 3, "maximum_per_slide": 6 },
+    "image": { "legacy_target": "image-frame", "maximum_per_slide": 1 },
+    "source_marker": { "legacy_target": "slide-source" }
+  }
+}

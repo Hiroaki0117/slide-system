@@ -1,0 +1,33 @@
+{
+  "font_family": {
+    "heading": "Slide Noto Sans JP",
+    "body": "Slide Noto Sans JP"
+  },
+  "size_px": {
+    "cover_title": 72,
+    "slide_title": 48,
+    "section_title": 74,
+    "headline": 48,
+    "body": 24,
+    "small_body": 22,
+    "caption": 20,
+    "source": 14,
+    "page_number": 17
+  },
+  "minimum_px": {
+    "cover_title": 67,
+    "slide_title": 47,
+    "subheading": 32,
+    "body": 21,
+    "source": 13
+  },
+  "weight": {
+    "regular": 400,
+    "medium": 600,
+    "bold": 800
+  },
+  "line_height": {
+    "heading": 1.18,
+    "body": 1.55
+  }
+}

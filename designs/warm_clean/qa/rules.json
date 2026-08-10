@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "rules": [
+    { "id": "warm-clean-no-gradient", "requirement": "MUST", "severity": "major", "description": "グラデーションを使用しない" },
+    { "id": "warm-clean-font", "requirement": "MUST", "severity": "critical", "description": "同梱Noto Sans JPを読み込む" },
+    { "id": "warm-clean-background", "requirement": "MUST", "severity": "major", "description": "既定背景を#FFF8F4とする" },
+    { "id": "warm-clean-soft-color-not-body", "requirement": "MUST", "severity": "major", "description": "淡色アクセントを本文色に使用しない" },
+    { "id": "warm-clean-restrained-decoration", "requirement": "SHOULD", "severity": "minor", "description": "大きな装飾図形を1ページ2個以内に抑える" },
+    { "id": "warm-clean-no-card-grid-default", "requirement": "SHOULD", "severity": "minor", "description": "内容上の理由なくUIカードを反復しない" }
+  ]
+}
