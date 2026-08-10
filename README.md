@@ -2,7 +2,7 @@
 
 短い依頼と不完全な元資料から、毎回同じ制作ルールで読みやすいスライドを作るための仕様・Claudeスキル・ローカルハーネスです。
 
-現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 4まで完了し、制作履歴、生成、統合QA、Codex・Claude Codeでの再開まで実装しています。
+現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 5まで完了し、制作履歴、生成、統合QA、AI別再開、Attempt比較、利用者レビューまで実装しています。
 
 ## 最初に選ぶもの
 
@@ -12,7 +12,7 @@
 |---|---|---|
 | Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.13`で一区切り |
 | Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.0`、実機検証待ち |
-| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 4完了 |
+| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 5完了 |
 
 Claude向けZIPとローカルハーネスは併存します。Claude Webだけで完結したい場合はZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
 
@@ -89,8 +89,10 @@ AI向けに完璧な依頼文を準備する必要はありません。不足情
 - 静的・全ページ視覚・PDF・テーマQAの統合レポート
 - QA FAIL時に直前Attemptを保持したまま修正Attemptを作成
 - Codex・Claude Code向けの状態別再開指示を自動生成
+- Run詳細画面でAttemptごとのHTML・PDF・QA・レビューを比較
+- 利用者レビューを記録し、採用成果物だけを`delivery/`へ保存
 
-次はローカル管理画面にRun詳細、Attempt比較、レビュー導線を追加します。
+次は題材の異なる複数テストケースと、承認済みベースラインを追加します。
 
 ### 必要な環境
 
@@ -184,6 +186,8 @@ slide-system open
 - 次に必要な操作
 - HTML/PDFへのリンク（生成後）
 - 表紙サムネイル（生成後）
+- Runごとの制作案履歴と比較リンク
+- AttemptごとのQA・レビュー結果
 
 Run IDは内部管理用です。普段はタイトル、サムネイル、更新日時、状態から探します。
 
@@ -194,6 +198,18 @@ slide-system open --no-browser
 ```
 
 生成された管理画面は`runs/index.html`です。`runs/`は個人の制作履歴を含むため、既定ではGit管理しません。
+
+### 利用者レビューと最終保存
+
+HTML/PDF確認後、`schemas/review.schema.json`に沿ったレビューJSONを記録します。
+
+```powershell
+slide-system review record run_20260810_001 `
+  --file ".\review.json" `
+  --owner codex
+```
+
+`accepted`なら採用AttemptのHTML/PDFを`delivery/final.*`へコピーし、Runを完了します。`needs_revision`なら既存Attemptを残したまま修正状態へ戻します。
 
 ### エージェント・開発者向けの状態管理
 
@@ -381,6 +397,7 @@ python scripts/test_harness_phase1.py
 python scripts/test_harness_phase2.py
 python scripts/test_harness_phase3.py
 python scripts/test_harness_phase4.py
+python scripts/test_harness_phase5.py
 ```
 
 Node.jsモジュールが通常とは異なる場所にある環境では、`NODE_PATH`の指定が必要になる場合があります。
@@ -474,7 +491,7 @@ PDFは編集データの正本ではありません。`deck.json`またはハー
 3. ハーネスv1 `deck.json`からHTML/PDF生成（完了）
 4. 自動QAと修正ループ（完了）
 5. Codex・Claude Codeアダプター（完了）
-6. ローカル管理画面の成果物・比較機能
+6. ローカル管理画面の成果物・比較機能（完了）
 7. 複数題材のテストケースとベースライン
 8. Claude WebとのBundle連携
 9. npm配布ラッパーとリリース自動化
