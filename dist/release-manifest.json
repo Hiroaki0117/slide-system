@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "harness_version": "0.9.0",
+  "skills": {
+    "free": {
+      "version": "0.2.14",
+      "file": "slide-system-free-v0.2.14.zip",
+      "sha256": "sha256:eddea4d357d47857203f1f40006a3f3b5f12e5d4757b6f58c74485a4c6b40a6f"
+    },
+    "paid": {
+      "version": "0.1.1",
+      "file": "slide-system-paid-v0.1.1.zip",
+      "sha256": "sha256:c3fc128ca7861a45633c56981bf7936d9b91966ef378a32540ceccb855014abb"
+    }
+  }
+}
