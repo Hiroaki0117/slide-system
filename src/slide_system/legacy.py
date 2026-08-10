@@ -175,6 +175,9 @@ def convert_deck_to_legacy(
             "layout": legacy_layout,
             "title": title,
         }
+        repeat_reason = str(slide.get("visual", {}).get("repeat_reason", "")).strip()
+        if repeat_reason:
+            converted["layout_repeat_reason"] = repeat_reason
         if legacy_layout not in {"cover", "sources_appendix"}:
             converted.update(
                 {
@@ -310,4 +313,12 @@ def convert_deck_to_legacy(
         if not isinstance(safety, dict):
             raise DeckConversionError("high_stakes資料にはcontext.safetyが必要です")
         result["safety"] = safety
+        claim_evidence = context.get("claim_evidence")
+        if isinstance(claim_evidence, list):
+            result["claim_evidence"] = claim_evidence
+    if context.get("dated_roadmap") is True:
+        result["dated_roadmap"] = True
+        timeline = context.get("timeline")
+        if isinstance(timeline, dict):
+            result["timeline"] = timeline
     return result
