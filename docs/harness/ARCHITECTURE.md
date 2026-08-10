@@ -38,7 +38,7 @@ schemas/              共通JSON Schema
 designs/              デザインパック（Phase 2で追加）
 harness/adapters/     AI別アダプター
 runs/                 ローカル制作履歴（Git対象外）
-baselines/            承認済み比較基準（Phase 6で追加）
+baselines/            承認済み比較基準
 skills/               Claudeスキルの共通資産
 variants/             Claude無料版・有料版の差分
 dist/                 配布ZIP

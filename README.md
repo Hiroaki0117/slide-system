@@ -2,7 +2,7 @@
 
 短い依頼と不完全な元資料から、毎回同じ制作ルールで読みやすいスライドを作るための仕様・Claudeスキル・ローカルハーネスです。
 
-現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 7まで完了し、制作履歴からClaude Web Bundle連携まで実装しています。
+現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 0〜8の実装を完了し、制作履歴、生成、QA、比較、AI間連携、配布検査まで一通り実行できます。
 
 ## 最初に選ぶもの
 
@@ -10,9 +10,9 @@
 
 | 利用方法 | 向いている人 | 現在の状態 |
 |---|---|---|
-| Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.13`で一区切り |
-| Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.0`、実機検証待ち |
-| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 7完了 |
+| Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.14` |
+| Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.1`、実機検証待ち |
+| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 0〜8完了 |
 
 Claude向けZIPとローカルハーネスは併存します。Claude Webだけで完結したい場合はZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
 
@@ -22,8 +22,8 @@ Claude向けZIPとローカルハーネスは併存します。Claude Webだけ�
 
 | ファイル | 内容 |
 |---|---|
-| `dist/slide-system-free-v0.2.13.zip` | 無料版向け。質問、構成確認、HTML先行納品、利用枠を意識した段階制作 |
-| `dist/slide-system-paid-v0.1.0.zip` | 有料版向け。00〜60正本、全ページ検査、HTML/PDFの一括制作 |
+| `dist/slide-system-free-v0.2.14.zip` | 無料版向け。質問、構成確認、HTML先行納品、利用枠を意識した段階制作 |
+| `dist/slide-system-paid-v0.1.1.zip` | 有料版向け。00〜60正本、全ページ検査、HTML/PDFの一括制作 |
 
 過去のZIPも`dist/`に残していますが、通常は上記の最新版を使用してください。
 
@@ -95,7 +95,7 @@ AI向けに完璧な依頼文を準備する必要はありません。不足情
 - 利用者が採用した匿名Runだけをベースライン化し、成果物ハッシュを比較
 - Claude Webへ渡すRun Bundleと、結果Bundleの安全な取り込み
 
-次はリリース検査、配布用ラッパー、ZIP再生成をまとめるPhase 8です。
+Phase 0〜8は完了しています。今後は実案件でのRun蓄積、利用者が承認したベースライン、追加テーマ、有料版Claudeでの実機検証を反復します。
 
 ### 必要な環境
 
@@ -123,6 +123,13 @@ PowerShellの設定によって`npm`や`npx`が実行できない場合は、上
 
 ```powershell
 slide-system doctor
+```
+
+npm経由でも同じPythonハーネスを起動できます。別実装ではなく薄いコマンドラッパーです。
+
+```powershell
+npm.cmd run doctor
+npx.cmd slide-system --project-root . run list
 ```
 
 インストールせずに開発中のコードを試す場合は、次の形式でも実行できます。
@@ -431,8 +438,8 @@ python scripts/test_build_deck_validation.py
 python scripts/test_artifact_recovery.py
 python scripts/test_fast_pdf_export.py
 python scripts/test_free_turn_gate_contract.py
-python scripts/test_free_package_generic.py dist/slide-system-free-v0.2.13.zip
-python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.0.zip
+python scripts/test_free_package_generic.py dist/slide-system-free-v0.2.14.zip
+python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.1.zip
 python scripts/test_harness_phase0.py
 python scripts/test_harness_phase1.py
 python scripts/test_harness_phase2.py
@@ -443,22 +450,23 @@ python scripts/test_harness_phase6.py
 python scripts/test_harness_phase7.py
 ```
 
+リリース前の全検査は1コマンドで実行できます。
+
+```powershell
+python scripts/release_check.py
+```
+
 Node.jsモジュールが通常とは異なる場所にある環境では、`NODE_PATH`の指定が必要になる場合があります。
 
 ## 配布ZIPの再生成
 
-無料版の例です。
+無料版と有料版をまとめて再生成し、SHA-256付きマニフェストを更新します。
 
 ```powershell
-python scripts/build_skill_package.py `
-  --base skills/slide-system `
-  --variant variants/slide-system-free `
-  --output dist/slide-system-free-v0.2.13.zip `
-  --root-name slide-system-free `
-  --replace
+python scripts/build_release.py --replace
 ```
 
-有料版では`--canonical-spec-root .`を追加し、00〜60の正本を同梱します。生成後は必ず対応するパッケージ契約テストを実行してください。
+生成物とハッシュは`dist/release-manifest.json`で確認できます。生成後は`python scripts/release_check.py`を実行してください。
 
 ## Gitとプライバシー
 
@@ -537,6 +545,6 @@ PDFは編集データの正本ではありません。`deck.json`またはハー
 6. ローカル管理画面の成果物・比較機能（完了）
 7. 複数題材のテストケースとベースライン（完了）
 8. Claude WebとのBundle連携（完了）
-9. npm配布ラッパーとリリース自動化
+9. npm配布ラッパーとリリース自動化（完了）
 
 詳細は`docs/harness/ROADMAP.md`を参照してください。
