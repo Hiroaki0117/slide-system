@@ -53,13 +53,13 @@
 - 承認済みベースライン
 - 比較レポート
 
-## Phase 7: Claude Web Bundle（次）
+## Phase 7: Claude Web Bundle（完了）
 
 - Run Bundleの書き出し
 - Claude Web結果Bundleの安全な取り込み
 - ZIPパストラバーサルと許可ファイル検査
 
-## Phase 8
+## Phase 8（次）
 
 - リリース自動化
 - npm配布ラッパー

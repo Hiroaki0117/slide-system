@@ -2,7 +2,7 @@
 
 短い依頼と不完全な元資料から、毎回同じ制作ルールで読みやすいスライドを作るための仕様・Claudeスキル・ローカルハーネスです。
 
-現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 6まで完了し、制作履歴、生成、統合QA、AI別再開、比較、レビュー、ベースラインまで実装しています。
+現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 7まで完了し、制作履歴からClaude Web Bundle連携まで実装しています。
 
 ## 最初に選ぶもの
 
@@ -12,7 +12,7 @@
 |---|---|---|
 | Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.13`で一区切り |
 | Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.0`、実機検証待ち |
-| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 6完了 |
+| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 7完了 |
 
 Claude向けZIPとローカルハーネスは併存します。Claude Webだけで完結したい場合はZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
 
@@ -93,8 +93,9 @@ AI向けに完璧な依頼文を準備する必要はありません。不足情
 - 利用者レビューを記録し、採用成果物だけを`delivery/`へ保存
 - 研修・業務提案・自己完結型解説の汎用テストケース
 - 利用者が採用した匿名Runだけをベースライン化し、成果物ハッシュを比較
+- Claude Webへ渡すRun Bundleと、結果Bundleの安全な取り込み
 
-次はClaude Webとローカルハーネスの間で受け渡す安全なBundleを追加します。
+次はリリース検査、配布用ラッパー、ZIP再生成をまとめるPhase 8です。
 
 ### 必要な環境
 
@@ -231,6 +232,25 @@ slide-system baseline compare run_20260810_002 `
 ```
 
 画像ハッシュの変化は自動的に品質低下とは断定しません。`CHANGED`として提示し、コンタクトシートを人が確認します。
+
+### Claude Web Bundle
+
+Claude Webへ依頼・添付・承認済みBrief・最新deckを渡すZIPを作ります。
+
+```powershell
+slide-system bundle export run_20260810_001 `
+  --output ".\exports\run-bundle.zip"
+```
+
+Claude Webから返されたResult Bundleは新しいAttemptへ取り込みます。
+
+```powershell
+slide-system bundle import run_20260810_001 `
+  --file ".\downloads\result-bundle.zip" `
+  --owner codex
+```
+
+取り込んだHTML/PDFは`imported/`へ参考保存され、最終成果物としては扱いません。`deck.json`からローカルでHTML/PDFを再生成し、統合QAを通します。ZIP内の危険なパス、シンボリックリンク、未許可ファイル、過大なファイルは拒否します。
 
 ### エージェント・開発者向けの状態管理
 
@@ -420,6 +440,7 @@ python scripts/test_harness_phase3.py
 python scripts/test_harness_phase4.py
 python scripts/test_harness_phase5.py
 python scripts/test_harness_phase6.py
+python scripts/test_harness_phase7.py
 ```
 
 Node.jsモジュールが通常とは異なる場所にある環境では、`NODE_PATH`の指定が必要になる場合があります。
@@ -515,7 +536,7 @@ PDFは編集データの正本ではありません。`deck.json`またはハー
 5. Codex・Claude Codeアダプター（完了）
 6. ローカル管理画面の成果物・比較機能（完了）
 7. 複数題材のテストケースとベースライン（完了）
-8. Claude WebとのBundle連携
+8. Claude WebとのBundle連携（完了）
 9. npm配布ラッパーとリリース自動化
 
 詳細は`docs/harness/ROADMAP.md`を参照してください。
