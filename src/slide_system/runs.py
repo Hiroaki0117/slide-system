@@ -247,7 +247,15 @@ def find_run(
 
 def _relative_artifact(run: dict[str, Any], key: str) -> str | None:
     path = run.get("delivery", {}).get(key)
-    return f"./{run['run_id']}/{path}" if path else None
+    if path:
+        return f"./{run['run_id']}/{path}"
+    attempt = int(run.get("progress", {}).get("current_attempt", 0))
+    run_dir = Path(run.get("_run_dir", ""))
+    if attempt and run_dir:
+        candidate = run_dir / "attempts" / f"{attempt:03d}" / f"deck.{key}"
+        if candidate.is_file():
+            return f"./{run['run_id']}/attempts/{attempt:03d}/deck.{key}"
+    return None
 
 
 def _index_entry(run: dict[str, Any]) -> dict[str, Any]:
@@ -258,6 +266,12 @@ def _index_entry(run: dict[str, Any]) -> dict[str, Any]:
     thumbnail = display.get("thumbnail")
     if thumbnail:
         thumbnail = f"./{run['run_id']}/{thumbnail}"
+    elif int(run.get("progress", {}).get("current_attempt", 0)):
+        attempt = int(run["progress"]["current_attempt"])
+        run_dir = Path(run.get("_run_dir", ""))
+        candidate = run_dir / "attempts" / f"{attempt:03d}" / "renders" / "slide-01.png"
+        if candidate.is_file():
+            thumbnail = f"./{run['run_id']}/attempts/{attempt:03d}/renders/slide-01.png"
     title = display.get("title") or "無題の制作"
     summary = display.get("summary") or ""
     tags = display.get("tags") or []

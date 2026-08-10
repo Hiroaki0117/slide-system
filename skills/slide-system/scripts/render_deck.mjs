@@ -126,6 +126,10 @@ async function main() {
   const expectedSecond = slideCount > 1 ? `2 / ${slideCount}` : `1 / ${slideCount}`;
   const navigationPass = navigation.initial === `1 / ${slideCount}` && navigation.second === expectedSecond && navigation.clampedEnd === `${slideCount} / ${slideCount}` && navigation.clampedStart === `1 / ${slideCount}`;
 
+  // Navigation is tested above. Hide viewer-only UI before visual inspection so
+  // it cannot obscure slide content in screenshots or the contact sheet.
+  await page.addStyleTag({ content: ".controls,.draft-banner{display:none!important}" });
+
   const slides = [];
   const imagePaths = [];
   for (let index = 0; index < slideCount; index += 1) {

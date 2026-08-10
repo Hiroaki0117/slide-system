@@ -164,7 +164,7 @@ def build_parser() -> argparse.ArgumentParser:
     open_parser.add_argument("--no-browser", action="store_true", help="管理画面を生成するだけにする")
 
     validate_parser = subparsers.add_parser("validate", help="JSONファイルを共通スキーマで検証する")
-    validate_parser.add_argument("schema", choices=["run", "deck", "approved-brief", "attempt", "step", "qa-report", "review"])
+    validate_parser.add_argument("schema", choices=["run", "deck", "approved-brief", "attempt", "step", "qa-report", "review", "design-pack"])
     validate_parser.add_argument("path", type=Path)
 
     run_parser = subparsers.add_parser("run", help="制作記録を管理する")
@@ -216,6 +216,14 @@ def build_parser() -> argparse.ArgumentParser:
     step_finish.add_argument("--failed", action="store_true")
     step_finish.add_argument("--message", default="")
     step_finish.add_argument("--owner", default="manual")
+
+    build_command_parser = subparsers.add_parser("build", help="最新AttemptからHTMLを生成する")
+    build_command_parser.add_argument("selector")
+    build_command_parser.add_argument("--owner", default="manual")
+    render_parser = subparsers.add_parser("render", help="全ページ視覚QAとPDF生成を実行する")
+    render_parser.add_argument("selector")
+    render_parser.add_argument("--pdf-approval", required=True, help="PDF生成を依頼した利用者のメッセージ")
+    render_parser.add_argument("--owner", default="manual")
     return parser
 
 
@@ -361,5 +369,36 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc), file=sys.stderr)
             return 2
         print(f"{step['step_id']}: {step['status']}")
+        return 0
+    if args.command == "build":
+        from .production import build_html
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            result = build_html(project_root, config, selected["run_id"], owner=args.owner)
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(f"HTML: {result['html']}")
+        print(f"静的QA: {result['report']}")
+        return 0
+    if args.command == "render":
+        from .production import render_pdf
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            result = render_pdf(
+                project_root,
+                config,
+                selected["run_id"],
+                owner=args.owner,
+                pdf_approval=args.pdf_approval,
+            )
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(f"HTML: {result['html']}")
+        print(f"PDF: {result['pdf']}")
+        print(f"視覚QA: {result['report']}")
         return 0
     return 2
