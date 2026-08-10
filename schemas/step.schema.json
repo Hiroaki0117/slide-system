@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slide-system.local/schemas/step.schema.json",
+  "title": "Slide System Step",
+  "type": "object",
+  "required": ["schema_version", "step_id", "name", "status", "input", "output", "execution", "error"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "step_id": { "type": "string", "minLength": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["pending", "running", "completed", "failed", "cancelled"] },
+    "input": { "type": "object" },
+    "output": { "type": "object" },
+    "execution": { "type": "object" },
+    "error": { "type": ["object", "null"] }
+  },
+  "additionalProperties": true
+}

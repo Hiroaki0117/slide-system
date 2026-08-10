@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slide-system.local/schemas/qa-report.schema.json",
+  "title": "Slide System QA Report",
+  "type": "object",
+  "required": ["schema_version", "run_id", "attempt", "result", "summary", "issues", "checked_at"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "run_id": { "type": "string" },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "result": { "enum": ["PASS", "FAIL"] },
+    "summary": {
+      "type": "object",
+      "required": ["passed", "failed", "warnings"],
+      "properties": {
+        "passed": { "type": "integer", "minimum": 0 },
+        "failed": { "type": "integer", "minimum": 0 },
+        "warnings": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "gate", "rule", "requirement", "severity", "status", "message"],
+        "properties": {
+          "id": { "type": "string" },
+          "gate": { "type": "string" },
+          "rule": { "type": "string" },
+          "requirement": { "enum": ["MUST", "SHOULD", "MAY"] },
+          "severity": { "enum": ["critical", "major", "minor", "info"] },
+          "status": { "enum": ["open", "resolved", "accepted"] },
+          "slide_id": { "type": ["string", "null"] },
+          "block_id": { "type": ["string", "null"] },
+          "message": { "type": "string" },
+          "evidence": { "type": ["string", "null"] },
+          "suggested_fix": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "checked_at": { "type": "string", "format": "date-time" }
+  },
+  "additionalProperties": true
+}

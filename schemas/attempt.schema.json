@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slide-system.local/schemas/attempt.schema.json",
+  "title": "Slide System Attempt",
+  "type": "object",
+  "required": ["schema_version", "run_id", "attempt", "status", "created_at", "input_hash", "artifacts"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "run_id": { "type": "string" },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "status": { "enum": ["created", "generating", "qa", "needs_revision", "ready_for_review", "accepted", "failed"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "input_hash": { "type": ["string", "null"] },
+    "artifacts": { "type": "object" }
+  },
+  "additionalProperties": true
+}

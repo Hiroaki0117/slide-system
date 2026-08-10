@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slide-system.local/schemas/deck.schema.json",
+  "title": "Slide System Deck",
+  "type": "object",
+  "required": ["schema_version", "deck_id", "run_id", "attempt", "metadata", "context", "slides", "sources"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "deck_id": { "type": "string", "minLength": 1 },
+    "run_id": { "type": "string", "pattern": "^run_[0-9]{8}_[0-9]{3}$" },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "metadata": {
+      "type": "object",
+      "required": ["title", "date", "language"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "subtitle": { "type": ["string", "null"] },
+        "date": { "type": "string" },
+        "author": { "type": ["string", "null"] },
+        "organization": { "type": ["string", "null"] },
+        "language": { "type": "string", "minLength": 2 }
+      },
+      "additionalProperties": false
+    },
+    "context": {
+      "type": "object",
+      "required": ["purpose", "audience", "mode", "core_message"],
+      "properties": {
+        "purpose": { "type": "string", "minLength": 1 },
+        "audience": { "type": "string", "minLength": 1 },
+        "mode": { "enum": ["standalone", "presented", "training"] },
+        "core_message": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": true
+    },
+    "narrative": { "type": "object" },
+    "slides": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "role", "title", "layout", "blocks", "visual", "source_refs"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "role": { "type": "string", "minLength": 1 },
+          "title": { "type": "string" },
+          "subtitle": { "type": ["string", "null"] },
+          "takeaway": { "type": ["string", "null"] },
+          "layout": {
+            "type": "object",
+            "required": ["family", "density"],
+            "properties": {
+              "family": { "type": "string", "minLength": 1 },
+              "variant": { "type": ["string", "null"] },
+              "density": { "enum": ["low", "medium", "high"] }
+            },
+            "additionalProperties": false
+          },
+          "blocks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["id", "type"],
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "type": {
+                  "enum": ["paragraph", "bullets", "metric", "comparison", "timeline", "process", "table", "callout", "quote", "image", "chart"]
+                },
+                "source_refs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+              },
+              "additionalProperties": true
+            }
+          },
+          "visual": { "type": "object" },
+          "source_refs": { "type": "array", "items": { "type": "string" }, "uniqueItems": true }
+        },
+        "additionalProperties": false
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "title"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "title": { "type": "string", "minLength": 1 },
+          "publisher": { "type": ["string", "null"] },
+          "url": { "type": ["string", "null"], "format": "uri" },
+          "published_at": { "type": ["string", "null"] },
+          "accessed_at": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

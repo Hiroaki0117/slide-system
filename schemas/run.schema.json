@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slide-system.local/schemas/run.schema.json",
+  "title": "Slide System Run",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "run_id",
+    "status",
+    "display",
+    "timestamps",
+    "input",
+    "execution",
+    "versions",
+    "design",
+    "output",
+    "progress",
+    "quality",
+    "delivery",
+    "guidance"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "run_id": { "type": "string", "pattern": "^run_[0-9]{8}_[0-9]{3}$" },
+    "status": {
+      "enum": [
+        "created",
+        "questions_pending",
+        "confirmation_pending",
+        "approved",
+        "generating",
+        "qa",
+        "needs_revision",
+        "ready_for_review",
+        "complete",
+        "blocked",
+        "failed",
+        "cancelled"
+      ]
+    },
+    "display": {
+      "type": "object",
+      "required": ["title", "summary", "tags", "thumbnail"],
+      "properties": {
+        "title": { "type": "string", "minLength": 1 },
+        "summary": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" }, "uniqueItems": true },
+        "thumbnail": { "type": ["string", "null"] }
+      },
+      "additionalProperties": false
+    },
+    "timestamps": {
+      "type": "object",
+      "required": ["created_at", "updated_at", "completed_at"],
+      "properties": {
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" },
+        "completed_at": { "type": ["string", "null"], "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+    "lineage": { "type": "object" },
+    "input": { "type": "object" },
+    "execution": { "type": "object" },
+    "versions": { "type": "object" },
+    "design": { "type": "object" },
+    "output": { "type": "object" },
+    "progress": { "type": "object" },
+    "quality": { "type": "object" },
+    "delivery": { "type": "object" },
+    "guidance": { "type": "object" },
+    "sessions": { "type": "array", "items": { "type": "object" } },
+    "resolved_config": { "type": "object" }
+  },
+  "additionalProperties": false
+}
