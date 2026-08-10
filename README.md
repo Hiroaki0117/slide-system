@@ -1,161 +1,389 @@
 # Slide System
 
-## Claudeカスタムスキル版（試作）
+短い依頼と不完全な元資料から、毎回同じ制作ルールで読みやすいスライドを作るための仕様・Claudeスキル・ローカルハーネスです。
 
-Claudeの利用枠に合わせて、無料版と有料版の配布ZIPを分けます。共通のテンプレート、フォント、生成・検査スクリプトは`skills/slide-system/`で一元管理し、各プランの進行ルールを`variants/`から重ねてZIPを生成します。有料版には00〜60の正本をそのまま同梱します。
+現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 0で、制作履歴の作成、一覧、検索、再開位置の確認、HTML管理画面まで実装しています。
 
-| 配布物 | 位置づけ | 状態 |
+## 最初に選ぶもの
+
+利用方法は3つあります。
+
+| 利用方法 | 向いている人 | 現在の状態 |
 |---|---|---|
-| `dist/slide-system-paid-v0.1.0.zip` | 有料版Claude向け。00〜60を正本として一括制作、全ページ検査、PASSまでの修正ループを実行 | ローカル回帰検証済み・有料版Claude実機検証待ち |
-| `dist/slide-system-free-v0.2.13.zip` | 無料版Claude向け。具体的な対象を扱う資料の視覚選択、同型レイアウトの反復警告、ページ単位の公式根拠を追加 | ローカル回帰検証済み・無料版Claude実機検証待ち |
-| `dist/slide-system-free-v0.2.12.zip` | 無料版Claude向け。特定題材の専用ロジックを配布物から除き、確認・構成・文字量・根拠・条件可視化を汎用化 | 旅行資料で実機検証済み・視覚反復とページ単位の根拠に課題があるため保存 |
-| `dist/slide-system-free-v0.2.11.zip` | 無料版Claude向け。相談中の再制作を止める検証版 | 題材固有の処理が入り込んだため非推奨・履歴として保存 |
-| `dist/slide-system-free-v0.2.10.zip` | 無料版Claude向け。定例メニューの現状と提案を分離し、維持・変更・中止の判断と理由を必須化 | ローカル回帰検証済み・無料版Claude実機検証待ち |
-| `dist/slide-system-free-v0.2.9.zip` | 無料版Claude向け。ページ数を固定せず、長い比較値と反復メニューを概要・詳細へ動的分割 | ローカル回帰検証済み・無料版Claude実機検証待ち |
-| `dist/slide-system-free-v0.2.8.zip` | 無料版Claude向け。文字過多をレイアウト別に検査し、検証未完了HTMLからのPDF化を禁止 | ローカル回帰検証済み・無料版Claude実機検証待ち |
-| `dist/slide-system-free-v0.2.7.zip` | 無料版Claude向け。表の条件付き自動分割とHTML納品時の利用者確認を追加 | ローカル回帰検証済み・無料版Claude実機検証待ち |
-| `dist/slide-system-free-v0.2.6.zip` | 無料版Claude向け。短い入力を従来と同じ厳格な検証モデルへ展開し、HTMLを必ず先に残す軽量ビルダー版 | ローカル回帰検証済み・無料版Claude実機検証待ち |
-| `dist/slide-system-free-v0.2.5.zip` | 無料版Claude向け。質問回答後の無ツール確認ゲートと検索予算を強化した版 | 実機検証済み・承認後の構築処理で上限到達したため保存 |
-| `dist/slide-system-free-v0.2.4.zip` | 無料版Claude向け第5回改善版 | 実機検証済み・承認前の検索で上限到達したため保存 |
-| `dist/slide-system-free-v0.2.3.zip` | 無料版Claude向け第4回改善版 | 実機検証済み・PDF上限と内容検査に課題があるため保存 |
-| `dist/slide-system-free-v0.2.2.zip` | 無料版Claude向け第3回改善版 | 実機検証済み・内容と修正ターンに課題があるため保存 |
-| `dist/slide-system-free-v0.2.1.zip` | 無料版Claude向け第2回改善版 | 実機検証済み・ロードマップ具体性に課題があるため保存 |
-| `dist/slide-system-free-v0.2.0.zip` | 無料版Claude向け初回段階納品版 | 実機検証済み・課題ありのため保存 |
-| `dist/slide-system-skill-v0.1.2.zip` | 従来の一括制作版。有料版設計前のベース | 新しい有料版へ置換・履歴として保存 |
+| Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.13`で一区切り |
+| Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.0`、実機検証待ち |
+| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 0実装中 |
 
-無料版は`v0.2.13`で一区切りとし、以後は重大な不具合だけを修正します。有料版は00〜60への忠実性、ビジュアル、全ページQAを優先して検証します。
+Claude向けZIPとローカルハーネスは併存します。Claude Webだけで完結したい場合はZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
 
-登録手順:
+## Claudeスキルを使う
 
-1. Claudeの「Customize > Skills」を開きます。
-2. 無料版では、スキル追加画面から`slide-system-free-v0.2.13.zip`をアップロードします。
-3. 有料版では、スキル追加画面から`slide-system-paid-v0.1.0.zip`をアップロードします。
-4. コード実行とファイル作成が有効になっていることを確認します。
-5. 新しいチャットで対象のスキルだけを有効にし、普段どおりの短い依頼文と素材だけを渡します。
+### 配布ファイル
 
-比較テストでは、従来のプロジェクト仕様書を同時に添付しません。無料版スキルだけを有効にして、`test-cases/01_sub4_roadmap/REQUEST.md`の依頼文と`source/RUNNING_NOTES.md`だけを渡します。無料版の手順は`test-cases/01_sub4_roadmap/FREE_SKILL_TEST.md`にまとめています。
+| ファイル | 内容 |
+|---|---|
+| `dist/slide-system-free-v0.2.13.zip` | 無料版向け。質問、構成確認、HTML先行納品、利用枠を意識した段階制作 |
+| `dist/slide-system-paid-v0.1.0.zip` | 有料版向け。00〜60正本、全ページ検査、HTML/PDFの一括制作 |
 
-無料版は、承認後の最初の制作ターンでHTML下書きを納品して必ず停止します。`どう思う`や`意見を教えて`は制作指示として扱わず、構成案を提示して再確認します。題材固有の知識や数値ルールはスキルへ固定せず、その依頼に必要な範囲だけを調査します。段階型の資料では対象、期間、目的、確認点、進行・維持・見直し・停止条件を示します。繰り返す項目は現状と提案を分け、共通の時間軸がある場合は比較しやすい横断表を優先します。1ページに詰め込まず、必要ならページ数を増やします。HTML納品時には、構成と結論、文言・数値・出典、前提条件と次の行動の3点を利用者へ確認します。
+過去のZIPも`dist/`に残していますが、通常は上記の最新版を使用してください。
 
-Claudeのプロジェクト機能とMarkdown仕様書を使い、短い依頼から一貫した品質のスライドを作るための仕様群です。
+### 登録手順
 
-## 現在の状態
+1. GitHubからリポジトリまたは対象ZIPをダウンロードします。
+2. Claudeの`Customize > Skills`を開きます。
+3. 無料版または有料版のZIPをアップロードします。
+4. コード実行とファイル作成が有効であることを確認します。
+5. 新しいチャットで対象スキルだけを有効にします。
+6. 普段どおりの短い依頼文と、手元にある資料を渡します。
 
-- バージョン: `0.9.2`
-- 状態: 無料版`v0.2.13`を固定し、有料版`v0.1.0`へ00〜60の正本、全ページQA、無制限の修正ループを実装
-- 既定の出力プロファイル: `html_pdf`
-- 既定のコンテンツモード: `standalone`
-- 既定のデザインテーマ: `warm_clean`
-- 既定のレイアウト方式: `hybrid`
-- 次の工程: 有料版Claudeへ`v0.1.0`を登録し、短い依頼と不完全な元資料から、確認→一括制作→全ページQA→HTML/PDF納品を実機検証する
+比較テストでは、ZIPと同時に00〜60を別添付しません。二重の指示で挙動が変わるのを防ぐためです。
 
-現在の仕様は初期仮説です。実際のスライドを一度生成し、出力と検査まで完了できることを確認してから`1.0.0`とします。
-
-## 提供方針
-
-設計・検証中はClaudeプロジェクトに仕様書を登録し、新しいチャットでも同じ制作ルールが適用されるか確認します。
-
-仕様と実地テストが安定した後は、Claudeのカスタムスキルとしてパッケージ化します。最終的な公開形態は次のとおりです。
-
-- GitHubリポジトリ: 仕様書、変更履歴、検証内容の原本
-- GitHub Releases: バージョンごとの公開場所
-- `slide-system-vX.Y.Z.zip`: 各ユーザーがClaudeへアップロードする配布物
-- `README.md`: 登録方法、利用方法、対応形式、既知の制約
-
-無料プランの利用者には、Web版またはデスクトップ版の`Customize > Skills`からZIPを登録し、スキルを有効化してもらう想定です。登録後は、同じClaudeアカウントのスマホ版からも利用する想定とします。ファイル生成には、Claudeの「コード実行とファイル作成」を有効にする必要があります。
-
-初回登録はWeb版またはデスクトップ版を推奨します。スマホではPDFを基本の確認形式とし、PPTXの閲覧や編集には対応アプリを使用します。
-
-## ロードマップ
-
-1. `standalone`、`presented`、研修・教材の代表ケースで実際のスライドを生成する。
-2. HTML/PDFとPPTX/PDFの生成結果を検査し、問題を仕様書へ反映する。
-3. 検証済みの仕様をClaudeスキルへ変換する。
-4. 新しいチャットとスマホ版でスキルの起動、質問、生成、ダウンロードを確認する。
-5. バージョン付きZIPをGitHub Releasesで公開する。
-
-## ファイル構成
-
-| ファイル | 役割 | 状態 |
-|---|---|---|
-| `PROJECT_INSTRUCTIONS.md` | Claudeのプロジェクト指示欄に貼り付ける指示 | 作成済み |
-| `00_MASTER.md` | 制作工程、仕様の優先順位、既定値 | 作成済み |
-| `10_CONTENT.md` | 構成、文章、情報量 | 作成済み |
-| `20_DESIGN.md` | 色、文字、余白、トンマナ | 作成済み |
-| `30_LAYOUTS.md` | レイアウトタイプと選択条件 | 作成済み |
-| `40_VISUALS.md` | 写真、イラスト、図解、グラフ、表、スクリーンショット | 作成済み |
-| `50_OUTPUTS.md` | HTML、PPTX、PDFの出力ルール | 作成済み |
-| `60_QA.md` | 着手前確認、検査、修正ループ、完成判定 | 作成済み |
-| `skills/slide-system/` | 無料版・有料版で共有する仕様、テンプレート、フォント、生成・検査処理 | 作成済み |
-| `variants/slide-system-free/` | 無料版だけの段階納品ワークフロー | 作成済み |
-| `variants/slide-system-paid/` | 有料版の00〜60準拠、一括制作、完全QAワークフロー | 作成済み |
-| `scripts/build_skill_package.py` | 共通部分へ派生ルールを重ねて配布ZIPを生成する | 作成済み |
-| `scripts/test_paid_package_contract.py` | 有料版ZIPと00〜60正本の一致、完全QA契約を検査する | 作成済み |
-| `test-cases/` | 実利用に近い入力、期待結果、実行結果、生成物 | 検証開始 |
-
-将来、必要に応じて`examples/`を追加します。作例とテストケースは仕様を補足する参考資料であり、文章で書かれた仕様より優先しません。
-
-### テーマの追加方針
-
-初期版では`warm_clean`だけを提供します。第2テーマが必要になった時点で、`20_DESIGN.md`と`40_VISUALS.md`のテーマ拡張契約に従い、テーマ別ファイルへ分離します。資料タイプからテーマを自動選択せず、ユーザー指定がない場合は引き続き`warm_clean`を使用します。
-
-## 検証期間中のClaudeプロジェクト設定
-
-1. Claudeでスライド作成専用のプロジェクトを作成します。
-2. `PROJECT_INSTRUCTIONS.md`の本文をプロジェクト指示欄に貼り付けます。
-3. `00_MASTER.md`、`10_CONTENT.md`、`20_DESIGN.md`、`30_LAYOUTS.md`、`40_VISUALS.md`、`50_OUTPUTS.md`、`60_QA.md`をプロジェクト知識に追加します。
-4. プロジェクト内で新しいチャットを開始します。
-5. 元資料、対象者、利用目的を伝えてスライド作成を依頼します。
-
-プロジェクト名や説明文だけにルールを書かず、必ずプロジェクト指示欄とプロジェクト知識を使用します。
-
-## 最小の依頼例
+### 最小の依頼例
 
 ```text
 添付した記事をもとに、初心者向けのスライドを作ってください。
 社内勉強会で使用します。
 ```
 
-出力形式を指定する場合は、次のように追加します。
+AI向けに完璧な依頼文を準備する必要はありません。不足情報を質問し、制作条件と構成を確認してから進むこと自体がテスト対象です。
+
+### 無料版の納品順
+
+無料版は利用枠を考慮し、原則として次の順番で進みます。
 
 ```text
-PowerPointとPDFで出力してください。
+必要な質問
+  → 制作内容の確認
+  → HTML下書き
+  → 利用者の確認
+  → 必要な場合だけPDF
 ```
 
-出力形式の指定がなければ、`50_OUTPUTS.md`に定義した既定の`html_pdf`を使用します。
+相談や意見確認だけで制作を始めず、制作内容の明示的な承認を必要とします。
 
-## 仕様の管理方針
+## ローカルハーネスを使う
 
-- `PROJECT_INSTRUCTIONS.md`は短く保ち、Claudeが毎回行う行動だけを記載します。
-- `00_MASTER.md`には制作工程と仕様間の関係を記載します。
-- 個別の数値、デザイン、レイアウト、出力条件は対応する個別仕様書に記載します。
-- 同じルールを複数ファイルに重複させないようにします。
-- 変更時は各ファイルのバージョンと更新日を更新します。
-- 仕様を正式版にする前に、曖昧な依頼、長文原稿、形式指定、出力失敗のテストを行います。
+### 現在できること
 
-## 推奨する検証
+- 新しい制作記録（Run）の作成
+- タイトル、概要、タグ、利用AIの保存
+- 最近の制作一覧
+- Run IDだけでなくタイトルの一部による検索
+- 最後に使ったRunの確認
+- 別セッションでの再開位置表示
+- ブラウザで見るローカル管理画面
+- `run.json`と`events.jsonl`の安全な保存
 
-主テストは、AIに詳しくない利用者の実際の使い方を再現します。1〜2文の自然な依頼と、走り書き程度の添付資料を使い、モード、テーマ、出力形式、枚数、構成などを事前に指定しません。入力をAI向けに整えることではなく、Claudeが不足を補い、必要な確認だけを行って成果物まで進めることを検証します。詳細は`test-cases/README.md`を参照してください。
+次はAttempt、承認済みBrief、`deck.json`変換、HTML/PDF生成を接続します。現時点のハーネスCLIだけでは、まだスライド本体を生成しません。
 
-少なくとも次のケースを、新しいチャットで確認します。
+### 必要な環境
 
-1. 出力形式を指定せず、既定形式が選ばれるか。
-2. PowerPointを指定し、`pptx_pdf`が選ばれるか。
-3. 長文を渡したとき、文字を極端に縮小せず整理できるか。
-4. 生成できない形式を、生成済みと報告しないか。
-5. 新しいチャットでもプロジェクト仕様が適用されるか。
-6. 用途から`standalone`と`presented`を正しく選べるか。
-7. 研修資料で、学習目標、演習、理解確認を含む構成になるか。
-8. 対象者に応じて説明水準を変え、複数の対象者を混在させないか。
-9. `warm_clean`の色、文字、強調、固定要素が一貫して適用されるか。
-10. 表紙、文章中心、図表中心のスライドで、余白と装飾量が適切か。
-11. テンプレートまたはブランド指定がある場合に、`warm_clean`を無理に混ぜないか。
-12. 主要ジョブと素材に応じて、12ファミリーから適切なレイアウトを選べるか。
-13. 収容量を超えた場合に、文字を縮小せず分割または別レイアウトを選べるか。
-14. 同じレイアウトの連続使用が、内容上の必要性に基づいているか。
-15. 各ページでビジュアルの役割が選ばれ、不要な装飾で空白を埋めていないか。
-16. 依頼者指定素材が置き換えられず、意図を変える切り抜きや加工をされていないか。
-17. 写真、イラスト、アイコン、図解、グラフ、表、スクリーンショットが`40_VISUALS.md`に従っているか。
-18. 外部素材とAI生成素材の出典、提供元、利用条件を追跡できるか。
-19. 本制作前に元資料、素材、生成・変換・検査能力を確認し、問題がある場合に推奨案を提示できるか。
-20. QAで見つかった問題を修正し、必須項目が合格するまで再生成と再検査を繰り返すか。
+- Python 3.11以上
+- Node.js 20以上
+- Git
+- ChromiumまたはPlaywright管理ブラウザ
+
+PythonはRun管理と生成制御、Node.jsはPlaywrightによる描画とPDF処理に使用します。
+
+### 開発版のセットアップ
+
+PowerShellでリポジトリを開きます。
+
+```powershell
+cd "C:\Users\Hiroaki Nishimura\Documents\slide-system"
+python -m pip install -e .
+npm.cmd install
+npx.cmd playwright install chromium
+```
+
+PowerShellの設定によって`npm`や`npx`が実行できない場合は、上記のように`npm.cmd`と`npx.cmd`を使用してください。
+
+環境を確認します。
+
+```powershell
+slide-system doctor
+```
+
+インストールせずに開発中のコードを試す場合は、次の形式でも実行できます。
+
+```powershell
+$env:PYTHONPATH = "$PWD\src"
+python -m slide_system doctor
+```
+
+### 新しい制作記録を作る
+
+```powershell
+slide-system run new `
+  --title "新入社員向けセキュリティ研修" `
+  --summary "社内研修で使用する基礎教材" `
+  --tag "研修" `
+  --tag "セキュリティ" `
+  --adapter codex
+```
+
+依頼文をMarkdownで用意している場合は、`--request`で登録できます。
+
+```powershell
+slide-system run new `
+  --title "問い合わせ対応の改善提案" `
+  --request ".\request.md" `
+  --adapter claude-code
+```
+
+### 過去の制作を探す
+
+```powershell
+slide-system run list
+```
+
+タイトルの一部でも探せます。
+
+```powershell
+slide-system run status "セキュリティ"
+```
+
+一番最近の制作はRun IDを覚えなくても確認できます。
+
+```powershell
+slide-system run resume --latest
+```
+
+候補が複数ある場合は、勝手に選ばず候補のタイトルとRun IDを表示します。
+
+### ローカル管理画面
+
+```powershell
+slide-system open
+```
+
+ブラウザに次を表示します。
+
+- 制作タイトル
+- 概要
+- 更新日時
+- 現在の状態
+- 使用したAI
+- デザイン
+- 次に必要な操作
+- HTML/PDFへのリンク（生成後）
+- 表紙サムネイル（生成後）
+
+Run IDは内部管理用です。普段はタイトル、サムネイル、更新日時、状態から探します。
+
+ブラウザを自動で開かず、管理画面だけを更新する場合は次を使います。
+
+```powershell
+slide-system open --no-browser
+```
+
+生成された管理画面は`runs/index.html`です。`runs/`は個人の制作履歴を含むため、既定ではGit管理しません。
+
+## ハーネスの完成形
+
+標準フローは次のとおりです。
+
+```text
+依頼・添付資料
+  → 事前検査と質問
+  → 制作条件・構成案の承認
+  → deck.json
+  → 構造QA
+  → HTML
+  → 全ページ視覚QA
+  → HTML確認
+  → PDF
+  → 最終QA
+  → 人間の承認
+  → 保存・比較
+```
+
+自動QAがPASSしても完成にはしません。利用者が内容と見た目を承認した後にRunを`complete`とします。
+
+## 制作履歴
+
+1件の制作はRunとして保存します。
+
+```text
+runs/
+└─ run_YYYYMMDD_NNN/
+   ├─ run.json
+   ├─ events.jsonl
+   ├─ input/
+   ├─ brief/
+   ├─ attempts/
+   └─ delivery/
+```
+
+- Run: 目的と実行条件が固定された制作単位
+- Attempt: 内容やデザインを修正した候補
+- Step: HTML生成、描画、PDF生成、QAなどの個別処理
+
+チャット履歴ではなくRunのファイルを読むため、CodexやClaude Codeの別セッションから再開できます。
+
+## 00〜60の正規仕様
+
+| ファイル | 役割 |
+|---|---|
+| `PROJECT_INSTRUCTIONS.md` | Claudeプロジェクトで毎回行う動作 |
+| `00_MASTER.md` | 制作工程、優先順位、既定値 |
+| `10_CONTENT.md` | 構成、文章、情報量 |
+| `20_DESIGN.md` | 色、文字、余白、トンマナ |
+| `30_LAYOUTS.md` | レイアウトタイプと選択条件 |
+| `40_VISUALS.md` | 写真、イラスト、図解、グラフ、表 |
+| `50_OUTPUTS.md` | HTML、PPTX、PDFの出力ルール |
+| `60_QA.md` | 制作前確認、検査、修正、完成判定 |
+
+有料版Claudeスキルには00〜60の正本をそのまま同梱します。無料版は利用枠に合わせて手順を圧縮しますが、題材固有の知識は固定しません。
+
+## 設計文書
+
+ハーネスの詳しい設計は`docs/harness/`にあります。
+
+- `ARCHITECTURE.md`: 技術境界と責任分担
+- `DATA_MODEL.md`: Run、Attempt、Step
+- `PIPELINE.md`: 質問から納品までの流れ
+- `QA.md`: PASS/FAILの考え方
+- `ADAPTERS.md`: Codex、Claude Code、Claude Web
+- `ROADMAP.md`: 実装順序
+
+共通JSON Schemaは`schemas/`に置きます。
+
+## リポジトリ構成
+
+```text
+slide-system/
+├─ 00_MASTER.md〜60_QA.md     正規仕様
+├─ PROJECT_INSTRUCTIONS.md    Claudeプロジェクト指示
+├─ src/slide_system/          ローカルハーネス
+├─ schemas/                   共通JSON Schema
+├─ docs/harness/              ハーネス設計
+├─ skills/slide-system/       Claudeスキル共通資産
+├─ variants/                  無料版・有料版の差分
+├─ scripts/                   ZIP生成と回帰テスト
+├─ test-cases/                実利用に近い検証
+├─ dist/                      配布ZIP
+└─ runs/                      ローカル制作履歴（Git対象外）
+```
+
+## デザインの拡張
+
+初期テーマは`warm_clean`です。背景`#FFF8F4`を中心とした、温かく清潔感のあるデザインです。
+
+ハーネスでは、内容、レイアウト、デザインテーマ、レンダラーを分離します。将来のテーマ追加では既存テーマを直接コピーして題材固有ルールを加えるのではなく、共通のデザインパック契約に従います。
+
+第2テーマは、`warm_clean`のデザインパック化と拡張テンプレートが完成してから追加します。資料の題材だけでテーマを自動変更しません。
+
+## テスト
+
+主テストは、AIに詳しくない利用者の使い方を再現します。1〜2文の自然な依頼と、走り書き程度の添付資料を使用し、完璧なプロンプトを入力しません。
+
+現在の回帰テストは次のように実行できます。
+
+```powershell
+python scripts/test_build_deck_validation.py
+python scripts/test_artifact_recovery.py
+python scripts/test_fast_pdf_export.py
+python scripts/test_free_turn_gate_contract.py
+python scripts/test_free_package_generic.py dist/slide-system-free-v0.2.13.zip
+python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.0.zip
+python scripts/test_harness_phase0.py
+```
+
+Node.jsモジュールが通常とは異なる場所にある環境では、`NODE_PATH`の指定が必要になる場合があります。
+
+## 配布ZIPの再生成
+
+無料版の例です。
+
+```powershell
+python scripts/build_skill_package.py `
+  --base skills/slide-system `
+  --variant variants/slide-system-free `
+  --output dist/slide-system-free-v0.2.13.zip `
+  --root-name slide-system-free `
+  --replace
+```
+
+有料版では`--canonical-spec-root .`を追加し、00〜60の正本を同梱します。生成後は必ず対応するパッケージ契約テストを実行してください。
+
+## Gitとプライバシー
+
+GitHubで管理するもの：
+
+- 00〜60
+- ハーネスとスキーマ
+- Claudeスキル
+- 匿名化したテストケース
+- 承認済みベースライン
+- QA・比較形式
+
+原則としてGitHubへ入れないもの：
+
+- 個人の依頼文
+- 未加工の添付資料
+- すべての途中HTML/PDF
+- 全スクリーンショット
+- キャッシュ
+- APIキーや認証情報
+
+`runs/`、`.cache/`、`.state/`は`.gitignore`に含まれます。
+
+## トラブルシューティング
+
+### `slide-system`が見つからない
+
+```powershell
+python -m pip install -e .
+```
+
+または次を使用します。
+
+```powershell
+$env:PYTHONPATH = "$PWD\src"
+python -m slide_system doctor
+```
+
+### Node.jsが見つからない
+
+Node.js 20以上をインストールし、PowerShellを開き直してから確認します。
+
+```powershell
+node --version
+```
+
+### Playwrightのブラウザがない
+
+```powershell
+npx.cmd playwright install chromium
+```
+
+### 前回の制作が分からない
+
+```powershell
+slide-system open
+```
+
+または次を使います。
+
+```powershell
+slide-system run resume --latest
+```
+
+### PDFだけを修正したい
+
+PDFは編集データの正本ではありません。`deck.json`またはハーネス生成HTMLがあればそこから再開します。PDFしかない場合は、完全復元ではなく新しいRunでの再構築になります。
+
+## ロードマップ
+
+1. Run、Attempt、Stepと再開処理
+2. `warm_clean`デザインパック
+3. ハーネスv1 `deck.json`からHTML/PDF生成
+4. 自動QAと修正ループ
+5. Codex・Claude Codeアダプター
+6. ローカル管理画面の成果物・比較機能
+7. 複数題材のテストケースとベースライン
+8. Claude WebとのBundle連携
+9. npm配布ラッパーとリリース自動化
+
+詳細は`docs/harness/ROADMAP.md`を参照してください。
