@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import sys
 import tempfile
 from pathlib import Path
@@ -32,6 +33,7 @@ def config() -> dict:
 def main() -> int:
     with tempfile.TemporaryDirectory() as temporary:
         project_root = Path(temporary)
+        shutil.copytree(ROOT / "schemas", project_root / "schemas")
         request = project_root / "request.md"
         request.write_text("# 依頼\n\n短い依頼です。\n", encoding="utf-8")
 

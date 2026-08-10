@@ -7,7 +7,9 @@ from typing import Any
 
 from . import __version__
 from .dashboard import write_dashboard
+from .hashing import sha256_file, sha256_files, sha256_json
 from .storage import append_jsonl, atomic_write_json, atomic_write_text, read_json
+from .validation import validate_document
 
 
 STATUS_LABELS = {
@@ -148,7 +150,35 @@ def create_run(
             "require_human_approval": config.get("qa", {}).get("require_human_approval", True),
         },
     }
+    validate_document(project_root, "run", run)
     atomic_write_json(run_dir / "run.json", run)
+    specification_files = [
+        project_root / "PROJECT_INSTRUCTIONS.md",
+        *(project_root / f"{number}_{name}.md" for number, name in (
+            ("00", "MASTER"),
+            ("10", "CONTENT"),
+            ("20", "DESIGN"),
+            ("30", "LAYOUTS"),
+            ("40", "VISUALS"),
+            ("50", "OUTPUTS"),
+            ("60", "QA"),
+        )),
+    ]
+    existing_specification_files = [path for path in specification_files if path.is_file()]
+    font_path = project_root / "skills/slide-system/assets/fonts/NotoSansJP-Variable.ttf"
+    run_lock = {
+        "schema_version": "1.0",
+        "run_id": run_id,
+        "created_at": timestamp,
+        "versions": run["versions"],
+        "resolved_config": run["resolved_config"],
+        "checksums": {
+            "specification": sha256_files(existing_specification_files, relative_to=project_root),
+            "configuration": sha256_json(config),
+            "font_bundle": sha256_file(font_path) if font_path.is_file() else None,
+        },
+    }
+    atomic_write_json(run_dir / "run.lock.json", run_lock)
     append_jsonl(
         run_dir / "events.jsonl",
         {"event": "run_created", "at": timestamp, "run_id": run_id, "adapter": adapter},
