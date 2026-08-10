@@ -79,7 +79,7 @@ def render_dashboard(entries: list[dict[str, Any]]) -> str:
       const actions=text('div','','actions');
       if(run.html) {{ const a=text('a','HTMLを開く'); a.href=run.html; actions.append(a); }}
       if(run.pdf) {{ const a=text('a','PDFを開く','secondary'); a.href=run.pdf; actions.append(a); }}
-      const folder=text('a','制作フォルダ','secondary'); folder.href=`./${{run.run_id}}/`; actions.append(folder); body.append(actions);
+      const folder=text('a','詳細と比較','secondary'); folder.href=run.detail; actions.append(folder); body.append(actions);
       article.append(thumb,body); return article;
     }}
     function render() {{
@@ -97,3 +97,31 @@ def render_dashboard(entries: list[dict[str, Any]]) -> str:
 
 def write_dashboard(path: Path, entries: list[dict[str, Any]]) -> None:
     atomic_write_text(path, render_dashboard(entries))
+
+
+def render_run_detail(run: dict[str, Any], attempts: list[dict[str, Any]]) -> str:
+    data = _embedded_json({"run": run, "attempts": attempts})
+    return f"""<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Slide System - 制作詳細</title>
+<style>
+:root {{ --bg:#f5f2f0;--surface:#fffaf7;--text:#443a3a;--muted:#746868;--accent:#de837d;--line:#eaded8; }}
+*{{box-sizing:border-box}} body{{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans JP","Yu Gothic",Meiryo,sans-serif}}
+header,main{{max-width:1120px;margin:auto;padding:28px clamp(18px,5vw,56px)}} header{{padding-bottom:16px}} a{{color:#8c4540}} .back{{font-weight:700;text-decoration:none}}
+h1{{margin:22px 0 8px;font-size:clamp(28px,5vw,46px)}} .lead{{color:var(--muted);line-height:1.6}} .status{{display:inline-block;border-radius:999px;background:#fde7e3;color:#8c4540;padding:7px 12px;font-weight:700}}
+.next{{margin:22px 0;padding:16px 18px;border-left:5px solid var(--accent);background:var(--surface);line-height:1.6}} .attempts{{display:grid;gap:18px}}
+article{{background:white;border:1px solid var(--line);border-radius:18px;padding:20px}} article.latest{{border:2px solid var(--accent)}} h2{{margin:0 0 8px}} dl{{display:grid;grid-template-columns:auto 1fr;gap:7px 14px}} dt{{color:var(--muted)}} dd{{margin:0}}
+.actions{{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}} .actions a{{display:inline-flex;align-items:center;min-height:40px;padding:0 13px;border-radius:10px;background:var(--text);color:white;text-decoration:none;font-weight:700}} .actions a.secondary{{background:white;color:var(--text);border:1px solid var(--line)}}
+code{{word-break:break-all}} .empty{{padding:32px;background:white;border:1px dashed var(--line);border-radius:18px;color:var(--muted)}}
+</style></head><body><header><a class="back" href="../index.html">← 制作一覧へ</a><h1 id="title"></h1><p class="lead" id="summary"></p><span class="status" id="status"></span><p class="next" id="next"></p></header><main><h2>制作案の履歴</h2><section class="attempts" id="attempts"></section></main>
+<script type="application/json" id="detail-data">{data}</script><script>
+const data=JSON.parse(document.getElementById('detail-data').textContent), run=data.run;
+document.getElementById('title').textContent=run.title;document.getElementById('summary').textContent=run.summary||'概要はまだ登録されていません。';document.getElementById('status').textContent=run.status_label;document.getElementById('next').textContent=`次の操作: ${{run.next_action||'未設定'}}`;
+const root=document.getElementById('attempts'); const text=(tag,value,cls)=>{{const n=document.createElement(tag);n.textContent=value||'';if(cls)n.className=cls;return n}};
+function attemptCard(item){{const a=text('article','',item.latest?'latest':'');a.append(text('h2',`Attempt ${{String(item.number).padStart(3,'0')}}${{item.latest?'（最新）':''}}`));const dl=document.createElement('dl');for(const [k,v] of [['状態',item.status_label],['理由',item.reason||'未記録'],['QA',item.qa_result||'未実行'],['人の確認',item.review_result||'未確認'],['更新',item.updated_label]]){{dl.append(text('dt',k),text('dd',v))}}a.append(dl);const actions=text('div','','actions');for(const [label,url,cls] of [['HTML',item.html,''],['PDF',item.pdf,'secondary'],['QAレポート',item.qa,'secondary'],['レビュー',item.review,'secondary'],['コンタクトシート',item.contact_sheet,'secondary']]){{if(url){{const link=text('a',label,cls);link.href=url;actions.append(link)}}}}a.append(actions);return a}}
+root.replaceChildren(...(data.attempts.length?data.attempts.map(attemptCard):[text('div','制作案はまだありません。','empty')]));
+</script></body></html>"""
+
+
+def write_run_detail(path: Path, run: dict[str, Any], attempts: list[dict[str, Any]]) -> None:
+    atomic_write_text(path, render_run_detail(run, attempts))

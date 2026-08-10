@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from . import __version__
-from .dashboard import write_dashboard
+from .dashboard import write_dashboard, write_run_detail
 from .hashing import sha256_file, sha256_files, sha256_json
 from .storage import append_jsonl, atomic_write_json, atomic_write_text, read_json
 from .validation import validate_document
@@ -290,8 +290,40 @@ def _index_entry(run: dict[str, Any]) -> dict[str, Any]:
         "next_action": guidance.get("next_action"),
         "html": _relative_artifact(run, "html"),
         "pdf": _relative_artifact(run, "pdf"),
+        "detail": f"./{run['run_id']}/index.html",
         "search_text": " ".join([title, summary, *tags]).casefold(),
     }
+
+
+def _attempt_entries(run: dict[str, Any]) -> list[dict[str, Any]]:
+    run_dir = Path(run["_run_dir"])
+    current = int(run.get("progress", {}).get("current_attempt", 0))
+    entries: list[dict[str, Any]] = []
+    for path in sorted((run_dir / "attempts").glob("[0-9][0-9][0-9]/attempt.json"), reverse=True):
+        attempt = read_json(path)
+        number = int(attempt["attempt"])
+        attempt_dir = path.parent
+        qa_path = attempt_dir / "qa-report.json"
+        review_path = attempt_dir / "review.json"
+        qa = read_json(qa_path) if qa_path.is_file() else {}
+        review = read_json(review_path) if review_path.is_file() else {}
+        updated = attempt.get("updated_at") or attempt.get("created_at") or ""
+        entries.append({
+            "number": number,
+            "latest": number == current,
+            "status": attempt.get("status"),
+            "status_label": {"created": "作成済み", "generating": "制作中", "qa": "QA中", "needs_revision": "修正が必要", "ready_for_review": "確認待ち", "accepted": "採用", "failed": "失敗"}.get(attempt.get("status"), attempt.get("status", "不明")),
+            "reason": attempt.get("reason", ""),
+            "qa_result": qa.get("result"),
+            "review_result": review.get("result"),
+            "updated_label": updated.replace("T", " ")[:16] if updated else "不明",
+            "html": f"attempts/{number:03d}/deck.html" if (attempt_dir / "deck.html").is_file() else None,
+            "pdf": f"attempts/{number:03d}/deck.pdf" if (attempt_dir / "deck.pdf").is_file() else None,
+            "qa": f"attempts/{number:03d}/qa-report.json" if qa_path.is_file() else None,
+            "review": f"attempts/{number:03d}/review.json" if review_path.is_file() else None,
+            "contact_sheet": f"attempts/{number:03d}/renders/contact-sheet.png" if (attempt_dir / "renders" / "contact-sheet.png").is_file() else None,
+        })
+    return entries
 
 
 def regenerate_index(project_root: Path, config: dict[str, Any]) -> list[dict[str, Any]]:
@@ -303,4 +335,7 @@ def regenerate_index(project_root: Path, config: dict[str, Any]) -> list[dict[st
     atomic_write_json(root / "latest.json", latest)
     if config.get("runs", {}).get("generate_index", True):
         write_dashboard(root / "index.html", entries)
+        for run in list_runs(project_root, config):
+            entry = _index_entry(run)
+            write_run_detail(Path(run["_run_dir"]) / "index.html", entry, _attempt_entries(run))
     return entries
