@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://slide-system.local/schemas/bundle-manifest.schema.json",
+  "title": "Slide System Bundle Manifest",
+  "type": "object",
+  "required": ["schema_version", "bundle_type", "bundle_id", "run_id", "created_at", "files"],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "bundle_type": { "enum": ["run_bundle", "result_bundle"] },
+    "bundle_id": { "type": "string", "pattern": "^[a-z0-9_-]+$" },
+    "run_id": { "type": "string", "pattern": "^run_[0-9]{8}_[0-9]{3}$" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "source_bundle_id": { "type": ["string", "null"] },
+    "files": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+  },
+  "additionalProperties": false
+}
