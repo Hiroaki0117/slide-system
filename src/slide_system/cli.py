@@ -235,6 +235,12 @@ def build_parser() -> argparse.ArgumentParser:
     adapter_prepare.add_argument("selector")
     adapter_prepare.add_argument("--adapter", required=True, choices=["codex", "claude-code"])
     adapter_prepare.add_argument("--owner", default="manual")
+    review_parser = subparsers.add_parser("review", help="利用者レビューを記録する")
+    review_subparsers = review_parser.add_subparsers(dest="review_command", required=True)
+    review_record = review_subparsers.add_parser("record", help="レビューJSONを記録し、採用時はdeliveryへ保存する")
+    review_record.add_argument("selector")
+    review_record.add_argument("--file", required=True, type=Path)
+    review_record.add_argument("--owner", default="manual")
     return parser
 
 
@@ -440,5 +446,16 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc), file=sys.stderr)
             return 2
         print(f"再開指示: {output}")
+        return 0
+    if args.command == "review" and args.review_command == "record":
+        from .reviews import record_review
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            run = record_review(project_root, config, selected["run_id"], review_source=args.file, owner=args.owner)
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        _print_run(run)
         return 0
     return 2
