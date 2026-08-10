@@ -164,7 +164,7 @@ def build_parser() -> argparse.ArgumentParser:
     open_parser.add_argument("--no-browser", action="store_true", help="管理画面を生成するだけにする")
 
     validate_parser = subparsers.add_parser("validate", help="JSONファイルを共通スキーマで検証する")
-    validate_parser.add_argument("schema", choices=["run", "deck", "approved-brief", "attempt", "step", "qa-report", "review", "design-pack"])
+    validate_parser.add_argument("schema", choices=["run", "deck", "approved-brief", "attempt", "step", "qa-report", "review", "design-pack", "adapter"])
     validate_parser.add_argument("path", type=Path)
 
     run_parser = subparsers.add_parser("run", help="制作記録を管理する")
@@ -229,6 +229,12 @@ def build_parser() -> argparse.ArgumentParser:
     render_parser.add_argument("selector")
     render_parser.add_argument("--pdf-approval", required=True, help="PDF生成を依頼した利用者のメッセージ")
     render_parser.add_argument("--owner", default="manual")
+    adapter_parser = subparsers.add_parser("adapter", help="AI別の再開指示を作る")
+    adapter_subparsers = adapter_parser.add_subparsers(dest="adapter_command", required=True)
+    adapter_prepare = adapter_subparsers.add_parser("prepare", help="現在のRun状態から再開指示を生成する")
+    adapter_prepare.add_argument("selector")
+    adapter_prepare.add_argument("--adapter", required=True, choices=["codex", "claude-code"])
+    adapter_prepare.add_argument("--owner", default="manual")
     return parser
 
 
@@ -423,5 +429,16 @@ def main(argv: list[str] | None = None) -> int:
         print(f"HTML: {result['html']}")
         print(f"PDF: {result['pdf']}")
         print(f"視覚QA: {result['report']}")
+        return 0
+    if args.command == "adapter" and args.adapter_command == "prepare":
+        from .adapters import prepare_session
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            output = prepare_session(project_root, config, selected["run_id"], adapter_id=args.adapter, owner=args.owner)
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(f"再開指示: {output}")
         return 0
     return 2
