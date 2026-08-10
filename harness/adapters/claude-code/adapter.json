@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "id": "claude-code",
+  "name": "Claude Code",
+  "version": "1.0.0",
+  "providers": ["Anthropic Claude Code"],
+  "capabilities": { "read_files": true, "write_files": true, "run_commands": true, "render_browser": true },
+  "entrypoint": "INSTRUCTIONS.md"
+}
