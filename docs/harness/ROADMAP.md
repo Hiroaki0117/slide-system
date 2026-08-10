@@ -47,14 +47,19 @@
 - 状態変更とレビュー導線
 - 比較画面
 
-## Phase 6: テストケースとベースライン（次）
+## Phase 6: テストケースとベースライン（完了）
 
 - 複数題材のテストケース
 - 承認済みベースライン
 - 比較レポート
 
-## Phase 7以降
+## Phase 7: Claude Web Bundle（次）
 
-- Claude WebのBundle連携
+- Run Bundleの書き出し
+- Claude Web結果Bundleの安全な取り込み
+- ZIPパストラバーサルと許可ファイル検査
+
+## Phase 8
+
 - リリース自動化
 - npm配布ラッパー
