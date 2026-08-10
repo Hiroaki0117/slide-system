@@ -2,7 +2,7 @@
 
 短い依頼と不完全な元資料から、毎回同じ制作ルールで読みやすいスライドを作るための仕様・Claudeスキル・ローカルハーネスです。
 
-現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 2まで完了し、制作履歴、承認済みBrief、Attempt・Step、再開、HTML/PDF生成まで実装しています。
+現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 3まで完了し、制作履歴、HTML/PDF生成、統合QA、修正Attemptまで実装しています。
 
 ## 最初に選ぶもの
 
@@ -12,7 +12,7 @@
 |---|---|---|
 | Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.13`で一区切り |
 | Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.0`、実機検証待ち |
-| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 2完了 |
+| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 3完了 |
 
 Claude向けZIPとローカルハーネスは併存します。Claude Webだけで完結したい場合はZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
 
@@ -86,8 +86,10 @@ AI向けに完璧な依頼文を準備する必要はありません。不足情
 - Attempt単位の自己完結型HTML生成
 - 全ページ画像、コンタクトシート、PDFの生成
 - HTML確認後だけPDFへ進む明示的な承認ゲート
+- 静的・全ページ視覚・PDF・テーマQAの統合レポート
+- QA FAIL時に直前Attemptを保持したまま修正Attemptを作成
 
-次は静的QA、全ページ描画結果、PDF比較を1つのQAレポートへ統合し、修正が必要な場合は新しいAttemptへ進むループを実装します。
+次はCodexとClaude Codeが同じ状態・承認ゲート・再開指示を扱えるアダプターを追加します。
 
 ### 必要な環境
 
@@ -235,6 +237,16 @@ slide-system render run_20260810_001 `
 
 `render`は全ページ画像、コンタクトシート、PDFを最新Attemptへ保存します。承認文がない場合はPDFを生成しません。
 
+QAがFAILした場合は、直前の成果物を上書きせず修正Attemptを作ります。
+
+```powershell
+slide-system attempt revise run_20260810_001 `
+  --reason "QAで見つかった文字あふれを修正" `
+  --owner codex
+```
+
+`--deck`を省略すると直前の`deck.json`を複製し、Attempt番号だけ安全に更新します。
+
 個別工程を記録します。
 
 ```powershell
@@ -355,6 +367,7 @@ python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.0.zip
 python scripts/test_harness_phase0.py
 python scripts/test_harness_phase1.py
 python scripts/test_harness_phase2.py
+python scripts/test_harness_phase3.py
 ```
 
 Node.jsモジュールが通常とは異なる場所にある環境では、`NODE_PATH`の指定が必要になる場合があります。
@@ -446,7 +459,7 @@ PDFは編集データの正本ではありません。`deck.json`またはハー
 1. Run、Attempt、Stepと再開処理（基本機能完了）
 2. `warm_clean`デザインパック（完了）
 3. ハーネスv1 `deck.json`からHTML/PDF生成（完了）
-4. 自動QAと修正ループ
+4. 自動QAと修正ループ（完了）
 5. Codex・Claude Codeアダプター
 6. ローカル管理画面の成果物・比較機能
 7. 複数題材のテストケースとベースライン

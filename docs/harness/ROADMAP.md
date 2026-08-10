@@ -27,7 +27,7 @@
 - 既存ビルダーとの変換層
 - PDF生成
 
-## Phase 3: QA（次）
+## Phase 3: QA（完了）
 
 - 静的QA
 - 全ページ描画
@@ -35,7 +35,7 @@
 - QAレポート統合
 - PASSまでのAttemptループ
 
-## Phase 4: アダプター
+## Phase 4: アダプター（次）
 
 - Codex
 - Claude Code
