@@ -13,6 +13,7 @@ from .attempts import finish_step, start_step
 from .designs import DesignPack, load_design_pack
 from .hashing import sha256_files
 from .legacy import convert_deck_to_legacy
+from .qa import create_qa_report
 from .runs import STATUS_LABELS, find_run, now_iso
 from .state import mutate_run
 from .storage import atomic_write_json, read_json
@@ -98,7 +99,7 @@ def _update_attempt_and_run(
         }
         if qa_result is not None:
             run["quality"]["qa_result"] = qa_result
-            qa_path = artifacts.get("visual_qa") or artifacts.get("static_qa")
+            qa_path = artifacts.get("qa_report") or artifacts.get("visual_qa") or artifacts.get("static_qa")
             run["quality"]["latest_qa"] = f"attempts/{number:03d}/{qa_path}" if qa_path else None
         if design_pack:
             run["design"]["version"] = design_pack.version
@@ -181,6 +182,10 @@ def build_html(
             error={"message": completed.stderr.strip() or completed.stdout.strip() or "HTML生成に失敗しました"},
         )
         report = read_json(report_path) if report_path.is_file() else {}
+        visual_placeholder = attempt_dir / "visual-qa-legacy.json"
+        if not visual_placeholder.exists():
+            atomic_write_json(visual_placeholder, {"status": "FAIL", "failures": [{"code": "VISUAL_NOT_RUN", "message": "静的QAがFAILのため視覚QAは未実行です"}]})
+        qa_report = create_qa_report(project_root, run_id=run_id, attempt=attempt_number, attempt_dir=attempt_dir, design_pack=pack)
         run_status = "needs_revision" if report.get("status") == "FAIL" else "failed"
         _update_attempt_and_run(
             project_root,
@@ -190,7 +195,7 @@ def build_html(
             event="html_build_failed",
             attempt_status="needs_revision" if run_status == "needs_revision" else "failed",
             run_status=run_status,
-            artifacts={"legacy_deck": "build/legacy-deck.json", "static_qa": "static-qa-legacy.json"},
+            artifacts={"legacy_deck": "build/legacy-deck.json", "static_qa": "static-qa-legacy.json", "qa_report": "qa-report.json"},
             last_action="HTML生成または静的QAに失敗しました",
             next_action="QAレポートを確認し、新しいAttemptで修正してください",
             qa_result="FAIL",
@@ -295,6 +300,10 @@ def render_pdf(
         command.extend(["--browser", browser])
     completed = subprocess.run(command, capture_output=True, text=True, check=False)
     success = completed.returncode == 0
+    design_id = str(run.get("design", {}).get("pack") or config.get("defaults", {}).get("design_pack", "warm_clean"))
+    pack = load_design_pack(project_root, design_id)
+    qa_report = create_qa_report(project_root, run_id=run_id, attempt=attempt_number, attempt_dir=attempt_dir, design_pack=pack)
+    success = success and qa_report["result"] == "PASS"
     finish_step(
         project_root,
         config,
@@ -311,6 +320,7 @@ def render_pdf(
         "renders": "renders",
         "contact_sheet": "renders/contact-sheet.png",
         "render_work_state": "build/render-work-state.json",
+        "qa_report": "qa-report.json",
     }
     updated = _update_attempt_and_run(
         project_root,
@@ -323,7 +333,7 @@ def render_pdf(
         artifacts=artifacts,
         last_action="HTML/PDFの全ページQAが完了しました" if success else "視覚QAで問題が見つかりました",
         next_action="HTMLとPDFを確認してください" if success else "QAレポートを確認し、新しいAttemptで修正してください",
-        qa_result="PASS" if success else "FAIL",
+        qa_result=qa_report["result"],
         event_details={"pdf_approval": pdf_approval},
     )
     if not success:
@@ -332,7 +342,7 @@ def render_pdf(
         "run": updated,
         "html": html_path,
         "pdf": pdf_path,
-        "report": report_path,
+        "report": attempt_dir / "qa-report.json",
         "renders": render_dir,
         "attempt": attempt_number,
     }
