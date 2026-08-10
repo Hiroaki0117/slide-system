@@ -1,9 +1,18 @@
 {
-  "name": "slide-system-renderer",
-  "version": "0.1.0",
+  "name": "slide-system-harness",
+  "version": "0.9.0",
   "private": true,
   "type": "module",
-  "description": "Browser rendering and PDF dependencies for slide-system",
+  "description": "Provider-neutral local harness and browser renderer for slide-system",
+  "bin": {
+    "slide-system": "bin/slide-system.mjs"
+  },
+  "files": ["bin", "src", "schemas", "designs", "harness", "skills", "slide-system.config.json", "pyproject.toml", "README.md"],
+  "scripts": {
+    "doctor": "node bin/slide-system.mjs --project-root . doctor",
+    "release:build": "python scripts/build_release.py --replace",
+    "release:check": "python scripts/release_check.py"
+  },
   "engines": {
     "node": ">=20"
   },
