@@ -1,0 +1,14 @@
+{
+  "name": "slide-system-renderer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Browser rendering and PDF dependencies for slide-system",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "pdf-lib": "1.17.1",
+    "playwright": "1.62.0"
+  }
+}

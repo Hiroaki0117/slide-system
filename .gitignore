@@ -1,3 +1,10 @@
 __pycache__/
 *.pyc
 .playwright-cli/
+.cache/
+.state/
+runs/
+node_modules/
+.pytest_cache/
+*.egg-info/
+build/

@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "defaults": {
+    "language": "ja",
+    "mode": "interactive",
+    "design_pack": "warm_clean",
+    "output_profile": "html_pdf",
+    "aspect_ratio": "16:9"
+  },
+  "runs": {
+    "directory": "runs",
+    "generate_index": true,
+    "generate_thumbnails": true
+  },
+  "qa": {
+    "repeat_until_pass": true,
+    "pause_after_failed_attempts": 3,
+    "require_human_approval": true,
+    "require_pdf_parity": true
+  },
+  "delivery": {
+    "keep_html": true,
+    "keep_pdf": true,
+    "keep_contact_sheet": true
+  },
+  "cache": {
+    "enabled": true,
+    "directory": ".cache",
+    "max_size_mb": 2048
+  }
+}
