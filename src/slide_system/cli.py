@@ -164,7 +164,7 @@ def build_parser() -> argparse.ArgumentParser:
     open_parser.add_argument("--no-browser", action="store_true", help="管理画面を生成するだけにする")
 
     validate_parser = subparsers.add_parser("validate", help="JSONファイルを共通スキーマで検証する")
-    validate_parser.add_argument("schema", choices=["run", "deck", "approved-brief", "attempt", "step", "qa-report", "review", "design-pack", "adapter"])
+    validate_parser.add_argument("schema", choices=["run", "deck", "approved-brief", "attempt", "step", "qa-report", "review", "design-pack", "adapter", "baseline"])
     validate_parser.add_argument("path", type=Path)
 
     run_parser = subparsers.add_parser("run", help="制作記録を管理する")
@@ -241,6 +241,16 @@ def build_parser() -> argparse.ArgumentParser:
     review_record.add_argument("selector")
     review_record.add_argument("--file", required=True, type=Path)
     review_record.add_argument("--owner", default="manual")
+    baseline_parser = subparsers.add_parser("baseline", help="承認済み比較基準を管理する")
+    baseline_subparsers = baseline_parser.add_subparsers(dest="baseline_command", required=True)
+    baseline_approve = baseline_subparsers.add_parser("approve", help="完了Runを新しいベースラインとして保存する")
+    baseline_approve.add_argument("selector")
+    baseline_approve.add_argument("--case-id", required=True)
+    baseline_approve.add_argument("--approver", required=True)
+    baseline_approve.add_argument("--note", default="")
+    baseline_compare = baseline_subparsers.add_parser("compare", help="最新Attemptをベースラインと比較する")
+    baseline_compare.add_argument("selector")
+    baseline_compare.add_argument("--baseline", required=True, type=Path)
     return parser
 
 
@@ -457,5 +467,22 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc), file=sys.stderr)
             return 2
         _print_run(run)
+        return 0
+    if args.command == "baseline":
+        from .baselines import approve_baseline, compare_baseline
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            if args.baseline_command == "approve":
+                path = approve_baseline(project_root, config, selected["run_id"], case_id=args.case_id, approver=args.approver, note=args.note)
+                print(f"ベースライン: {path}")
+            else:
+                result = compare_baseline(project_root, config, selected["run_id"], baseline_path=args.baseline)
+                print(f"比較結果: {result['result']}")
+                for item in result["comparisons"]:
+                    print(f"- {item['artifact']}: {item['result']}")
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
         return 0
     return 2
