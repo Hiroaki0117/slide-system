@@ -2,7 +2,7 @@
 
 短い依頼と不完全な元資料から、毎回同じ制作ルールで読みやすいスライドを作るための仕様・Claudeスキル・ローカルハーネスです。
 
-現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 1で、制作履歴、承認済みBrief、Attempt・Step、状態遷移、再開、HTML管理画面まで実装しています。
+現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 2まで完了し、制作履歴、承認済みBrief、Attempt・Step、再開、HTML/PDF生成まで実装しています。
 
 ## 最初に選ぶもの
 
@@ -12,7 +12,7 @@
 |---|---|---|
 | Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.13`で一区切り |
 | Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.0`、実機検証待ち |
-| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 1基本機能完了 |
+| ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 2完了 |
 
 Claude向けZIPとローカルハーネスは併存します。Claude Webだけで完結したい場合はZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
 
@@ -81,8 +81,13 @@ AI向けに完璧な依頼文を準備する必要はありません。不足情
 - 仕様、設定、フォントのハッシュ記録
 - 決定的生成物用のローカルキャッシュ
 - QA、成果物、利用者承認がない完了操作の拒否
+- `warm_clean`デザインパックの読み込みと検証
+- ハーネスv1 `deck.json`から既存ビルダー形式への変換
+- Attempt単位の自己完結型HTML生成
+- 全ページ画像、コンタクトシート、PDFの生成
+- HTML確認後だけPDFへ進む明示的な承認ゲート
 
-次は`warm_clean`のデザインパック化、ハーネスv1 `deck.json`の変換、HTML/PDF生成を接続します。現時点のハーネスCLIだけでは、まだスライド本体を生成しません。
+次は静的QA、全ページ描画結果、PDF比較を1つのQAレポートへ統合し、修正が必要な場合は新しいAttemptへ進むループを実装します。
 
 ### 必要な環境
 
@@ -214,6 +219,22 @@ slide-system attempt new run_20260810_001 `
   --owner codex
 ```
 
+承認済みBriefとAttemptを作成した後、HTMLを生成します。
+
+```powershell
+slide-system build run_20260810_001 --owner codex
+```
+
+HTMLを確認してPDFも必要と判断した場合だけ、承認文を明示して描画します。
+
+```powershell
+slide-system render run_20260810_001 `
+  --owner codex `
+  --pdf-approval "HTML確認済み。PDF生成を承認します"
+```
+
+`render`は全ページ画像、コンタクトシート、PDFを最新Attemptへ保存します。承認文がない場合はPDFを生成しません。
+
 個別工程を記録します。
 
 ```powershell
@@ -333,6 +354,7 @@ python scripts/test_free_package_generic.py dist/slide-system-free-v0.2.13.zip
 python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.0.zip
 python scripts/test_harness_phase0.py
 python scripts/test_harness_phase1.py
+python scripts/test_harness_phase2.py
 ```
 
 Node.jsモジュールが通常とは異なる場所にある環境では、`NODE_PATH`の指定が必要になる場合があります。
@@ -422,8 +444,8 @@ PDFは編集データの正本ではありません。`deck.json`またはハー
 ## ロードマップ
 
 1. Run、Attempt、Stepと再開処理（基本機能完了）
-2. `warm_clean`デザインパック
-3. ハーネスv1 `deck.json`からHTML/PDF生成
+2. `warm_clean`デザインパック（完了）
+3. ハーネスv1 `deck.json`からHTML/PDF生成（完了）
 4. 自動QAと修正ループ
 5. Codex・Claude Codeアダプター
 6. ローカル管理画面の成果物・比較機能
