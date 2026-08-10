@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -88,6 +89,40 @@ def create_attempt(
         event_details=details,
     )
     return result
+
+
+def create_revision_attempt(
+    project_root: Path,
+    config: dict[str, Any],
+    run_id: str,
+    *,
+    owner: str,
+    deck_source: Path | None = None,
+    reason: str,
+) -> dict[str, Any]:
+    selected = find_run(project_root, config, run_id)
+    if selected["status"] != "needs_revision":
+        raise ValueError(f"修正Attemptを作成できる状態ではありません: {selected['status']}")
+    run_dir = Path(selected["_run_dir"])
+    current_number = int(selected["progress"].get("current_attempt", 0))
+    source = deck_source.resolve() if deck_source else run_dir / "attempts" / f"{current_number:03d}" / "deck.json"
+    if not source.is_file():
+        raise FileNotFoundError(f"修正元deck.jsonがありません: {source}")
+    deck = read_json(source)
+    deck["run_id"] = run_id
+    deck["attempt"] = current_number + 1
+    validate_document(project_root, "deck", deck)
+    with tempfile.TemporaryDirectory(prefix="slide-system-revision-") as temporary:
+        normalized = Path(temporary) / "deck.json"
+        atomic_write_json(normalized, deck)
+        return create_attempt(
+            project_root,
+            config,
+            run_id,
+            owner=owner,
+            deck_source=normalized,
+            reason=reason or f"Attempt {current_number:03d}のQA修正",
+        )
 
 
 def start_step(

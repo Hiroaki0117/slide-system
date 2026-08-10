@@ -203,6 +203,11 @@ def build_parser() -> argparse.ArgumentParser:
     attempt_new.add_argument("--deck", type=Path)
     attempt_new.add_argument("--reason", default="")
     attempt_new.add_argument("--owner", default="manual")
+    attempt_revise = attempt_subparsers.add_parser("revise", help="QA FAILから新しい修正Attemptを作る")
+    attempt_revise.add_argument("selector")
+    attempt_revise.add_argument("--deck", type=Path, help="省略時は直前Attemptのdeck.jsonを複製する")
+    attempt_revise.add_argument("--reason", default="")
+    attempt_revise.add_argument("--owner", default="manual")
 
     step_parser = subparsers.add_parser("step", help="Attempt内の工程を管理する")
     step_subparsers = step_parser.add_subparsers(dest="step_command", required=True)
@@ -339,6 +344,24 @@ def main(argv: list[str] | None = None) -> int:
             print(str(exc), file=sys.stderr)
             return 2
         print(f"Attempt {attempt['attempt']:03d}を作成しました")
+        return 0
+    if args.command == "attempt" and args.attempt_command == "revise":
+        from .attempts import create_revision_attempt
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            attempt = create_revision_attempt(
+                project_root,
+                config,
+                selected["run_id"],
+                owner=args.owner,
+                deck_source=args.deck,
+                reason=args.reason,
+            )
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(f"修正Attempt {attempt['attempt']:03d}を作成しました。直前Attemptは保持されています")
         return 0
     if args.command == "step" and args.step_command == "start":
         from .attempts import start_step
