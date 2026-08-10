@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import os
 import shutil
@@ -13,6 +14,7 @@ from typing import Any
 from . import __version__
 from .runs import AmbiguousRunError, RunNotFoundError, create_run, find_run, list_runs, regenerate_index, runs_root
 from .storage import read_json
+from .validation import validate_file
 
 
 def find_project_root(start: Path) -> Path:
@@ -78,6 +80,8 @@ def _browser_path() -> Path | None:
 def doctor(project_root: Path, config: dict[str, Any]) -> int:
     checks: list[tuple[str, bool, str]] = []
     checks.append(("Python", sys.version_info >= (3, 11), sys.version.split()[0]))
+    jsonschema_available = importlib.util.find_spec("jsonschema") is not None
+    checks.append(("Python依存", jsonschema_available, "jsonschema" if jsonschema_available else "python -m pip install -e . を実行してください"))
     node_version = _version("node")
     checks.append(("Node.js", node_version is not None, node_version or "見つかりません"))
     node_modules_ok, node_modules_detail = _node_dependencies()
@@ -117,14 +121,30 @@ def _print_run(run: dict[str, Any]) -> None:
     print(f"  状態: {guidance.get('status_label') or run.get('status')}")
     print(f"  更新: {run.get('timestamps', {}).get('updated_at', '不明')}")
     print(f"  次:   {guidance.get('next_action') or '未設定'}")
+    attempt = run.get("progress", {}).get("current_attempt", 0)
+    if attempt:
+        print(f"  案:   Attempt {attempt:03d}")
+    last_step = run.get("progress", {}).get("last_step")
+    if last_step:
+        print(f"  工程: {last_step}")
     print(f"  ID:   {run.get('run_id')}")
     if run.get("_run_dir"):
         print(f"  場所: {run['_run_dir']}")
 
 
 def _resolve_run(args: argparse.Namespace, project_root: Path, config: dict[str, Any]) -> dict[str, Any]:
+    return _resolve_selector(project_root, config, args.selector, latest=args.latest)
+
+
+def _resolve_selector(
+    project_root: Path,
+    config: dict[str, Any],
+    selector: str | None,
+    *,
+    latest: bool = False,
+) -> dict[str, Any]:
     try:
-        return find_run(project_root, config, args.selector, latest=args.latest)
+        return find_run(project_root, config, selector, latest=latest)
     except AmbiguousRunError as exc:
         print(f"「{exc.selector}」に該当する制作が複数あります:", file=sys.stderr)
         for run in exc.candidates:
@@ -143,6 +163,10 @@ def build_parser() -> argparse.ArgumentParser:
     open_parser = subparsers.add_parser("open", help="ローカル管理画面を開く")
     open_parser.add_argument("--no-browser", action="store_true", help="管理画面を生成するだけにする")
 
+    validate_parser = subparsers.add_parser("validate", help="JSONファイルを共通スキーマで検証する")
+    validate_parser.add_argument("schema", choices=["run", "deck", "approved-brief", "attempt", "step", "qa-report", "review"])
+    validate_parser.add_argument("path", type=Path)
+
     run_parser = subparsers.add_parser("run", help="制作記録を管理する")
     run_subparsers = run_parser.add_subparsers(dest="run_command", required=True)
     new_parser = run_subparsers.add_parser("new", help="新しい制作記録を作る")
@@ -156,6 +180,42 @@ def build_parser() -> argparse.ArgumentParser:
         item = run_subparsers.add_parser(command, help="制作の状態を確認する" if command == "status" else "制作の再開位置を確認する")
         item.add_argument("selector", nargs="?")
         item.add_argument("--latest", action="store_true")
+    transition_parser = run_subparsers.add_parser("transition", help="Runの状態を変更する")
+    transition_parser.add_argument("selector")
+    transition_parser.add_argument("--status", required=True)
+    transition_parser.add_argument("--last-action", required=True)
+    transition_parser.add_argument("--next-action", required=True)
+    transition_parser.add_argument("--phase")
+    transition_parser.add_argument("--last-step")
+    transition_parser.add_argument("--owner", default="manual")
+
+    brief_parser = subparsers.add_parser("brief", help="制作条件の承認を記録する")
+    brief_subparsers = brief_parser.add_subparsers(dest="brief_command", required=True)
+    brief_approve = brief_subparsers.add_parser("approve", help="承認済みBriefを登録する")
+    brief_approve.add_argument("selector")
+    brief_approve.add_argument("--file", required=True, type=Path)
+    brief_approve.add_argument("--owner", default="manual")
+
+    attempt_parser = subparsers.add_parser("attempt", help="制作候補を管理する")
+    attempt_subparsers = attempt_parser.add_subparsers(dest="attempt_command", required=True)
+    attempt_new = attempt_subparsers.add_parser("new", help="新しいAttemptを作る")
+    attempt_new.add_argument("selector")
+    attempt_new.add_argument("--deck", type=Path)
+    attempt_new.add_argument("--reason", default="")
+    attempt_new.add_argument("--owner", default="manual")
+
+    step_parser = subparsers.add_parser("step", help="Attempt内の工程を管理する")
+    step_subparsers = step_parser.add_subparsers(dest="step_command", required=True)
+    step_start = step_subparsers.add_parser("start", help="Stepを開始する")
+    step_start.add_argument("selector")
+    step_start.add_argument("--name", required=True)
+    step_start.add_argument("--owner", default="manual")
+    step_finish = step_subparsers.add_parser("finish", help="Stepを完了または失敗として記録する")
+    step_finish.add_argument("selector")
+    step_finish.add_argument("--step-id", required=True)
+    step_finish.add_argument("--failed", action="store_true")
+    step_finish.add_argument("--message", default="")
+    step_finish.add_argument("--owner", default="manual")
     return parser
 
 
@@ -170,6 +230,14 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "doctor":
         return doctor(project_root, config)
+    if args.command == "validate":
+        try:
+            validate_file(project_root, args.schema, args.path.resolve())
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(f"PASS: {args.path} ({args.schema})")
+        return 0
     if args.command == "open":
         regenerate_index(project_root, config)
         dashboard = runs_root(project_root, config) / "index.html"
@@ -188,7 +256,7 @@ def main(argv: list[str] | None = None) -> int:
                 adapter=args.adapter,
                 request_source=args.request,
             )
-        except OSError as exc:
+        except (OSError, ValueError, RuntimeError) as exc:
             print(str(exc), file=sys.stderr)
             return 2
         run["_run_dir"] = str(runs_root(project_root, config) / run["run_id"])
@@ -207,5 +275,91 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "run" and args.run_command in {"status", "resume"}:
         run = _resolve_run(args, project_root, config)
         _print_run(run)
+        return 0
+    if args.command == "run" and args.run_command == "transition":
+        from .state import transition_run
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            run = transition_run(
+                project_root,
+                config,
+                selected["run_id"],
+                new_status=args.status,
+                owner=args.owner,
+                last_action=args.last_action,
+                next_action=args.next_action,
+                phase=args.phase,
+                last_step=args.last_step,
+            )
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        _print_run(run)
+        return 0
+    if args.command == "brief" and args.brief_command == "approve":
+        from .briefs import approve_brief
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            run = approve_brief(
+                project_root,
+                config,
+                selected["run_id"],
+                brief_source=args.file,
+                owner=args.owner,
+            )
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        _print_run(run)
+        return 0
+    if args.command == "attempt" and args.attempt_command == "new":
+        from .attempts import create_attempt
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            attempt = create_attempt(
+                project_root,
+                config,
+                selected["run_id"],
+                owner=args.owner,
+                deck_source=args.deck,
+                reason=args.reason,
+            )
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(f"Attempt {attempt['attempt']:03d}を作成しました")
+        return 0
+    if args.command == "step" and args.step_command == "start":
+        from .attempts import start_step
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            step = start_step(project_root, config, selected["run_id"], name=args.name, owner=args.owner)
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(f"{step['step_id']}を開始しました: {step['name']}")
+        return 0
+    if args.command == "step" and args.step_command == "finish":
+        from .attempts import finish_step
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            step = finish_step(
+                project_root,
+                config,
+                selected["run_id"],
+                step_id=args.step_id,
+                owner=args.owner,
+                success=not args.failed,
+                error={"message": args.message or "詳細なし"} if args.failed else None,
+            )
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        print(f"{step['step_id']}: {step['status']}")
         return 0
     return 2
