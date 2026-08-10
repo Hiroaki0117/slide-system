@@ -164,7 +164,7 @@ def build_parser() -> argparse.ArgumentParser:
     open_parser.add_argument("--no-browser", action="store_true", help="管理画面を生成するだけにする")
 
     validate_parser = subparsers.add_parser("validate", help="JSONファイルを共通スキーマで検証する")
-    validate_parser.add_argument("schema", choices=["run", "deck", "approved-brief", "attempt", "step", "qa-report", "review", "design-pack", "adapter", "baseline"])
+    validate_parser.add_argument("schema", choices=["run", "deck", "approved-brief", "attempt", "step", "qa-report", "review", "design-pack", "adapter", "baseline", "bundle-manifest"])
     validate_parser.add_argument("path", type=Path)
 
     run_parser = subparsers.add_parser("run", help="制作記録を管理する")
@@ -251,6 +251,15 @@ def build_parser() -> argparse.ArgumentParser:
     baseline_compare = baseline_subparsers.add_parser("compare", help="最新Attemptをベースラインと比較する")
     baseline_compare.add_argument("selector")
     baseline_compare.add_argument("--baseline", required=True, type=Path)
+    bundle_parser = subparsers.add_parser("bundle", help="Claude Webとの受け渡しBundleを管理する")
+    bundle_subparsers = bundle_parser.add_subparsers(dest="bundle_command", required=True)
+    bundle_export = bundle_subparsers.add_parser("export", help="Run BundleをZIPで書き出す")
+    bundle_export.add_argument("selector")
+    bundle_export.add_argument("--output", required=True, type=Path)
+    bundle_import = bundle_subparsers.add_parser("import", help="Claude WebのResult Bundleを安全に取り込む")
+    bundle_import.add_argument("selector")
+    bundle_import.add_argument("--file", required=True, type=Path)
+    bundle_import.add_argument("--owner", default="manual")
     return parser
 
 
@@ -481,6 +490,22 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"比較結果: {result['result']}")
                 for item in result["comparisons"]:
                     print(f"- {item['artifact']}: {item['result']}")
+        except (OSError, ValueError, RuntimeError) as exc:
+            print(str(exc), file=sys.stderr)
+            return 2
+        return 0
+    if args.command == "bundle":
+        from .bundles import export_run_bundle, import_result_bundle
+
+        selected = _resolve_selector(project_root, config, args.selector)
+        try:
+            if args.bundle_command == "export":
+                output = export_run_bundle(project_root, config, selected["run_id"], output=args.output)
+                print(f"Run Bundle: {output}")
+            else:
+                result = import_result_bundle(project_root, config, selected["run_id"], bundle_path=args.file, owner=args.owner)
+                print(f"Attempt {result['attempt']:03d}へ取り込みました: {result['imported']}")
+                print(result["next_action"])
         except (OSError, ValueError, RuntimeError) as exc:
             print(str(exc), file=sys.stderr)
             return 2
