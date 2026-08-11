@@ -1,20 +1,37 @@
 # Slide System
 
-短い依頼と不完全な元資料から、毎回同じ制作ルールで読みやすいスライドを作るための仕様・Claudeスキル・ローカルハーネスです。
+短い依頼と不完全な元資料から、毎回同じ制作ルールで読みやすいスライドを作るための仕様・ChatGPT Projectパッケージ・Claudeスキル・ローカルハーネスです。
 
-現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。Claude向け配布ZIPは利用可能です。ローカルハーネスはPhase 0〜8の実装を完了し、制作履歴、生成、QA、比較、AI間連携、配布検査まで一通り実行できます。
+現在は`warm_clean`を既定テーマとし、自己完結型HTMLとPDFを中心に検証しています。ChatGPT Free／Plus向けProject ZIPとClaude向けSkill ZIPを配布しています。ローカルハーネスはPhase 0〜8の実装を完了し、制作履歴、生成、QA、比較、AI間連携、配布検査まで一通り実行できます。
 
 ## 最初に選ぶもの
 
-利用方法は3つあります。
+利用方法は4つあります。
 
 | 利用方法 | 向いている人 | 現在の状態 |
 |---|---|---|
-| Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.14` |
-| Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.1`、実機検証待ち |
+| ChatGPT Project | PCを使わず、ChatGPT Free／PlusのProjectで作りたい | `v0.1.0`、モバイル実機検証待ち |
+| Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.15` |
+| Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.2`、実機検証待ち |
 | ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 0〜8完了 |
 
-Claude向けZIPとローカルハーネスは併存します。Claude Webだけで完結したい場合はZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
+ChatGPT／Claude向けZIPとローカルハーネスは併存します。AIのWeb／モバイル画面だけで完結したい場合は配布ZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
+
+## ChatGPT Projectパッケージを使う
+
+### 配布ファイル
+
+`dist/slide-system-chatgpt-project-v0.1.0.zip`をChatGPT Free／Plusで共通利用します。パッケージには、Projectへ登録する5ファイル、Project Instructionsへ貼り付ける文章、iPad／iPhone向け説明書が入っています。
+
+### iPadでの登録
+
+1. ZIPをダウンロードし、「ファイル」アプリで展開します。
+2. `PROJECT_INSTRUCTIONS.txt`をProject Instructionsへ貼り付けます。
+3. `UPLOAD_TO_PROJECT/`内の5ファイルを同じProjectへ追加します。
+4. 新しいチャットで短い依頼と手元の資料を送ります。
+5. HTMLを確認した後、次のメッセージでPDFを依頼します。
+
+Free／Plusの比較では同じProjectパッケージと段階納品を使用します。Plusだけ共有GPTや追加機能を使うと、料金プラン以外の条件が変わるためです。
 
 ## Claudeスキルを使う
 
@@ -22,8 +39,8 @@ Claude向けZIPとローカルハーネスは併存します。Claude Webだけ�
 
 | ファイル | 内容 |
 |---|---|
-| `dist/slide-system-free-v0.2.14.zip` | 無料版向け。質問、構成確認、HTML先行納品、利用枠を意識した段階制作 |
-| `dist/slide-system-paid-v0.1.1.zip` | 有料版向け。00〜60正本、全ページ検査、HTML/PDFの一括制作 |
+| `dist/slide-system-free-v0.2.15.zip` | 無料版向け。質問、構成確認、HTML先行納品、利用枠を意識した段階制作 |
+| `dist/slide-system-paid-v0.1.2.zip` | 有料版向け。00〜60正本、全ページ検査、HTML/PDFの一括制作 |
 
 過去のZIPも`dist/`に残していますが、通常は上記の最新版を使用してください。
 
@@ -438,8 +455,9 @@ python scripts/test_build_deck_validation.py
 python scripts/test_artifact_recovery.py
 python scripts/test_fast_pdf_export.py
 python scripts/test_free_turn_gate_contract.py
-python scripts/test_free_package_generic.py dist/slide-system-free-v0.2.14.zip
-python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.1.zip
+python scripts/test_free_package_generic.py dist/slide-system-free-v0.2.15.zip
+python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.2.zip
+python scripts/test_chatgpt_project_package.py dist/slide-system-chatgpt-project-v0.1.0.zip
 python scripts/test_harness_phase0.py
 python scripts/test_harness_phase1.py
 python scripts/test_harness_phase2.py
@@ -460,7 +478,7 @@ Node.jsモジュールが通常とは異なる場所にある環境では、`NOD
 
 ## 配布ZIPの再生成
 
-無料版と有料版をまとめて再生成し、SHA-256付きマニフェストを更新します。
+ChatGPT Project、Claude無料版、Claude有料版をまとめて再生成し、SHA-256付きマニフェストを更新します。
 
 ```powershell
 python scripts/build_release.py --replace

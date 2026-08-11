@@ -3,14 +3,22 @@
   "harness_version": "0.9.0",
   "skills": {
     "free": {
-      "version": "0.2.14",
-      "file": "slide-system-free-v0.2.14.zip",
-      "sha256": "sha256:eddea4d357d47857203f1f40006a3f3b5f12e5d4757b6f58c74485a4c6b40a6f"
+      "version": "0.2.15",
+      "file": "slide-system-free-v0.2.15.zip",
+      "sha256": "sha256:47bd3f8b9562837e6096189cd8c3883d5c9e23f088ff00cc663df0b8c87f8296"
     },
     "paid": {
-      "version": "0.1.1",
-      "file": "slide-system-paid-v0.1.1.zip",
-      "sha256": "sha256:c3fc128ca7861a45633c56981bf7936d9b91966ef378a32540ceccb855014abb"
+      "version": "0.1.2",
+      "file": "slide-system-paid-v0.1.2.zip",
+      "sha256": "sha256:94f13caed3c3c5746951dbe20af66a2f9aacf8244bc2e3ed09496cb787caedf3"
+    }
+  },
+  "packages": {
+    "chatgpt_project": {
+      "version": "0.1.0",
+      "file": "slide-system-chatgpt-project-v0.1.0.zip",
+      "sha256": "sha256:b1dbf0309e5c6507450e7130cd9730692d0bc2967f7617e4ca3fcbb2b588ec16",
+      "upload_file_count": 5
     }
   }
 }

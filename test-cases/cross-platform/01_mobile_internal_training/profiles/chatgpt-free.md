@@ -7,7 +7,9 @@ ChatGPT FreeのProjectを使い、iPadとiPhoneだけで初期設定から成果
 ## 条件
 
 - 新規Projectを作成する
-- ChatGPT用の共通仕様パッケージをProjectへ登録する
+- `dist/release-manifest.json`に記載されたChatGPT Projectパッケージを使用する
+- ZIP内の`PROJECT_INSTRUCTIONS.txt`をProject Instructionsへ貼り付ける
+- ZIP内の`UPLOAD_TO_PROJECT`にある5ファイルをProjectへ登録する
 - 共通仕様パッケージは5ファイル以内とする
 - `common/REQUEST.md`の本文を最初のメッセージとして送る
 - `common/SOURCE_NOTES.md`だけを利用者資料として添付する
@@ -16,7 +18,7 @@ ChatGPT FreeのProjectを使い、iPadとiPhoneだけで初期設定から成果
 ## 実行
 
 1. iPadでProjectを作成する
-2. 仕様ファイルと利用者資料を登録する
+2. Project Instructionsと5つの仕様ファイルを登録する
 3. 依頼文を送る
 4. 最初の質問、構成確認、承認待ちが行われるか記録する
 5. 同じ回答を返し、HTMLが得られるまで待つ
@@ -28,4 +30,3 @@ ChatGPT FreeのProjectを使い、iPadとiPhoneだけで初期設定から成果
 - ファイル登録上限またはツール上限に到達したか
 - 上限到達時に途中成果物と再開方法が残ったか
 - Project作成から依頼送信までの操作が初心者にも理解できるか
-

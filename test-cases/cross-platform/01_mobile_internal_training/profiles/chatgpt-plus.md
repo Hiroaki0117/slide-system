@@ -7,7 +7,8 @@ ChatGPT PlusのProjectを使い、Freeと同じ設定方式で利用枠と完成
 ## 条件
 
 - 新規Projectを作成する
-- ChatGPT Freeと同一の共通仕様パッケージを登録する
+- `dist/release-manifest.json`に記載されたChatGPT Projectパッケージを使用する
+- Freeと同じ`PROJECT_INSTRUCTIONS.txt`と5つのProjectファイルを登録する
 - `common/REQUEST.md`と`common/SOURCE_NOTES.md`を変更しない
 - 共有GPT、Deep Research、追加エージェント機能は使用しない
 
@@ -26,4 +27,3 @@ ChatGPT PlusのProjectを使い、Freeと同じ設定方式で利用枠と完成
 - Freeより少ないターンで完了したか
 - 長い制作処理でも上限に到達しなかったか
 - Freeと比べ、内容や見た目が明確に改善したか
-

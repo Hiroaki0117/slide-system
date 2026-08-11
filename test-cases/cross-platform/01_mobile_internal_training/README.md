@@ -15,12 +15,12 @@ PCを持たず、iPadとiPhoneだけを使うAI初心者が、短い依頼と走
 
 | 環境 | 使用物 | 状態 |
 |---|---|---|
-| ChatGPT Free | 5ファイル以内のProject用共通仕様パッケージ | 未作成 |
-| ChatGPT Plus | Freeと同じProject用共通仕様パッケージ | 未作成 |
+| ChatGPT Free | `dist/release-manifest.json`記載のChatGPT Projectパッケージ | 実行可能 |
+| ChatGPT Plus | Freeと同じChatGPT Projectパッケージ | 実行可能 |
 | Claude Free | `dist/release-manifest.json`記載の無料版Skill ZIP | 実行可能 |
 | Claude Pro | `dist/release-manifest.json`記載の有料版Skill ZIP | 実行可能 |
 
-ChatGPT用パッケージができるまでは、ChatGPTの2プロファイルを`NOT_VERIFIED`とします。00〜60を個別にアップロードして代用すると、モバイル導入とファイル数の比較条件が変わるため行いません。
+ChatGPT Free／Plusでは同じProjectパッケージを使用します。00〜60を個別にアップロードして代用すると、モバイル導入とファイル数の比較条件が変わるため行いません。
 
 ## 比較の原則
 
@@ -56,4 +56,3 @@ results/
 ```
 
 各フォルダにはHTML、PDF、会話記録、`RESULT.md`を保存します。評価方法は`EVALUATION.md`、記録形式は`results/RESULT_TEMPLATE.md`を使用します。
-
