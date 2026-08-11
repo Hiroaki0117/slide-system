@@ -62,10 +62,15 @@ def main() -> int:
     assert (CASE / matrix["evaluation"]).is_file()
     assert (CASE / matrix["result_template"]).is_file()
 
+    release = json.loads((ROOT / "dist" / "release-manifest.json").read_text(encoding="utf-8"))
+    chatgpt_package = release.get("packages", {}).get("chatgpt_project")
+    assert chatgpt_package, "ChatGPT Project package is missing from the release manifest"
+    assert chatgpt_package["upload_file_count"] <= rules["common_reference_file_budget"]
+    assert (ROOT / "dist" / chatgpt_package["file"]).is_file()
+
     print("PASS: mobile cross-platform comparison case contract")
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
