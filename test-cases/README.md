@@ -63,3 +63,14 @@
 | `harness-01` | `internal_training` | 研修構成、確認問題、元資料外の社内規程を作らない |
 | `harness-02` | `business_proposal` | 根拠のない数値を作らない、比較、試行条件 |
 | `harness-03` | `standalone_explainer` | 自己完結性、出典、段階説明 |
+
+## ChatGPT／Claude モバイル比較
+
+`test-cases/cross-platform/`では、PCを持たずiPad・iPhoneだけを使う利用者を想定し、同じ依頼と元資料を次の4環境で比較します。
+
+- ChatGPT Free
+- ChatGPT Plus
+- Claude Free
+- Claude Pro
+
+仕様と入力は共通にし、成果物と実行記録を環境別に分離します。最初のケースは`cross-platform/01_mobile_internal_training/`です。

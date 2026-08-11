@@ -1,0 +1,58 @@
+{
+  "schema_version": "1.0",
+  "case_id": "mobile-internal-training-01",
+  "title": "新入社員向け社内チャット研修",
+  "target_user": {
+    "pc_available": false,
+    "primary_device": "ipad",
+    "secondary_device": "iphone",
+    "ai_literacy": "beginner"
+  },
+  "common_inputs": {
+    "request": "common/REQUEST.md",
+    "source": "common/SOURCE_NOTES.md",
+    "acceptance": "common/ACCEPTANCE_CRITERIA.md"
+  },
+  "profiles": [
+    {
+      "id": "chatgpt-free",
+      "provider": "chatgpt",
+      "plan": "free",
+      "setup_mode": "project",
+      "instructions": "profiles/chatgpt-free.md"
+    },
+    {
+      "id": "chatgpt-plus",
+      "provider": "chatgpt",
+      "plan": "plus",
+      "setup_mode": "project",
+      "instructions": "profiles/chatgpt-plus.md"
+    },
+    {
+      "id": "claude-free",
+      "provider": "claude",
+      "plan": "free",
+      "setup_mode": "custom-skill",
+      "instructions": "profiles/claude-free.md"
+    },
+    {
+      "id": "claude-pro",
+      "provider": "claude",
+      "plan": "pro",
+      "setup_mode": "custom-skill",
+      "instructions": "profiles/claude-pro.md"
+    }
+  ],
+  "rules": {
+    "same_request": true,
+    "same_source": true,
+    "same_clarification_answers": true,
+    "no_improvement_prompt_before_first_artifact": true,
+    "separate_outputs_by_profile": true,
+    "common_reference_file_budget": 5
+  },
+  "required_outputs": ["html", "pdf"],
+  "evaluation": "EVALUATION.md",
+  "result_template": "results/RESULT_TEMPLATE.md"
+}
+
