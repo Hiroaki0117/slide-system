@@ -20,10 +20,11 @@ ChatGPT FreeのProjectを使い、iPadとiPhoneだけで初期設定から成果
 1. iPadでProjectを作成する
 2. Project Instructionsと5つの仕様ファイルを登録する
 3. 依頼文を送る
-4. 最初の質問、構成確認、承認待ちが行われるか記録する
-5. 同じ回答を返し、HTMLが得られるまで待つ
-6. HTML確認後にPDFを依頼する
-7. iPhoneで同じProjectを開き、会話と成果物へアクセスできるか確認する
+4. 最初の質問には`common/CLARIFICATION_ANSWERS.md`の該当部分だけで回答する
+5. 構成確認と承認待ちが行われるか記録する
+6. 明示的に制作を承認し、HTMLが得られるまで待つ
+7. HTML確認後にPDFを依頼する
+8. iPhoneで同じProjectを開き、会話と成果物へアクセスできるか確認する
 
 ## 追加記録
 

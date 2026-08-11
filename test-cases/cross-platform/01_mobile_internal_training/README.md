@@ -9,7 +9,7 @@ PCを持たず、iPadとiPhoneだけを使うAI初心者が、短い依頼と走
 - Claude Free
 - Claude Pro
 
-4環境には同じ`common/REQUEST.md`と`common/SOURCE_NOTES.md`を渡します。仕様・依頼・期待条件は共通にし、生成物と実行記録だけを環境別に保存します。
+4環境には同じ`common/REQUEST.md`と`common/SOURCE_NOTES.md`を渡します。質問への回答は`common/CLARIFICATION_ANSWERS.md`へ固定します。仕様・依頼・期待条件は共通にし、生成物と実行記録だけを環境別に保存します。
 
 ## 現在の実行準備
 
@@ -27,6 +27,7 @@ ChatGPT Free／Plusでは同じProjectパッケージを使用します。00〜6
 - AIへ送る依頼文を環境ごとに改善しない
 - 最初の成果物が出るまで、追加のデザイン指示を送らない
 - 不足確認への回答は、4環境で同じ内容にする
+- `CLARIFICATION_ANSWERS.md`は評価者専用とし、AIへ事前添付しない
 - HTMLとPDFは環境ごとに別ファイルとして保存する
 - iPadを主制作端末、iPhoneを再開・確認端末とする
 - PCやローカルコマンドを利用者の操作手順へ含めない

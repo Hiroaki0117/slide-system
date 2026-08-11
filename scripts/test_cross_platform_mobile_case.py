@@ -28,10 +28,16 @@ def main() -> int:
     }
 
     common = matrix["common_inputs"]
-    assert set(common) == {"request", "source", "acceptance"}
+    assert set(common) == {"request", "source", "acceptance", "clarification_answers"}
     for relative in common.values():
         assert (CASE / relative).is_file(), relative
     assert common["acceptance"] not in {common["request"], common["source"]}
+    assert common["clarification_answers"] not in {common["request"], common["source"]}
+
+    answer_bank = (CASE / common["clarification_answers"]).read_text(encoding="utf-8")
+    assert "AIへ事前添付しません" in answer_bank
+    assert "2026年8月12日" in answer_bank
+    assert "まずHTML" in answer_bank and "PDF" in answer_bank
 
     request = (CASE / common["request"]).read_text(encoding="utf-8")
     source = (CASE / common["source"]).read_text(encoding="utf-8")
@@ -50,6 +56,7 @@ def main() -> int:
         text = instructions.read_text(encoding="utf-8")
         assert "iPad" in text and "iPhone" in text, instructions
         assert "common/REQUEST.md" in text and "common/SOURCE_NOTES.md" in text, instructions
+        assert "common/CLARIFICATION_ANSWERS.md" in text, instructions
 
     rules = matrix["rules"]
     assert rules["same_request"] is True
@@ -67,6 +74,12 @@ def main() -> int:
     assert chatgpt_package, "ChatGPT Project package is missing from the release manifest"
     assert chatgpt_package["upload_file_count"] <= rules["common_reference_file_budget"]
     assert (ROOT / "dist" / chatgpt_package["file"]).is_file()
+
+    chatgpt_free_result = CASE / "results" / "chatgpt-free" / "RESULT.md"
+    chatgpt_free_status = CASE / "results" / "chatgpt-free" / "RUN_STATUS.md"
+    assert chatgpt_free_result.is_file()
+    assert chatgpt_free_status.is_file()
+    assert "READY_FOR_MOBILE_RUN" in chatgpt_free_status.read_text(encoding="utf-8")
 
     print("PASS: mobile cross-platform comparison case contract")
     return 0
