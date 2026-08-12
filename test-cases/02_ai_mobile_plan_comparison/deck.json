@@ -1,0 +1,188 @@
+{
+  "deck_title": "iPad・iPhoneで使う生成AI 4プラン比較",
+  "audience": "PCを持たず、iPadとiPhoneで生成AIを使いたい初心者",
+  "purpose": "ChatGPT Free・PlusとClaude Free・Proの違いを理解し、自分の使い方に合うプランを選べるようにする",
+  "mode": "standalone",
+  "slides": [
+    {
+      "layout": "cover",
+      "eyebrow": "MOBILE AI × PLAN GUIDE",
+      "title": "iPad・iPhoneで使う\n生成AI 4プラン比較",
+      "subtitle": "ChatGPT Free・Plus × Claude Free・Pro",
+      "date": "2026.8.12"
+    },
+    {
+      "layout": "single_message",
+      "job": "claim",
+      "visual_role": "explain",
+      "title": "有料版の価値は、長い仕事の完走率",
+      "headline": "FREE",
+      "body": "iPad・iPhoneからの基本利用は4プランとも可能です。差が大きくなるのは、資料を複数読み、調査し、何度も修正して成果物まで仕上げる場面です。",
+      "source": "出典: OpenAI・Anthropic公式プラン情報 [S1][S5][S6]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "data_focus",
+      "job": "evidence",
+      "visual_role": "evidence",
+      "title": "端末対応より、利用枠と資料量に差が出る",
+      "lead": "4プランともモバイル利用の入口はあります。",
+      "stats": [
+        { "value": "4プラン", "label": "iOSから利用", "note": "ChatGPT・Claudeとも対応" },
+        { "value": "全プラン", "label": "Project利用", "note": "関連資料と会話をまとめる" },
+        { "value": "Freeも可", "label": "Claude Skills", "note": "コード実行の有効化が必要" },
+        { "value": "差は枠", "label": "長い制作", "note": "上限・資料量・高度機能" }
+      ],
+      "source": "出典: ChatGPT Projects、Claude Projects・Skills [S2][S7][S8]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "table",
+      "layout_repeat_reason": "ChatGPTのFree・Plusを同じ比較軸で正確に読み比べるため",
+      "job": "compare",
+      "visual_role": "evidence",
+      "title": "ChatGPT Plusは、資料と制作機能の余裕を買う",
+      "lead": "FreeでもProjectは使えますが、ファイル利用と高度機能はPlusが広がります。",
+      "headers": ["比較軸", "Free", "Plus"],
+      "rows": [
+        ["料金", "$0", "$20／月"],
+        ["Project資料", "5ファイル／Project", "20〜25ファイル※"],
+        ["ファイル投入", "3件／日", "上限が大幅に拡大"],
+        ["高度機能", "検索・分析・画像等は限定", "推論・調査・分析等を拡張"],
+        ["向く制作", "短い依頼・少数資料", "反復修正・複数資料の制作"]
+      ],
+      "note": "※公式ヘルプ内でPlusのProject上限に20件と25件の表記差があります。実際のアプリ表示を優先してください。",
+      "source": "出典: ChatGPT Plus、Projects、File Uploads [S2][S3][S4]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "table",
+      "layout_repeat_reason": "ClaudeのFree・ProをChatGPTと同じ粒度で比較するため",
+      "job": "compare",
+      "visual_role": "evidence",
+      "title": "Claude Proは、長文制作と継続利用に強い",
+      "lead": "SkillsはFreeでも使えます。Proの主な差は利用量、Project知識、モデルと調査機能です。",
+      "headers": ["比較軸", "Free", "Pro"],
+      "rows": [
+        ["料金", "$0", "$20／月・$200／年"],
+        ["5時間枠", "限定", "Freeの少なくとも5倍"],
+        ["Projects", "最大5件", "無制限"],
+        ["Project知識", "通常コンテキスト", "RAGで最大10倍へ拡張"],
+        ["向く制作", "試用・短い成果物", "長文・複数資料・反復制作"]
+      ],
+      "note": "Proにも5時間枠と週次上限があります。長い添付や複雑な処理ほど消費量は増えます。",
+      "source": "出典: Claude Pricing、Pro、Projects、Skills [S5][S6][S7][S8]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "process",
+      "job": "explain",
+      "visual_role": "explain",
+      "title": "スライド制作は後半ほど上限の影響を受ける",
+      "lead": "以下は公式の上限説明から導いた実務上の見立てです。",
+      "steps": [
+        { "label": "1", "title": "仕様を読む", "body": "複数ファイルと長い指示を読み込む" },
+        { "label": "2", "title": "内容を調べる", "body": "検索・推論・出典確認を重ねる" },
+        { "label": "3", "title": "構成を作る", "body": "質問と承認を経てページを設計する" },
+        { "label": "4", "title": "HTMLを作る", "body": "コード生成と全ページ修正を行う" },
+        { "label": "5", "title": "PDFまで確認", "body": "変換・再確認で追加の利用枠を使う" }
+      ],
+      "source": "推論: 各社の利用上限説明をスライド制作工程へ当てはめた整理 [S3][S6]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "comparison",
+      "job": "instruction",
+      "visual_role": "explain",
+      "title": "iPadは制作、iPhoneは確認に向く",
+      "lead": "どのプランでも、主端末と確認端末の役割を分けると迷いにくくなります。",
+      "columns": [
+        {
+          "title": "iPad｜主制作",
+          "tone": "coral",
+          "body": "Project・Skillの準備\n資料の添付と長文入力\nHTML/PDFの全ページ確認"
+        },
+        {
+          "title": "iPhone｜再開・確認",
+          "tone": "mint",
+          "body": "会話の続きと短い修正\n成果物の再確認\n移動中の追加指示"
+        }
+      ],
+      "source": "出典: ChatGPT Projectsの端末間利用、Claudeのモバイル対応 [S2][S5]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "comparison",
+      "job": "compare",
+      "visual_role": "explain",
+      "title": "無料版は分割、有料版は一連の流れで進める",
+      "lead": "無料版でも品質を諦める必要はありません。工程の切り方を変えます。",
+      "columns": [
+        {
+          "title": "Freeの進め方",
+          "tone": "neutral",
+          "body": "質問と構成を先に確定\nまずHTMLだけ取得\n次の返信・次の枠でPDF\n再開情報を毎回残す"
+        },
+        {
+          "title": "Plus／Proの進め方",
+          "tone": "coral",
+          "body": "複数資料をまとめて参照\n調査と制作を連続実行\n修正とQAを同じ文脈で継続\nただし上限は残る"
+        }
+      ],
+      "source": "推論: 公式の利用枠・ファイル上限を前提にした運用提案 [S3][S4][S6]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "table",
+      "layout_repeat_reason": "4プランの用途と注意点を一覧で最終判断できるようにするため",
+      "job": "instruction",
+      "visual_role": "evidence",
+      "title": "使い方から選ぶと、過不足が少ない",
+      "lead": "同じ有料でも得意な余裕が異なります。まず利用頻度と資料量で選びます。",
+      "headers": ["プラン", "向いている人", "注意点"],
+      "rows": [
+        ["ChatGPT Free", "短い相談、画像や検索を時々使う", "添付と高度機能の枠が小さい"],
+        ["ChatGPT Plus", "調査・画像・資料分析を頻繁に使う", "Plusにも変動する上限がある"],
+        ["Claude Free", "Skillsを試し、短い制作を分割できる", "長い処理は途中到達に注意"],
+        ["Claude Pro", "長文資料と反復制作を継続したい", "週次上限を含め無制限ではない"]
+      ],
+      "note": "価格は米国向け公式表示。App Storeの地域価格・税・請求方法は購入画面で確認してください。",
+      "source": "出典: 各社公式価格・利用上限 [S1][S4][S5][S6]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "summary_action",
+      "job": "summary",
+      "visual_role": "none",
+      "visual_reason": "プラン選択を3つの行動へ絞り、読み返して判断しやすくするページだから",
+      "title": "迷うなら無料で1本作り、止まる場所を見る",
+      "headline": "支払う判断は、品質より中断コストで決める",
+      "actions": [
+        "5ファイル以内の同じ資料で、Freeから1本完成まで試す",
+        "HTML前・PDF前・修正中のどこで上限に当たったか記録する",
+        "月に繰り返すなら、ChatGPT PlusかClaude Proで中断時間を減らす"
+      ],
+      "note": "本比較は2026年8月12日時点。モデル名・利用枠・機能は変更されるため、契約前に公式画面を再確認してください。"
+    },
+    {
+      "layout": "sources_appendix",
+      "title": "出典 1／2",
+      "sources": [
+        { "id": "S1", "title": "ChatGPT Plans", "publisher": "OpenAI", "url": "https://chatgpt.com/pricing/", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S2", "title": "Projects in ChatGPT", "publisher": "OpenAI Help Center", "url": "https://help.openai.com/en/articles/10169521-projects-in-chatgpt", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S3", "title": "File Uploads FAQ", "publisher": "OpenAI Help Center", "url": "https://help.openai.com/en/articles/8555545-file-uploads-faq", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S4", "title": "What is ChatGPT Plus?", "publisher": "OpenAI Help Center", "url": "https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus", "checked": "2026-08-12", "source_class": "official" }
+      ]
+    },
+    {
+      "layout": "sources_appendix",
+      "title": "出典 2／2",
+      "sources": [
+        { "id": "S5", "title": "Plans & Pricing", "publisher": "Anthropic", "url": "https://claude.com/pricing", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S6", "title": "What is the Pro plan?", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/8325606-what-is-the-pro-plan", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S7", "title": "What are projects?", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/9517075-what-are-projects", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S8", "title": "Use skills in Claude", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/12512180-use-skills-in-claude", "checked": "2026-08-12", "source_class": "official" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "phase": "pdf_requested",
+  "delivery_profile": "staged",
+  "approval": {
+    "status": "approved",
+    "user_reply": "ChatGPTとClaudeの有料と無料とで、どんな差があるのかを比較するスライドを作ってほしい"
+  },
+  "pdf_request": {
+    "user_reply": "iPadとiPhoneで使用した場合の有料と無料の差をスライドにする"
+  }
+}

@@ -1,0 +1,240 @@
+{
+  "status": "PASS",
+  "browser": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "workflow": {
+    "path": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\work-state.json",
+    "phase": "pdf_requested",
+    "delivery_profile": "staged",
+    "approval_status": "approved"
+  },
+  "html": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\ai-mobile-plan-comparison.html",
+  "pdf": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\ai-mobile-plan-comparison.pdf",
+  "slide_count": 12,
+  "detected_pdf_pages": 12,
+  "individual_pdf_bytes": [
+    58195,
+    166119,
+    217569,
+    300733,
+    291258,
+    283848,
+    222315,
+    268021,
+    356739,
+    255549,
+    59658,
+    57629
+  ],
+  "navigation": {
+    "initial": "1 / 12",
+    "second": "2 / 12",
+    "clampedEnd": "12 / 12",
+    "clampedStart": "1 / 12"
+  },
+  "navigation_pass": true,
+  "mobile_viewports": [
+    {
+      "name": "ipad",
+      "width": 1024,
+      "height": 1366,
+      "indicator": "1 / 12",
+      "viewport": {
+        "left": 0,
+        "top": 395,
+        "right": 1024,
+        "bottom": 971,
+        "width": 1024,
+        "height": 576
+      },
+      "slide": {
+        "left": 0,
+        "top": 395,
+        "right": 1024,
+        "bottom": 971,
+        "width": 1024,
+        "height": 576
+      },
+      "controls": {
+        "left": 373.4296875,
+        "top": 1302,
+        "right": 650.5703125,
+        "bottom": 1348
+      },
+      "viewport_fits": true,
+      "slide_fits": true,
+      "controls_fit": true
+    },
+    {
+      "name": "iphone",
+      "width": 390,
+      "height": 844,
+      "indicator": "1 / 12",
+      "viewport": {
+        "left": 0,
+        "top": 312.3125,
+        "right": 390,
+        "bottom": 531.6875,
+        "width": 390,
+        "height": 219.375
+      },
+      "slide": {
+        "left": 0,
+        "top": 312.3125,
+        "right": 390,
+        "bottom": 531.6875,
+        "width": 390,
+        "height": 219.375
+      },
+      "controls": {
+        "left": 97.5,
+        "top": 780,
+        "right": 292.5,
+        "bottom": 826
+      },
+      "viewport_fits": true,
+      "slide_fits": true,
+      "controls_fit": true
+    }
+  ],
+  "font": {
+    "loaded": true,
+    "family": "\"Slide Noto Sans JP\"",
+    "status": "loaded"
+  },
+  "contact_sheet": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\contact-sheet.png",
+  "slides": [
+    {
+      "number": 1,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-01.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 2,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-02.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 1,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 3,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-03.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 4,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-04.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 5,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-05.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 6,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-06.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 7,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-07.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 8,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-08.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 9,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-09.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 10,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-10.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 11,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-11.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "number": 12,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\output\\v0.1.0\\screenshots\\slide-12.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "failures": []
+}

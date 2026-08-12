@@ -55,6 +55,7 @@
 | ID | ケース | 主な検証対象 | 状態 |
 |---|---|---|---|
 | `01` | `sub4_roadmap` | AI初心者の短い依頼、粗いメモ、用途判定、調査、安全性、HTML/PDF、基本QA | 無料版v0.2.1再検証待ち |
+| `02` | `ai_mobile_plan_comparison` | iPad・iPhone利用を前提にChatGPT Free・PlusとClaude Free・Proの差を説明 | v0.1.0作成済み |
 
 ハーネスの汎用回帰テストは`test-cases/harness/`に分離しています。マラソンは実利用例の1つであり、共通ハーネスの前提ではありません。
 
@@ -74,3 +75,5 @@
 - Claude Pro
 
 仕様と入力は共通にし、成果物と実行記録を環境別に分離します。最初のケースは`cross-platform/01_mobile_internal_training/`です。
+
+なお、4環境で同じスライドを生成して品質を競うテストと、4プランの違いを説明するスライドは別物です。後者の成果物は`02_ai_mobile_plan_comparison/`へ保存します。
