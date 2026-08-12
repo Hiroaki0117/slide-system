@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0",
+  "deck_id": "ai-mobile-provider-choice-v0.2.0",
+  "run_id": "run_20260812_005",
+  "attempt": 3,
+  "metadata": {"title": "iPad・iPhoneだけで選ぶ ChatGPTとClaude", "subtitle": "無料継続・Plus・Proの判断ガイド", "date": "2026.8.12", "author": null, "organization": null, "language": "ja"},
+  "context": {
+    "purpose": "作業目的からFree継続・ChatGPT Plus・Claude Proを選ぶ",
+    "audience": "PCを持たずiPadとiPhoneだけで生成AIを使うAI初心者",
+    "mode": "standalone",
+    "core_message": "会話性能の勝敗ではなく、完成物までの作業経路で選ぶ",
+    "content_coverage": [
+      {"item_id": "cmp-axis-free", "slide_ids": ["cmp-03"]},
+      {"item_id": "cmp-axis-paid", "slide_ids": ["cmp-04"]},
+      {"item_id": "cmp-axis-mobile", "slide_ids": ["cmp-06"]},
+      {"item_id": "cmp-usecases", "slide_ids": ["cmp-05"]},
+      {"item_id": "cmp-rollout", "slide_ids": ["cmp-06"]},
+      {"item_id": "cmp-decision", "slide_ids": ["cmp-07"]}
+    ]
+  },
+  "narrative": {"arc": "選び方の軸→無料版→有料版→用途→モバイル制約→3択"},
+  "slides": [
+    {"id": "cmp-01", "role": "cover", "title": "iPad・iPhoneだけで選ぶ\nChatGPTとClaude", "subtitle": "無料継続・Plus・Proの判断ガイド", "takeaway": null, "layout": {"family": "cover", "variant": null, "density": "low"}, "blocks": [], "visual": {"strategy": "decorative_shapes", "eyebrow": "AI × MOBILE CHOICE"}, "source_refs": []},
+    {
+      "id": "cmp-02", "role": "content", "title": "AIは、完成までの作業経路で選ぶ", "subtitle": null,
+      "takeaway": "どちらが賢いかより、何を任せてどこで確認するかが重要です。",
+      "layout": {"family": "standard_visual", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cmp-02-p", "type": "paragraph", "text": "ChatGPTもClaudeも無料から始められます。有料化は、使える機能の数ではなく、調査・制作・修正をどこまで連続して任せたいかで決めます。", "source_refs": ["OAI-PRICE", "ANT-PRICE"]},
+        {"id": "cmp-02-i", "type": "image", "path": "C:/Users/Hiroaki Nishimura/Documents/slide-system/test-cases/02_ai_mobile_plan_comparison/v0.2.0/assets/provider-choice.png", "alt": "二つのAI作業経路から完成物を選ぶ抽象イラスト", "position": "right"}
+      ],
+      "visual": {"strategy": "image"}, "source_refs": ["OAI-PRICE", "ANT-PRICE"]
+    },
+    {
+      "id": "cmp-03", "role": "content", "title": "無料版でも、仕組み化の入口まで試せる", "subtitle": null,
+      "takeaway": "ChatGPTはWork、ClaudeはSkillsとProjectsまで無料で触れます。",
+      "layout": {"family": "comparison", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cmp-03-c", "type": "comparison", "items": [
+          {"heading": "ChatGPT Free", "body": "Workで完成物を依頼\nProjectsで文脈を保持\nPluginsをモバイルで利用", "tone": "coral"},
+          {"heading": "Claude Free", "body": "検索・ファイル作成\nProjectsは最大5件\nSkillsで手順を再利用", "tone": "mint"}
+        ], "source_refs": ["OAI-PRICE", "OAI-WORK", "OAI-PROJECTS", "OAI-PLUGINS", "ANT-PRICE", "ANT-PROJECTS", "ANT-SKILLS"]}
+      ],
+      "visual": {"strategy": "comparison_graphic"}, "source_refs": ["OAI-PRICE", "OAI-WORK", "OAI-PROJECTS", "OAI-PLUGINS", "ANT-PRICE", "ANT-PROJECTS", "ANT-SKILLS"]
+    },
+    {
+      "id": "cmp-04", "role": "content", "title": "PlusとProは、広げる場所が違う", "subtitle": null,
+      "takeaway": "ChatGPT Plusはモデルと反復、Claude Proは調査と委任が強い軸です。",
+      "layout": {"family": "comparison", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cmp-04-c", "type": "comparison", "items": [
+          {"heading": "ChatGPT Plus｜選択と反復", "body": "Sol・Terra・Luna\nWorkの利用余力\nクラウド連携", "tone": "coral"},
+          {"heading": "Claude Pro｜調査と委任", "body": "Research・Cowork\nより多いモデル\n少なくとも5倍の利用量", "tone": "mint"}
+        ], "source_refs": ["OAI-PRICE", "OAI-MODELS", "OAI-WORK", "ANT-PRICE", "ANT-PRO", "ANT-RESEARCH", "ANT-COWORK"]}
+      ],
+      "visual": {"strategy": "comparison_graphic"}, "source_refs": ["OAI-PRICE", "OAI-MODELS", "OAI-WORK", "ANT-PRICE", "ANT-PRO", "ANT-RESEARCH", "ANT-COWORK"]
+    },
+    {
+      "id": "cmp-05", "role": "content", "title": "やりたい仕事から候補を絞る", "subtitle": null,
+      "takeaway": "同じ資料制作でも、重視する工程で向きが変わります。",
+      "layout": {"family": "table", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cmp-05-t", "type": "table", "headers": ["やりたいこと", "先に試す候補", "見るポイント"], "rows": [
+          ["短い相談・整理", "どちらもFree", "会話の好み"],
+          ["資料を完成させる", "ChatGPT Work", "モデルと反復"],
+          ["深く調査する", "Claude Pro", "Research"],
+          ["手順を再利用する", "Claude Skills", "Freeから試せる"],
+          ["長く続く案件", "両方を比較", "Projectsと上限"]
+        ], "note": "これは公式機能差から導く運用提案です。実際の得意不得意は題材でも変わります。", "source_refs": ["OAI-WORK", "OAI-PROJECTS", "ANT-RESEARCH", "ANT-COWORK", "ANT-SKILLS", "ANT-PROJECTS"]}
+      ],
+      "visual": {"strategy": "evidence"}, "source_refs": ["OAI-WORK", "OAI-PROJECTS", "ANT-RESEARCH", "ANT-COWORK", "ANT-SKILLS", "ANT-PROJECTS"]
+    },
+    {
+      "id": "cmp-06", "role": "content", "title": "PCなしでは、クラウドとローカルを分けて考える", "subtitle": null,
+      "takeaway": "iPad・iPhoneで進められても、PC内の操作までは代替できません。",
+      "layout": {"family": "comparison", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cmp-06-c", "type": "comparison", "items": [
+          {"heading": "モバイルで進めやすい", "body": "クラウド資料\n進捗確認と修正\n完成ファイルの保存", "tone": "mint"},
+          {"heading": "PCが必要・要確認", "body": "ローカルファイルやアプリ\nブラウザの直接操作\nCowork Mobileはベータ・段階的", "tone": "neutral"}
+        ], "source_refs": ["OAI-WORK", "OAI-PLUGINS", "ANT-COWORK"]}
+      ],
+      "visual": {"strategy": "comparison_graphic"}, "source_refs": ["OAI-WORK", "OAI-PLUGINS", "ANT-COWORK"]
+    },
+    {
+      "id": "cmp-07", "role": "summary", "title": "迷ったら、無料で同じ仕事を1回ずつ試す", "subtitle": null,
+      "takeaway": "上限・調査・修正のどこで困ったかが、有料化の理由になります。",
+      "layout": {"family": "process", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cmp-07-pr", "type": "process", "items": [
+          {"label": "Free", "title": "両方で試す", "body": "同じ依頼・同じ資料"},
+          {"label": "記録", "title": "困った工程", "body": "上限・調査・修正"},
+          {"label": "Plus", "title": "制作を反復", "body": "モデル選択が必要"},
+          {"label": "Pro", "title": "調査を委任", "body": "Research・Coworkが必要"}
+        ], "source_refs": ["OAI-PRICE", "OAI-MODELS", "ANT-PRICE", "ANT-RESEARCH", "ANT-COWORK"]}
+      ],
+      "visual": {"strategy": "process"}, "source_refs": ["OAI-PRICE", "OAI-MODELS", "ANT-PRICE", "ANT-RESEARCH", "ANT-COWORK"]
+    },
+    {
+      "id": "cmp-08", "role": "summary", "title": "選択肢は、Free継続・Plus・Proの3つ", "subtitle": null,
+      "takeaway": "毎月の作業で最も重い工程にだけ課金します。",
+      "layout": {"family": "summary", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cmp-08-b", "type": "bullets", "items": ["短い相談と小さな制作ならFree継続", "モデルを選び、完成物を何度も直すならChatGPT Plus", "深い調査と作業委任を繰り返すならClaude Pro"], "source_refs": ["OAI-PRICE", "ANT-PRICE"]},
+        {"id": "cmp-08-p", "type": "paragraph", "text": "契約直前に、使いたい機能が自分のアプリへ表示されているか確認します。", "source_refs": ["ANT-COWORK"]}
+      ],
+      "visual": {"strategy": "none", "reason": "3択の結論を短く残すため"}, "source_refs": ["OAI-PRICE", "ANT-PRICE", "ANT-COWORK"]
+    },
+    {"id": "cmp-09", "role": "sources", "title": "出典｜ChatGPT", "subtitle": null, "takeaway": null, "layout": {"family": "sources", "variant": null, "density": "medium"}, "blocks": [], "visual": {"strategy": "none", "reason": "出典を2ページへ分けて可読性を確保"}, "source_refs": ["OAI-PRICE", "OAI-WORK", "OAI-MODELS", "OAI-PROJECTS", "OAI-PLUGINS"]},
+    {"id": "cmp-10", "role": "sources", "title": "出典｜Claude", "subtitle": null, "takeaway": null, "layout": {"family": "sources", "variant": null, "density": "medium"}, "blocks": [], "visual": {"strategy": "none", "reason": "出典を2ページへ分けて可読性を確保"}, "source_refs": ["ANT-PRICE", "ANT-PRO", "ANT-RESEARCH", "ANT-COWORK", "ANT-PROJECTS", "ANT-SKILLS"]}
+  ],
+  "sources": [
+    {"id": "OAI-PRICE", "title": "Pricing", "publisher": "OpenAI", "url": "https://learn.chatgpt.com/docs/pricing", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "OAI-WORK", "title": "Get started with ChatGPT Work", "publisher": "OpenAI", "url": "https://learn.chatgpt.com/docs/get-started-with-work", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "OAI-MODELS", "title": "Models", "publisher": "OpenAI", "url": "https://learn.chatgpt.com/docs/models", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "OAI-PROJECTS", "title": "Projects and chats", "publisher": "OpenAI", "url": "https://learn.chatgpt.com/docs/projects", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "OAI-PLUGINS", "title": "Plugins", "publisher": "OpenAI", "url": "https://learn.chatgpt.com/docs/plugins", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-PRICE", "title": "Plans & Pricing", "publisher": "Anthropic", "url": "https://claude.com/pricing", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-PRO", "title": "What is the Pro plan?", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/8325606-what-is-the-pro-plan", "published_at": "2026-06-10", "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-RESEARCH", "title": "Use research on Claude", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/11088861-use-research-on-claude", "published_at": "2026-06-02", "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-COWORK", "title": "Use Claude Cowork on web, desktop, and mobile", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/15520349-use-claude-cowork-on-web-desktop-and-mobile", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-PROJECTS", "title": "What are projects?", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/9517075-what-are-projects", "published_at": "2026-03-16", "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-SKILLS", "title": "Use skills in Claude", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/12512180-use-skills-in-claude", "published_at": "2026-05-27", "accessed_at": "2026-08-12", "source_class": "official"}
+  ]
+}

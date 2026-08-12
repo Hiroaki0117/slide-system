@@ -1,0 +1,150 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_20260812_002",
+  "status": "approved",
+  "purpose": "PCを持たないiPad・iPhone利用者が、ChatGPT Free・PlusとClaude Free・Proの実質的な違いを理解し、無料継続・Plus・Proのどれを選ぶか判断できるようにする",
+  "audience": "AIに詳しくなく、PCを持たず、iPadとiPhoneだけで生成AIを使う個人利用者",
+  "cover": {
+    "title": "iPad・iPhoneで選ぶ生成AIプラン",
+    "date": "2026.8.12",
+    "subtitle": "ChatGPT Free・Plus / Claude Free・Pro",
+    "author": null,
+    "organization": null
+  },
+  "outline": [
+    "ChatGPT Free・Plus詳細ガイド",
+    "Claude Free・Pro詳細ガイド",
+    "ChatGPTとClaudeの選び方ガイド"
+  ],
+  "content_contract": {
+    "status": "approved",
+    "kind": "comparison",
+    "decision_or_learning_outcome": "WorkやSkillsなど無料でも使える機能を正しく理解し、有料プランで増えるモデル、調査、エージェント作業、利用容量が自分に必要か判断できる",
+    "research_required": true,
+    "research_topics": [
+      {
+        "id": "chatgpt-current-plans",
+        "question": "ChatGPT FreeとPlusでWork、モデル、Projects、Plugins、モバイル利用はどう違うか",
+        "status": "verified",
+        "source_ids": ["OAI-PRICE", "OAI-WORK", "OAI-MODELS", "OAI-PROJECTS", "OAI-PLUGINS"]
+      },
+      {
+        "id": "claude-current-plans",
+        "question": "Claude FreeとProでResearch、Cowork、Code、モデル、Projects、Skills、モバイル利用はどう違うか",
+        "status": "verified",
+        "source_ids": ["ANT-PRICE", "ANT-PRO", "ANT-RESEARCH", "ANT-SKILLS", "ANT-PROJECTS", "ANT-COWORK", "ANT-IOS", "ANT-CODE"]
+      }
+    ],
+    "comparison_subjects": ["ChatGPT Free", "ChatGPT Plus", "Claude Free", "Claude Pro"],
+    "comparison_axes": [
+      {
+        "id": "axis-deliverable-work",
+        "label": "完成物を作る機能",
+        "requirement": "MUST",
+        "planned_section": "ChatGPT WorkとClaude Coworkの役割・提供差",
+        "evidence_terms": ["Work", "Cowork"],
+        "source_ids": ["OAI-WORK", "ANT-COWORK"]
+      },
+      {
+        "id": "axis-models",
+        "label": "モデルと利用容量",
+        "requirement": "MUST",
+        "planned_section": "PlusのSol・Terra・LunaとProのより多いモデル、利用量",
+        "evidence_terms": ["Sol", "モデル"],
+        "source_ids": ["OAI-MODELS", "ANT-PRICE", "ANT-PRO"]
+      },
+      {
+        "id": "axis-research",
+        "label": "調査機能",
+        "requirement": "MUST",
+        "planned_section": "Web検索とResearchの違い",
+        "evidence_terms": ["Research", "調査"],
+        "source_ids": ["OAI-WORK", "ANT-RESEARCH"]
+      },
+      {
+        "id": "axis-context-procedure",
+        "label": "文脈と手順の再利用",
+        "requirement": "MUST",
+        "planned_section": "Projects、Skills、Pluginsの役割",
+        "evidence_terms": ["Projects", "Skills", "Plugins"],
+        "source_ids": ["OAI-PROJECTS", "OAI-PLUGINS", "ANT-PROJECTS", "ANT-SKILLS"]
+      },
+      {
+        "id": "axis-mobile",
+        "label": "iPad・iPhoneとPC依存",
+        "requirement": "MUST",
+        "planned_section": "モバイルで完結する作業とデスクトップ必須機能",
+        "evidence_terms": ["iPad", "iPhone", "PC"],
+        "source_ids": ["OAI-WORK", "OAI-PLUGINS", "ANT-COWORK", "ANT-IOS"]
+      }
+    ],
+    "coverage_items": [
+      {
+        "id": "chatgpt-free-work",
+        "label": "WorkはFreeにも含まれる",
+        "requirement": "MUST",
+        "planned_section": "ChatGPT詳細ガイド",
+        "evidence_terms": ["Freeにも", "Work"],
+        "source_ids": ["OAI-PRICE", "OAI-WORK"]
+      },
+      {
+        "id": "chatgpt-plus-value",
+        "label": "Plusの実質的価値",
+        "requirement": "MUST",
+        "planned_section": "ChatGPT詳細ガイド",
+        "evidence_terms": ["Plus", "Sol", "Terra", "Luna"],
+        "source_ids": ["OAI-PRICE", "OAI-MODELS"]
+      },
+      {
+        "id": "claude-free-common",
+        "label": "SkillsとProjectsはFreeでも利用できる",
+        "requirement": "MUST",
+        "planned_section": "Claude詳細ガイド",
+        "evidence_terms": ["Skills", "Projects", "Free"],
+        "source_ids": ["ANT-SKILLS", "ANT-PROJECTS"]
+      },
+      {
+        "id": "claude-pro-value",
+        "label": "Proの実質的価値",
+        "requirement": "MUST",
+        "planned_section": "Claude詳細ガイド",
+        "evidence_terms": ["Research", "Cowork", "Claude Code"],
+        "source_ids": ["ANT-PRICE", "ANT-PRO", "ANT-RESEARCH", "ANT-COWORK", "ANT-CODE"]
+      },
+      {
+        "id": "rollout-caveat",
+        "label": "提供状況の注意",
+        "requirement": "MUST",
+        "planned_section": "Claude詳細ガイドと選び方ガイド",
+        "evidence_terms": ["段階的", "ロールアウト", "ベータ"],
+        "source_ids": ["ANT-COWORK"]
+      },
+      {
+        "id": "decision-flow",
+        "label": "無料継続・Plus・Proの判断",
+        "requirement": "MUST",
+        "planned_section": "選び方ガイド",
+        "evidence_terms": ["Free", "Plus", "Pro"],
+        "source_ids": ["OAI-PRICE", "ANT-PRICE"]
+      }
+    ]
+  },
+  "required_materials": ["2026年8月12日時点の各社公式情報"],
+  "constraints": [
+    "standalone",
+    "PCなしのiPad・iPhone利用を前提にする",
+    "価格表だけにせず、作業体験の差を中心にする",
+    "提供状況が変動する機能は断定しない",
+    "1スライド1メッセージを守る",
+    "warm_cleanではグラデーションを使わない"
+  ],
+  "output": {
+    "profile": "html_pdf",
+    "aspect_ratio": "16:9",
+    "language": "ja",
+    "theme": "warm_clean",
+    "deliverables": 3
+  },
+  "approved_at": "2026-08-12T17:42:00+09:00",
+  "approval_message": "この内容で制作する"
+}

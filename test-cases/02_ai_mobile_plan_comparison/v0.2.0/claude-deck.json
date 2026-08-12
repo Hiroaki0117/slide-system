@@ -1,0 +1,175 @@
+{
+  "schema_version": "1.0",
+  "deck_id": "claude-mobile-plan-v0.2.0",
+  "run_id": "run_20260812_004",
+  "attempt": 2,
+  "metadata": {"title": "iPad・iPhoneで使う Claude Free・Pro比較", "subtitle": "Research・Cowork時代のプラン選び", "date": "2026.8.12", "author": null, "organization": null, "language": "ja"},
+  "context": {
+    "purpose": "FreeとProの実質差を理解し、Research・Cowork・利用量が必要か判断する",
+    "audience": "PCを持たずiPadとiPhoneだけでClaudeを使うAI初心者",
+    "mode": "standalone",
+    "core_message": "SkillsとProjectsはFreeでも使える。Proは調査と作業委任を継続する余裕を広げる",
+    "content_coverage": [
+      {"item_id": "cl-axis-research", "slide_ids": ["cl-05"]},
+      {"item_id": "cl-axis-cowork", "slide_ids": ["cl-06", "cl-11"]},
+      {"item_id": "cl-axis-mobile", "slide_ids": ["cl-10", "cl-11"]},
+      {"item_id": "cl-free-common", "slide_ids": ["cl-03", "cl-08"]},
+      {"item_id": "cl-pro-model-code", "slide_ids": ["cl-04", "cl-07", "cl-09"]},
+      {"item_id": "cl-decision", "slide_ids": ["cl-12", "cl-13"]}
+    ]
+  },
+  "narrative": {"arc": "無料機能の再認識→Pro差分→Research/Cowork→再利用→モバイル制約→判断"},
+  "slides": [
+    {"id": "cl-01", "role": "cover", "title": "iPad・iPhoneで使う\nClaude Free・Pro比較", "subtitle": "Research・Cowork時代のプラン選び", "takeaway": null, "layout": {"family": "cover", "variant": null, "density": "low"}, "blocks": [], "visual": {"strategy": "decorative_shapes", "eyebrow": "CLAUDE × MOBILE GUIDE"}, "source_refs": []},
+    {
+      "id": "cl-02", "role": "content", "title": "Proは、長い仕事を途中で止めにくくする", "subtitle": null,
+      "takeaway": "価値の中心はResearch・Cowork・モデル・利用量です。",
+      "layout": {"family": "standard_visual", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cl-02-p", "type": "paragraph", "text": "Freeでも検索やファイル作成、Skillsを試せます。Proは、調査から完成物までを何度も回す人向けです。", "source_refs": ["ANT-PRICE", "ANT-PRO"]},
+        {"id": "cl-02-i", "type": "image", "path": "C:/Users/Hiroaki Nishimura/Documents/slide-system/test-cases/02_ai_mobile_plan_comparison/v0.2.0/assets/claude-mobile-research.png", "alt": "タブレットとスマートフォンで調査資料を扱う抽象イラスト", "position": "right"}
+      ],
+      "visual": {"strategy": "image"}, "source_refs": ["ANT-PRICE", "ANT-PRO"]
+    },
+    {
+      "id": "cl-03", "role": "content", "title": "Freeでも制作の入口はかなり広い", "subtitle": null,
+      "takeaway": "検索・メモリ・ファイル作成・Skillsまで無料で試せます。",
+      "layout": {"family": "standard", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cl-03-b", "type": "bullets", "items": ["Web検索と拡張思考", "会話をまたぐメモリ", "ファイル作成とコード実行", "Skillsとコネクタ", "FreeはProjects最大5件"], "source_refs": ["ANT-PRICE", "ANT-SKILLS", "ANT-PROJECTS"]}
+      ],
+      "visual": {"strategy": "decorative_shapes"}, "source_refs": ["ANT-PRICE", "ANT-SKILLS", "ANT-PROJECTS"]
+    },
+    {
+      "id": "cl-04", "role": "content", "title": "Proで増えるのは4つの制作余力", "subtitle": null,
+      "takeaway": "量だけでなく、調査・委任・モデル選択が変わります。",
+      "layout": {"family": "process", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cl-04-pr", "type": "process", "items": [
+          {"label": "5×+", "title": "利用量", "body": "Freeの少なくとも5倍"},
+          {"label": "R", "title": "Research", "body": "多段階の調査"},
+          {"label": "C", "title": "Cowork", "body": "作業を委任"},
+          {"label": "M", "title": "モデル", "body": "より多く選択"}
+        ], "source_refs": ["ANT-PRICE", "ANT-PRO", "ANT-RESEARCH", "ANT-COWORK"]}
+      ],
+      "visual": {"strategy": "process"}, "source_refs": ["ANT-PRICE", "ANT-PRO", "ANT-RESEARCH", "ANT-COWORK"]
+    },
+    {
+      "id": "cl-05", "role": "content", "title": "検索とResearchは、調べ方の深さが違う", "subtitle": null,
+      "takeaway": "事実確認は検索、論点整理まで任せるならResearch。",
+      "layout": {"family": "comparison", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cl-05-c", "type": "comparison", "items": [
+          {"heading": "Web検索｜一点を確認", "body": "最新情報を探す\n1～2回の検索\n自分で方向を指定", "tone": "mint"},
+          {"heading": "Research｜全体を調査", "body": "複数検索を連鎖\n未解決点を追う\n引用付きで統合", "tone": "coral"}
+        ], "source_refs": ["ANT-RESEARCH"]}
+      ],
+      "visual": {"strategy": "comparison_graphic"}, "source_refs": ["ANT-RESEARCH", "ANT-PRICE"]
+    },
+    {
+      "id": "cl-06", "role": "content", "title": "Chatは相談、Coworkは作業の委任", "subtitle": null,
+      "takeaway": "成果物や複数工程があるときにCoworkが効きます。",
+      "layout": {"family": "comparison", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cl-06-c", "type": "comparison", "items": [
+          {"heading": "Chat｜対話", "body": "質問・推敲\n短い分析\nその場で返答", "tone": "mint"},
+          {"heading": "Cowork｜委任", "body": "資料・調査・ツール\nバックグラウンド実行\n完成ファイルを確認", "tone": "coral"}
+        ], "source_refs": ["ANT-COWORK"]}
+      ],
+      "visual": {"strategy": "comparison_graphic"}, "source_refs": ["ANT-COWORK", "ANT-PRO"]
+    },
+    {
+      "id": "cl-07", "role": "content", "title": "Proも無制限ではない", "subtitle": null,
+      "takeaway": "5時間枠と週次上限を前提に、重い機能を使い分けます。",
+      "layout": {"family": "data_focus", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cl-07-m1", "type": "metric", "value": "5h", "label": "セッション枠", "note": "利用状況に応じてリセット"},
+        {"id": "cl-07-m2", "type": "metric", "value": "5×+", "label": "Free比", "note": "少なくとも5倍"},
+        {"id": "cl-07-m3", "type": "metric", "value": "週次", "label": "追加上限", "note": "全モデル合算"}
+      ],
+      "visual": {"strategy": "data"}, "source_refs": ["ANT-PRO"]
+    },
+    {
+      "id": "cl-08", "role": "content", "title": "Projectsは背景、Skillsは手順を再利用する", "subtitle": null,
+      "takeaway": "どちらもFreeから使えます。",
+      "layout": {"family": "comparison", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cl-08-c", "type": "comparison", "items": [
+          {"heading": "Projects｜背景", "body": "資料・指示・会話を保持\nFreeは最大5件\nProは無制限", "tone": "mint"},
+          {"heading": "Skills｜手順", "body": "仕様・スクリプトを登録\n必要なときだけ読み込む\nFree・Pro共通", "tone": "coral"}
+        ], "source_refs": ["ANT-PROJECTS", "ANT-SKILLS"]}
+      ],
+      "visual": {"strategy": "comparison_graphic"}, "source_refs": ["ANT-PROJECTS", "ANT-SKILLS"]
+    },
+    {
+      "id": "cl-09", "role": "content", "title": "Claude Codeは開発者向けの追加価値", "subtitle": null,
+      "takeaway": "スライド作成だけなら、CodeよりResearchとCoworkを先に見ます。",
+      "layout": {"family": "standard", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cl-09-p", "type": "paragraph", "text": "Claude Codeはターミナルや対応IDEでコード作業を委任する機能です。Proに含まれますが、PCを持たない非開発者には主な契約理由になりにくい機能です。", "source_refs": ["ANT-CODE", "ANT-PRICE"]}
+      ],
+      "visual": {"strategy": "decorative_shapes"}, "source_refs": ["ANT-CODE", "ANT-PRICE"]
+    },
+    {
+      "id": "cl-10", "role": "content", "title": "iPhone連携はFreeでも使える", "subtitle": null,
+      "takeaway": "Messages・Mail・Calendar・Maps・Remindersなどへつなげられます。",
+      "layout": {"family": "process", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cl-10-pr", "type": "process", "items": [
+          {"label": "1", "title": "Claudeへ依頼", "body": "予定や文面を相談"},
+          {"label": "2", "title": "iOSへ渡す", "body": "標準共有と権限を使用"},
+          {"label": "3", "title": "内容を確認", "body": "アプリ側で編集"},
+          {"label": "4", "title": "保存・送信", "body": "最後は利用者が決定"}
+        ], "source_refs": ["ANT-IOS"]}
+      ],
+      "visual": {"strategy": "process"}, "source_refs": ["ANT-IOS"]
+    },
+    {
+      "id": "cl-11", "role": "content", "title": "Coworkのモバイル利用には2つの注意がある", "subtitle": null,
+      "takeaway": "提供状況とデスクトップ依存を分けて確認します。",
+      "layout": {"family": "comparison", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cl-11-c", "type": "comparison", "items": [
+          {"heading": "段階的ロールアウト", "body": "Web・Mobileはベータ\nプランごとに順次提供\n表示されない場合がある", "tone": "coral"},
+          {"heading": "PCが必要な機能", "body": "ローカルファイル\nブラウザ・Computer Use\nLive ArtifactsはDesktop", "tone": "neutral"}
+        ], "source_refs": ["ANT-COWORK"]}
+      ],
+      "visual": {"strategy": "comparison_graphic"}, "source_refs": ["ANT-COWORK", "ANT-IOS"]
+    },
+    {
+      "id": "cl-12", "role": "content", "title": "Proは調査と制作を何度も回す人に向く", "subtitle": null,
+      "takeaway": "料金ではなく、ResearchとCoworkを月に何度使うかで考えます。",
+      "layout": {"family": "table", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cl-12-t", "type": "table", "headers": ["使い方", "Free", "Pro"], "rows": [
+          ["短い相談・検索", "十分試せる", "余裕あり"],
+          ["Skillsで定型制作", "小さく実行", "反復しやすい"],
+          ["多段階の調査", "Web検索", "Research"],
+          ["作業を委任", "Chat中心", "Cowork※"],
+          ["Projects", "最大5件", "無制限"]
+        ], "note": "※CoworkのWeb・Mobile版はベータかつ段階的ロールアウトです。", "source_refs": ["ANT-PRICE", "ANT-PRO", "ANT-COWORK", "ANT-PROJECTS"]}
+      ],
+      "visual": {"strategy": "evidence"}, "source_refs": ["ANT-PRICE", "ANT-PRO", "ANT-COWORK", "ANT-PROJECTS"]
+    },
+    {
+      "id": "cl-13", "role": "summary", "title": "Freeで1本作り、止まった工程からProを判断する", "subtitle": null,
+      "takeaway": "Proは利用量だけでなく、ResearchとCoworkを使う人向けです。",
+      "layout": {"family": "decision", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cl-13-d", "type": "callout", "question": "多段階の調査や完成物制作を、月に何度も行いますか？", "yes_label": "はい", "yes_action": "ProでResearch・Cowork・利用量を広げる", "no_label": "いいえ", "no_action": "FreeでProjectsとSkillsを先に試す", "footer": "Coworkが自分のアプリに表示されるか、契約前に確認します。", "source_refs": ["ANT-PRICE", "ANT-PRO", "ANT-COWORK"]}
+      ],
+      "visual": {"strategy": "explain"}, "source_refs": ["ANT-PRICE", "ANT-PRO", "ANT-COWORK"]
+    },
+    {"id": "cl-14", "role": "sources", "title": "出典", "subtitle": null, "takeaway": null, "layout": {"family": "sources", "variant": null, "density": "high"}, "blocks": [], "visual": {"strategy": "none", "reason": "出典一覧の可読性を優先"}, "source_refs": ["ANT-PRICE", "ANT-PRO", "ANT-RESEARCH", "ANT-COWORK", "ANT-PROJECTS", "ANT-SKILLS", "ANT-CODE", "ANT-IOS"]}
+  ],
+  "sources": [
+    {"id": "ANT-PRICE", "title": "Plans & Pricing", "publisher": "Anthropic", "url": "https://claude.com/pricing", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-PRO", "title": "What is the Pro plan?", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/8325606-what-is-the-pro-plan", "published_at": "2026-06-10", "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-RESEARCH", "title": "Use research on Claude", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/11088861-use-research-on-claude", "published_at": "2026-06-02", "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-COWORK", "title": "Use Claude Cowork on web, desktop, and mobile", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/15520349-use-claude-cowork-on-web-desktop-and-mobile", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-PROJECTS", "title": "What are projects?", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/9517075-what-are-projects", "published_at": "2026-03-16", "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-SKILLS", "title": "Use skills in Claude", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/12512180-use-skills-in-claude", "published_at": "2026-05-27", "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-CODE", "title": "Use Claude Code with your Pro or Max plan", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/11145838-use-claude-code-with-your-pro-or-max-plan", "published_at": "2026-06-11", "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "ANT-IOS", "title": "Use Claude with iOS apps", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/11869619-use-claude-with-ios-apps", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"}
+  ]
+}

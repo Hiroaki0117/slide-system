@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_20260812_005",
+  "status": "approved",
+  "purpose": "PCを持たないiPad・iPhone利用者が、機能数ではなく作業目的から無料継続・ChatGPT Plus・Claude Proを選べるようにする",
+  "audience": "AIに詳しくなく、PCを持たず、iPadとiPhoneだけで生成AIを使う個人利用者",
+  "cover": {"title": "iPad・iPhoneだけで選ぶ ChatGPTとClaude", "date": "2026.8.12", "subtitle": "無料継続・Plus・Proの判断ガイド", "author": null, "organization": null},
+  "outline": ["選び方の軸", "無料版", "有料版", "用途別", "PCなし制約", "判断"],
+  "content_contract": {
+    "status": "approved",
+    "kind": "comparison",
+    "decision_or_learning_outcome": "自分が作りたい完成物と進め方からFree継続・ChatGPT Plus・Claude Proを選べる",
+    "research_required": true,
+    "research_topics": [
+      {"id": "cmp-openai", "question": "ChatGPT Free・Plusの現在の中核差分", "status": "verified", "source_ids": ["OAI-PRICE", "OAI-WORK", "OAI-MODELS", "OAI-PROJECTS", "OAI-PLUGINS"]},
+      {"id": "cmp-anthropic", "question": "Claude Free・Proの現在の中核差分", "status": "verified", "source_ids": ["ANT-PRICE", "ANT-PRO", "ANT-RESEARCH", "ANT-COWORK", "ANT-PROJECTS", "ANT-SKILLS"]}
+    ],
+    "comparison_subjects": ["ChatGPT Free・Plus", "Claude Free・Pro"],
+    "comparison_axes": [
+      {"id": "cmp-axis-free", "label": "無料版", "requirement": "MUST", "planned_section": "無料版同士", "evidence_terms": ["Free", "Work", "Skills"], "source_ids": ["OAI-PRICE", "OAI-WORK", "ANT-PRICE", "ANT-SKILLS"]},
+      {"id": "cmp-axis-paid", "label": "有料版", "requirement": "MUST", "planned_section": "PlusとPro", "evidence_terms": ["Plus", "Pro", "Research", "Cowork"], "source_ids": ["OAI-PRICE", "OAI-MODELS", "ANT-PRICE", "ANT-RESEARCH", "ANT-COWORK"]},
+      {"id": "cmp-axis-mobile", "label": "PCなし制約", "requirement": "MUST", "planned_section": "モバイル制約", "evidence_terms": ["iPad", "iPhone", "PC"], "source_ids": ["OAI-WORK", "OAI-PLUGINS", "ANT-COWORK"]}
+    ],
+    "coverage_items": [
+      {"id": "cmp-usecases", "label": "用途別適性", "requirement": "MUST", "planned_section": "用途別比較", "evidence_terms": ["調査", "資料", "継続"], "source_ids": ["OAI-WORK", "ANT-RESEARCH", "ANT-COWORK"]},
+      {"id": "cmp-rollout", "label": "Cowork提供状況", "requirement": "MUST", "planned_section": "モバイル制約", "evidence_terms": ["段階的", "ベータ"], "source_ids": ["ANT-COWORK"]},
+      {"id": "cmp-decision", "label": "3択判断", "requirement": "MUST", "planned_section": "判断フロー", "evidence_terms": ["Free", "Plus", "Pro"], "source_ids": ["OAI-PRICE", "ANT-PRICE"]}
+    ]
+  },
+  "required_materials": ["OpenAI・Anthropic公式情報"],
+  "constraints": ["standalone", "PCなし", "1スライド1メッセージ", "グラデーション禁止", "単純な勝敗にしない"],
+  "output": {"profile": "html_pdf", "aspect_ratio": "16:9", "language": "ja", "theme": "warm_clean"},
+  "approved_at": "2026-08-12T17:42:00+09:00",
+  "approval_message": "この内容で制作する"
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_20260812_004",
+  "status": "approved",
+  "purpose": "PCを持たないiPad・iPhone利用者がClaude FreeとProの実質差を理解し、Research・Cowork・利用量へ料金を払う価値があるか判断できるようにする",
+  "audience": "AIに詳しくなく、PCを持たず、iPadとiPhoneだけでClaudeを使う個人利用者",
+  "cover": {"title": "iPad・iPhoneで使う Claude Free・Pro比較", "date": "2026.8.12", "subtitle": "Research・Cowork時代のプラン選び", "author": null, "organization": null},
+  "outline": ["Freeの現在地", "Proの中核差分", "ResearchとCowork", "ProjectsとSkills", "モバイル制約", "判断"],
+  "content_contract": {
+    "status": "approved",
+    "kind": "comparison",
+    "decision_or_learning_outcome": "SkillsとProjectsはFreeでも使えると理解し、ProのResearch・Cowork・Claude Code・モデル・容量が必要か判断できる",
+    "research_required": true,
+    "research_topics": [
+      {"id": "cl-plans", "question": "FreeとProの価格・機能・利用量の差", "status": "verified", "source_ids": ["ANT-PRICE", "ANT-PRO", "ANT-RESEARCH"]},
+      {"id": "cl-workflow", "question": "Cowork・Projects・Skills・Code・iOS・PC依存", "status": "verified", "source_ids": ["ANT-COWORK", "ANT-PROJECTS", "ANT-SKILLS", "ANT-CODE", "ANT-IOS"]}
+    ],
+    "comparison_subjects": ["Claude Free", "Claude Pro"],
+    "comparison_axes": [
+      {"id": "cl-axis-research", "label": "Research", "requirement": "MUST", "planned_section": "調査機能", "evidence_terms": ["Research", "有料"], "source_ids": ["ANT-RESEARCH", "ANT-PRICE"]},
+      {"id": "cl-axis-cowork", "label": "Cowork", "requirement": "MUST", "planned_section": "完成物制作", "evidence_terms": ["Cowork", "ベータ"], "source_ids": ["ANT-COWORK", "ANT-PRO"]},
+      {"id": "cl-axis-mobile", "label": "モバイルとPC依存", "requirement": "MUST", "planned_section": "端末別運用", "evidence_terms": ["iPad", "iPhone", "PC"], "source_ids": ["ANT-COWORK", "ANT-IOS"]}
+    ],
+    "coverage_items": [
+      {"id": "cl-free-common", "label": "Freeで使えるSkillsとProjects", "requirement": "MUST", "planned_section": "Freeの現在地", "evidence_terms": ["Skills", "Projects", "Free"], "source_ids": ["ANT-SKILLS", "ANT-PROJECTS"]},
+      {"id": "cl-pro-model-code", "label": "モデルとClaude Code", "requirement": "MUST", "planned_section": "Proの差分", "evidence_terms": ["モデル", "Claude Code"], "source_ids": ["ANT-PRICE", "ANT-CODE"]},
+      {"id": "cl-decision", "label": "Free継続かProか", "requirement": "MUST", "planned_section": "判断", "evidence_terms": ["Free", "Pro"], "source_ids": ["ANT-PRICE", "ANT-PRO"]}
+    ]
+  },
+  "required_materials": ["Anthropic公式情報"],
+  "constraints": ["standalone", "PCなし", "1スライド1メッセージ", "グラデーション禁止", "Coworkモバイルは段階的ロールアウトと明記"],
+  "output": {"profile": "html_pdf", "aspect_ratio": "16:9", "language": "ja", "theme": "warm_clean"},
+  "approved_at": "2026-08-12T17:42:00+09:00",
+  "approval_message": "この内容で制作する"
+}

@@ -1,0 +1,159 @@
+{
+  "schema_version": "1.0",
+  "deck_id": "chatgpt-mobile-plan-v0.2.0",
+  "run_id": "run_20260812_003",
+  "attempt": 2,
+  "metadata": {"title": "iPad・iPhoneで使う ChatGPT Free・Plus比較", "subtitle": "Work時代のプラン選び", "date": "2026.8.12", "author": null, "organization": null, "language": "ja"},
+  "context": {
+    "purpose": "FreeとPlusの実質差を理解し、反復制作にPlusが必要か判断する",
+    "audience": "PCを持たずiPadとiPhoneだけでChatGPTを使うAI初心者",
+    "mode": "standalone",
+    "core_message": "WorkはFreeにもある。Plusは完成物を繰り返し作るためのモデル選択と余裕を広げる",
+    "content_coverage": [
+      {"item_id": "cg-axis-work", "slide_ids": ["cg-02", "cg-03"]},
+      {"item_id": "cg-axis-model", "slide_ids": ["cg-05", "cg-06"]},
+      {"item_id": "cg-axis-mobile", "slide_ids": ["cg-08", "cg-09"]},
+      {"item_id": "cg-projects", "slide_ids": ["cg-07"]},
+      {"item_id": "cg-plugins", "slide_ids": ["cg-07"]},
+      {"item_id": "cg-decision", "slide_ids": ["cg-10", "cg-11"]}
+    ]
+  },
+  "narrative": {"arc": "誤解の修正→作業体験→モデル→仕組み化→モバイル制約→判断"},
+  "slides": [
+    {
+      "id": "cg-01", "role": "cover", "title": "iPad・iPhoneで使う\nChatGPT Free・Plus比較", "subtitle": "Work時代のプラン選び", "takeaway": null,
+      "layout": {"family": "cover", "variant": null, "density": "low"}, "blocks": [],
+      "visual": {"strategy": "decorative_shapes", "eyebrow": "CHATGPT × MOBILE GUIDE"}, "source_refs": []
+    },
+    {
+      "id": "cg-02", "role": "content", "title": "PlusはWorkの入場券ではない", "subtitle": null,
+      "takeaway": "WorkはFreeにも含まれる。Plusは作業を続けやすくする選択肢です。",
+      "layout": {"family": "standard_visual", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cg-02-p", "type": "paragraph", "text": "現在はFreeでもWorkを使えます。違いを見るときは、機能の有無より、選べるモデル・利用量・クラウド連携に注目します。", "source_refs": ["OAI-PRICE", "OAI-WORK"]},
+        {"id": "cg-02-i", "type": "image", "path": "C:/Users/Hiroaki Nishimura/Documents/slide-system/test-cases/02_ai_mobile_plan_comparison/v0.2.0/assets/chatgpt-mobile-work.png", "alt": "タブレットとスマートフォンで資料を作る抽象イラスト", "position": "right"}
+      ],
+      "visual": {"strategy": "image"}, "source_refs": ["OAI-PRICE", "OAI-WORK"]
+    },
+    {
+      "id": "cg-03", "role": "content", "title": "Chatは答え、Workは完成物をつくる", "subtitle": null,
+      "takeaway": "依頼の終点がファイルならWorkを選びます。",
+      "layout": {"family": "comparison", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cg-03-c", "type": "comparison", "items": [
+          {"heading": "Chat｜考える", "body": "質問への回答\n説明・相談\n短い下書き", "tone": "mint"},
+          {"heading": "Work｜仕上げる", "body": "調査とファイル参照\n資料・分析の作成\n確認できる成果物", "tone": "coral"}
+        ], "source_refs": ["OAI-WORK"]}
+      ],
+      "visual": {"strategy": "comparison_graphic"}, "source_refs": ["OAI-WORK"]
+    },
+    {
+      "id": "cg-04", "role": "content", "title": "Freeでも制作の基本形は試せる", "subtitle": null,
+      "takeaway": "まず1本完成させ、止まった工程を記録します。",
+      "layout": {"family": "process", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cg-04-pr", "type": "process", "items": [
+          {"label": "1", "title": "材料を入れる", "body": "メモや資料を用意"},
+          {"label": "2", "title": "Workへ依頼", "body": "完成形を指定"},
+          {"label": "3", "title": "途中で確認", "body": "質問へ回答"},
+          {"label": "4", "title": "成果物を直す", "body": "必要な修正だけ伝える"}
+        ], "source_refs": ["OAI-WORK"]}
+      ],
+      "visual": {"strategy": "process"}, "source_refs": ["OAI-WORK"]
+    },
+    {
+      "id": "cg-05", "role": "content", "title": "Plusはモデルを仕事に合わせて選べる", "subtitle": null,
+      "takeaway": "重い判断にはSol、日常制作にはTerra、軽い反復にはLuna。",
+      "layout": {"family": "data_focus", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cg-05-m1", "type": "metric", "value": "SOL", "label": "複雑な推論", "note": "曖昧な課題・重要判断"},
+        {"id": "cg-05-m2", "type": "metric", "value": "TERRA", "label": "日常の制作", "note": "報告・文書・分析"},
+        {"id": "cg-05-m3", "type": "metric", "value": "LUNA", "label": "速い反復", "note": "抽出・分類・軽作業"}
+      ],
+      "visual": {"strategy": "data"}, "source_refs": ["OAI-PRICE", "OAI-MODELS"]
+    },
+    {
+      "id": "cg-06", "role": "content", "title": "高いEffortは、難しい場面だけで使う", "subtitle": null,
+      "takeaway": "深く考えさせるほど時間と利用量を使います。",
+      "layout": {"family": "standard", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cg-06-p", "type": "paragraph", "text": "最初は既定のEffortで十分です。複数条件の比較、矛盾の整理、重要な意思決定などでのみ上げます。", "source_refs": ["OAI-MODELS"]},
+        {"id": "cg-06-b", "type": "bullets", "items": ["普段の資料整理: 既定", "難しい比較・分析: High", "最大設定: 本当に必要なときだけ"], "source_refs": ["OAI-MODELS"]}
+      ],
+      "visual": {"strategy": "decorative_shapes"}, "source_refs": ["OAI-MODELS"]
+    },
+    {
+      "id": "cg-07", "role": "content", "title": "Projectsは文脈、Pluginsは道具を引き継ぐ", "subtitle": null,
+      "takeaway": "毎回の説明とデータ移動を減らせます。",
+      "layout": {"family": "comparison", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cg-07-c", "type": "comparison", "items": [
+          {"heading": "Projects｜文脈", "body": "チャット・資料・指示・参照元をまとめ、ChatとWorkで共有", "tone": "mint"},
+          {"heading": "Plugins｜道具", "body": "SkillsとConnectorsを束ね、Google DriveやSlackなどへ接続", "tone": "coral"}
+        ], "source_refs": ["OAI-PROJECTS", "OAI-PLUGINS"]}
+      ],
+      "visual": {"strategy": "comparison_graphic"}, "source_refs": ["OAI-PROJECTS", "OAI-PLUGINS"]
+    },
+    {
+      "id": "cg-08", "role": "content", "title": "iPadで任せ、iPhoneで途中介入する", "subtitle": null,
+      "takeaway": "画面の広さではなく、役割を分けると扱いやすくなります。",
+      "layout": {"family": "process", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cg-08-pr", "type": "process", "items": [
+          {"label": "iPad", "title": "依頼を組む", "body": "資料と完成条件を確認"},
+          {"label": "Cloud", "title": "Workを進める", "body": "Cloud利用時はアプリを閉じても継続"},
+          {"label": "iPhone", "title": "質問へ答える", "body": "方向修正と進捗確認"},
+          {"label": "iPad", "title": "完成物を見る", "body": "全体を確認して保存"}
+        ], "source_refs": ["OAI-WORK", "OAI-PLUGINS"]}
+      ],
+      "visual": {"strategy": "process"}, "source_refs": ["OAI-WORK", "OAI-PLUGINS"]
+    },
+    {
+      "id": "cg-09", "role": "content", "title": "PCなしでもクラウド作業はできる", "subtitle": null,
+      "takeaway": "ただし、自分のPC内を直接操作する仕事は対象外です。",
+      "layout": {"family": "comparison", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cg-09-c", "type": "comparison", "items": [
+          {"heading": "iPad・iPhoneで完結", "body": "アップロード資料\nクラウドのPlugins\nクラウドWorkの確認", "tone": "mint"},
+          {"heading": "PCが必要", "body": "PC内のローカルファイル\nデスクトップアプリ\nPCブラウザの直接操作", "tone": "neutral"}
+        ], "source_refs": ["OAI-WORK", "OAI-PLUGINS"]}
+      ],
+      "visual": {"strategy": "comparison_graphic"}, "source_refs": ["OAI-WORK", "OAI-PLUGINS"]
+    },
+    {
+      "id": "cg-10", "role": "content", "title": "Plusは反復回数を増やしたい人に向く", "subtitle": null,
+      "takeaway": "料金より先に、中断が成果を止めているかを見ます。",
+      "layout": {"family": "table", "variant": null, "density": "medium"},
+      "blocks": [
+        {"id": "cg-10-t", "type": "table", "headers": ["使い方", "Free", "Plus"], "rows": [
+          ["短い相談", "十分試せる", "余裕あり"],
+          ["完成物を1本", "まず試す", "安定して反復"],
+          ["モデル選択", "表示中の範囲", "Sol・Terra・Luna"],
+          ["継続作業", "上限を見ながら", "中断を減らしやすい"]
+        ], "note": "利用枠は固定メッセージ数ではありません。モデル、文脈、ツール、作業量で変わります。", "source_refs": ["OAI-PRICE", "OAI-MODELS"]}
+      ],
+      "visual": {"strategy": "evidence"}, "source_refs": ["OAI-PRICE", "OAI-MODELS"]
+    },
+    {
+      "id": "cg-11", "role": "summary", "title": "Freeで止まった理由が、Plusの判断材料になる", "subtitle": null,
+      "takeaway": "Plusは機能収集ではなく、完成率を上げるために選びます。",
+      "layout": {"family": "decision", "variant": null, "density": "low"},
+      "blocks": [
+        {"id": "cg-11-d", "type": "callout", "question": "月に何度も、資料を読み込ませて完成物を直しますか？", "yes_label": "はい", "yes_action": "Plusでモデルと利用の余裕を増やす", "no_label": "いいえ", "no_action": "Freeで1本完成させてから判断する", "footer": "契約前に、自分のアカウントに表示されるモデル・利用状況を確認します。", "source_refs": ["OAI-PRICE"]}
+      ],
+      "visual": {"strategy": "explain"}, "source_refs": ["OAI-PRICE"]
+    },
+    {
+      "id": "cg-12", "role": "sources", "title": "出典", "subtitle": null, "takeaway": null,
+      "layout": {"family": "sources", "variant": null, "density": "medium"}, "blocks": [],
+      "visual": {"strategy": "none", "reason": "出典一覧の可読性を優先"}, "source_refs": ["OAI-PRICE", "OAI-WORK", "OAI-MODELS", "OAI-PROJECTS", "OAI-PLUGINS"]
+    }
+  ],
+  "sources": [
+    {"id": "OAI-PRICE", "title": "Pricing", "publisher": "OpenAI", "url": "https://learn.chatgpt.com/docs/pricing", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "OAI-WORK", "title": "Get started with ChatGPT Work", "publisher": "OpenAI", "url": "https://learn.chatgpt.com/docs/get-started-with-work", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "OAI-MODELS", "title": "Models", "publisher": "OpenAI", "url": "https://learn.chatgpt.com/docs/models", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "OAI-PROJECTS", "title": "Projects and chats", "publisher": "OpenAI", "url": "https://learn.chatgpt.com/docs/projects", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"},
+    {"id": "OAI-PLUGINS", "title": "Plugins", "publisher": "OpenAI", "url": "https://learn.chatgpt.com/docs/plugins", "published_at": null, "accessed_at": "2026-08-12", "source_class": "official"}
+  ]
+}

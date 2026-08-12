@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "run_id": "run_20260812_003",
+  "status": "approved",
+  "purpose": "PCを持たないiPad・iPhone利用者が、ChatGPT FreeとPlusの実質的な差を理解し、自分の反復制作にPlusが必要か判断できるようにする",
+  "audience": "AIに詳しくなく、PCを持たず、iPadとiPhoneだけでChatGPTを使う個人利用者",
+  "cover": {"title": "iPad・iPhoneで使う ChatGPT Free・Plus比較", "date": "2026.8.12", "subtitle": "Work時代のプラン選び", "author": null, "organization": null},
+  "outline": ["Workの役割", "FreeとPlusの実質差", "モデルの使い分け", "ProjectsとPlugins", "モバイル運用", "判断"],
+  "content_contract": {
+    "status": "approved",
+    "kind": "comparison",
+    "decision_or_learning_outcome": "WorkがFreeにも含まれる現行仕様を理解し、Plusのモデル・容量・クラウド連携へ料金を払う価値があるか判断できる",
+    "research_required": true,
+    "research_topics": [
+      {"id": "cg-plans", "question": "FreeとPlusの価格・Work・モデル・利用面の差", "status": "verified", "source_ids": ["OAI-PRICE", "OAI-WORK", "OAI-MODELS"]},
+      {"id": "cg-workflow", "question": "Projects・Plugins・モバイル・PC依存", "status": "verified", "source_ids": ["OAI-PROJECTS", "OAI-PLUGINS", "OAI-WORK"]}
+    ],
+    "comparison_subjects": ["ChatGPT Free", "ChatGPT Plus"],
+    "comparison_axes": [
+      {"id": "cg-axis-work", "label": "Workの利用", "requirement": "MUST", "planned_section": "結論とChat/Work比較", "evidence_terms": ["Work", "Freeにも"], "source_ids": ["OAI-PRICE", "OAI-WORK"]},
+      {"id": "cg-axis-model", "label": "モデル選択", "requirement": "MUST", "planned_section": "モデルの使い分け", "evidence_terms": ["Sol", "Terra", "Luna"], "source_ids": ["OAI-PRICE", "OAI-MODELS"]},
+      {"id": "cg-axis-mobile", "label": "モバイルとPC依存", "requirement": "MUST", "planned_section": "端末別運用", "evidence_terms": ["iPad", "iPhone", "PC"], "source_ids": ["OAI-WORK", "OAI-PLUGINS"]}
+    ],
+    "coverage_items": [
+      {"id": "cg-projects", "label": "Projectsの役割", "requirement": "MUST", "planned_section": "ProjectsとPlugins", "evidence_terms": ["Projects", "文脈"], "source_ids": ["OAI-PROJECTS"]},
+      {"id": "cg-plugins", "label": "Pluginsの役割", "requirement": "MUST", "planned_section": "ProjectsとPlugins", "evidence_terms": ["Plugins", "Skills", "Connectors"], "source_ids": ["OAI-PLUGINS"]},
+      {"id": "cg-decision", "label": "Free継続かPlusか", "requirement": "MUST", "planned_section": "判断", "evidence_terms": ["Free", "Plus"], "source_ids": ["OAI-PRICE"]}
+    ]
+  },
+  "required_materials": ["OpenAI公式情報"],
+  "constraints": ["standalone", "PCなし", "1スライド1メッセージ", "グラデーション禁止", "提供状況はアカウント表示を優先"],
+  "output": {"profile": "html_pdf", "aspect_ratio": "16:9", "language": "ja", "theme": "warm_clean"},
+  "approved_at": "2026-08-12T17:42:00+09:00",
+  "approval_message": "この内容で制作する"
+}
