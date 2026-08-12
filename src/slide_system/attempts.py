@@ -35,9 +35,16 @@ def create_attempt(
         number = int(run["progress"].get("attempt_count", 0)) + 1
         attempt_dir = run_dir / "attempts" / f"{number:03d}"
         if attempt_dir.exists():
-            raise FileExistsError(f"Attemptフォルダが既にあります: {attempt_dir}")
-        attempt_dir.mkdir(parents=True)
-        (attempt_dir / "steps").mkdir()
+            existing_items = list(attempt_dir.iterdir())
+            if existing_items and not (
+                len(existing_items) == 1
+                and existing_items[0].name == "steps"
+                and existing_items[0].is_dir()
+                and not any(existing_items[0].iterdir())
+            ):
+                raise FileExistsError(f"Attemptフォルダが既にあります: {attempt_dir}")
+        attempt_dir.mkdir(parents=True, exist_ok=True)
+        (attempt_dir / "steps").mkdir(exist_ok=True)
 
         input_hash = None
         artifacts: dict[str, Any] = {}

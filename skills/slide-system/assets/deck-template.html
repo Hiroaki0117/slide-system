@@ -122,10 +122,10 @@
     .action { display: grid; grid-template-columns: 52px 1fr; gap: 20px; align-items: center; padding: 20px 26px; border-bottom: 1px solid var(--divider); font-size: 24px; line-height: 1.45; }
     .action-number { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; background: var(--coral-soft); color: var(--coral-text); font-size: 20px; font-weight: 800; }
     .sources-list { display: grid; gap: 15px; margin-top: 12px; }
-    .source-item { display: grid; grid-template-columns: 72px 1fr; gap: 18px; padding-bottom: 13px; border-bottom: 1px solid var(--divider); }
+    .source-item { display: grid; grid-template-columns: 110px minmax(0,1fr); gap: 22px; padding-bottom: 13px; border-bottom: 1px solid var(--divider); }
     .source-id { color: var(--coral-text); font-size: 18px; font-weight: 800; }
-    .source-main { font-size: 17px; line-height: 1.38; overflow-wrap: anywhere; }
-    .source-meta { margin-top: 3px; color: var(--muted); font-size: 14px; line-height: 1.35; }
+    .source-main { min-width: 0; font-size: 17px; line-height: 1.38; overflow-wrap: anywhere; }
+    .source-meta { min-width: 0; margin-top: 3px; color: var(--muted); font-size: 14px; line-height: 1.35; overflow-wrap: anywhere; }
     .slide-source { position: absolute; left: 88px; bottom: 27px; z-index: 2; max-width: 1180px; color: var(--muted); font-size: 14px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .page-number { position: absolute; right: 88px; bottom: 23px; z-index: 2; font-size: 17px; font-weight: 800; }
     .image-layout { display: grid; grid-template-columns: 1.05fr .95fr; gap: 42px; align-items: center; }

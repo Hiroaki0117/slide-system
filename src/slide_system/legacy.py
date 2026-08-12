@@ -117,10 +117,13 @@ def _process_steps(slide: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
-def _legacy_sources(deck: dict[str, Any]) -> list[dict[str, Any]]:
+def _legacy_sources(deck: dict[str, Any], source_refs: list[str] | None = None) -> list[dict[str, Any]]:
+    selected_ids = set(source_refs or [])
     result = []
     for source in deck.get("sources", []):
         source_id = str(source.get("id", "")).strip()
+        if selected_ids and source_id not in selected_ids:
+            continue
         title = str(source.get("title", "")).strip()
         publisher = str(source.get("publisher") or "").strip()
         checked = str(source.get("accessed_at") or "").strip()
@@ -292,7 +295,7 @@ def convert_deck_to_legacy(
                 }
             )
         elif legacy_layout == "sources_appendix":
-            converted["sources"] = _legacy_sources(deck)
+            converted["sources"] = _legacy_sources(deck, slide.get("source_refs", []))
             has_sources_slide = True
         legacy_slides.append(converted)
 

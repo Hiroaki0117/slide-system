@@ -9,3 +9,5 @@ node_modules/
 *.egg-info/
 build/
 test-cases/**/output/**/pdf-renders/
+# Temporary PDF page renders used for visual QA
+test-cases/**/pdf-renders/
