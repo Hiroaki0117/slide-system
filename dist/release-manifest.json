@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "harness_version": "0.9.0",
+  "harness_version": "0.10.0",
   "skills": {
     "free": {
       "version": "0.2.16",
@@ -8,16 +8,16 @@
       "sha256": "sha256:7ea8bf15bd9cb0d3a5b4ccf9c3d7cd93fe1521546b9ceff8f3e7078813cc58e2"
     },
     "paid": {
-      "version": "0.1.3",
-      "file": "slide-system-paid-v0.1.3.zip",
-      "sha256": "sha256:9869a676c1bcb963d186036e93a8ac3b80bf18b4f6f2de0b8fc4e0ecb3834fe2"
+      "version": "0.1.4",
+      "file": "slide-system-paid-v0.1.4.zip",
+      "sha256": "sha256:4bdc4216ea33291a9f5713dbd3faace93e4e9f4337b006c34982879a523d36d4"
     }
   },
   "packages": {
     "chatgpt_project": {
-      "version": "0.1.1",
-      "file": "slide-system-chatgpt-project-v0.1.1.zip",
-      "sha256": "sha256:6885d0f70c7dda151e7ed557ce01ee45ef738794d57b5e2367d00f29d3697c3e",
+      "version": "0.1.2",
+      "file": "slide-system-chatgpt-project-v0.1.2.zip",
+      "sha256": "sha256:1b7b4d53c7ad6763f2c981d2aa5e72c34b5cce3ebefa1d0b9bff95b2c8ae4f1e",
       "upload_file_count": 5
     }
   }
