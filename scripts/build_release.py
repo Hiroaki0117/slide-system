@@ -11,8 +11,9 @@ from build_skill_package import package
 
 ROOT = Path(__file__).resolve().parents[1]
 FREE_VERSION = "0.2.16"
-PAID_VERSION = "0.1.3"
-CHATGPT_PROJECT_VERSION = "0.1.1"
+PAID_VERSION = "0.1.4"
+CHATGPT_PROJECT_VERSION = "0.1.2"
+HARNESS_VERSION = "0.10.0"
 
 
 def sha256(path: Path) -> str:
@@ -34,7 +35,7 @@ def main() -> int:
     chatgpt_result = build_chatgpt_project(chatgpt_project, CHATGPT_PROJECT_VERSION, replace=args.replace)
     manifest = {
         "schema_version": "1.0",
-        "harness_version": "0.9.0",
+        "harness_version": HARNESS_VERSION,
         "skills": {
             "free": {"version": FREE_VERSION, "file": free.name, "sha256": sha256(free)},
             "paid": {"version": PAID_VERSION, "file": paid.name, "sha256": sha256(paid)},

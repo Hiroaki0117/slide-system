@@ -10,9 +10,9 @@
 
 | 利用方法 | 向いている人 | 現在の状態 |
 |---|---|---|
-| ChatGPT Project | PCを使わず、ChatGPT Free／PlusのProjectで作りたい | `v0.1.1`、モバイル表示QA対応 |
+| ChatGPT Project | PCを使わず、ChatGPT Free／PlusのProjectで作りたい | `v0.1.2`、内容契約・モバイル表示QA対応 |
 | Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.16` |
-| Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.3`、実機検証待ち |
+| Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.4`、内容契約対応・実機検証待ち |
 | ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 0〜8完了 |
 
 ChatGPT／Claude向けZIPとローカルハーネスは併存します。AIのWeb／モバイル画面だけで完結したい場合は配布ZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
@@ -21,7 +21,7 @@ ChatGPT／Claude向けZIPとローカルハーネスは併存します。AIのWe
 
 ### 配布ファイル
 
-`dist/slide-system-chatgpt-project-v0.1.1.zip`をChatGPT Free／Plusで共通利用します。パッケージには、Projectへ登録する5ファイル、Project Instructionsへ貼り付ける文章、iPad／iPhone向け説明書が入っています。
+`dist/slide-system-chatgpt-project-v0.1.2.zip`をChatGPT Free／Plusで共通利用します。パッケージには、Projectへ登録する5ファイル、Project Instructionsへ貼り付ける文章、iPad／iPhone向け説明書が入っています。
 
 ### iPadでの登録
 
@@ -40,7 +40,7 @@ Free／Plusの比較では同じProjectパッケージと段階納品を使用�
 | ファイル | 内容 |
 |---|---|
 | `dist/slide-system-free-v0.2.16.zip` | 無料版向け。質問、構成確認、HTML先行納品、利用枠を意識した段階制作 |
-| `dist/slide-system-paid-v0.1.3.zip` | 有料版向け。00〜60正本、全ページ検査、HTML/PDFの一括制作 |
+| `dist/slide-system-paid-v0.1.4.zip` | 有料版向け。00〜60正本、内容契約、全ページ検査、HTML/PDFの一括制作 |
 
 過去のZIPも`dist/`に残していますが、通常は上記の最新版を使用してください。
 
@@ -288,6 +288,15 @@ slide-system validate run ".\runs\run_20260810_001\run.json"
 
 承認済みBriefを登録します。
 
+Briefには、構成だけでなく`content_contract`として次を記録します。
+
+- 読者が最終的に判断または理解できること
+- 制作前に確認した調査項目と主要出典
+- 比較資料なら比較対象と3つ以上の比較軸
+- 必須論点と掲載予定セクション
+
+`deck.json`では`context.content_coverage`に各必須論点の掲載スライドIDを記録します。`build`はHTML生成前に両者を照合し、重要論点や出典が欠けている場合は`needs_revision`で停止します。
+
 ```powershell
 slide-system brief approve run_20260810_001 `
   --file ".\approved-brief.json" `
@@ -356,9 +365,10 @@ slide-system step finish run_20260810_001 --step-id step-001 --owner codex
 ```text
 依頼・添付資料
   → 事前検査と質問
-  → 制作条件・構成案の承認
+  → 調査・重要論点の棚卸し
+  → 内容契約・制作条件・構成案の承認
   → deck.json
-  → 構造QA
+  → 内容契約・構造QA
   → HTML
   → 全ページ視覚QA
   → HTML確認
@@ -456,8 +466,8 @@ python scripts/test_artifact_recovery.py
 python scripts/test_fast_pdf_export.py
 python scripts/test_free_turn_gate_contract.py
 python scripts/test_free_package_generic.py dist/slide-system-free-v0.2.16.zip
-python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.3.zip
-python scripts/test_chatgpt_project_package.py dist/slide-system-chatgpt-project-v0.1.1.zip
+python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.4.zip
+python scripts/test_chatgpt_project_package.py dist/slide-system-chatgpt-project-v0.1.2.zip
 python scripts/test_harness_phase0.py
 python scripts/test_harness_phase1.py
 python scripts/test_harness_phase2.py

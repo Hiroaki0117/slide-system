@@ -26,6 +26,7 @@ runs/run_YYYYMMDD_NNN/
 │     ├─ deck.json
 │     ├─ steps/
 │     ├─ deck.html
+│     ├─ content-qa.json
 │     ├─ qa-report.json
 │     ├─ review.json
 │     └─ screenshots/
@@ -35,6 +36,8 @@ runs/run_YYYYMMDD_NNN/
 ```
 
 `run.json`は現在状態とファイル位置を示す索引です。履歴は`events.jsonl`へ追記し、HTML/PDFの内容を`run.json`へ埋め込みません。
+
+`approved-brief.json`の`content_contract`は、読者が得る判断・理解、必要な調査項目、必須論点、比較軸、掲載予定セクション、主要出典を保持します。`deck.json`の`context.content_coverage`は、その必須論点を実際のスライドIDへ結び付けます。`content-qa.json`は両者を照合した結果です。
 
 ## 状態
 
