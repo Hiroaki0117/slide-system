@@ -126,6 +126,34 @@ async function main() {
   const expectedSecond = slideCount > 1 ? `2 / ${slideCount}` : `1 / ${slideCount}`;
   const navigationPass = navigation.initial === `1 / ${slideCount}` && navigation.second === expectedSecond && navigation.clampedEnd === `${slideCount} / ${slideCount}` && navigation.clampedStart === `1 / ${slideCount}`;
 
+  const mobileViewports = [];
+  for (const device of [
+    { name: "ipad", width: 1024, height: 1366 },
+    { name: "iphone", width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize({ width: device.width, height: device.height });
+    await page.waitForTimeout(50);
+    const result = await page.evaluate(() => {
+      const viewport = document.getElementById("viewport").getBoundingClientRect();
+      const slide = document.querySelector(".slide.active").getBoundingClientRect();
+      const controls = document.querySelector(".controls").getBoundingClientRect();
+      const fits = rect => rect.left >= -1 && rect.top >= -1 && rect.right <= innerWidth + 1 && rect.bottom <= innerHeight + 1;
+      return {
+        indicator: document.getElementById("indicator")?.textContent?.trim(),
+        viewport: { left: viewport.left, top: viewport.top, right: viewport.right, bottom: viewport.bottom, width: viewport.width, height: viewport.height },
+        slide: { left: slide.left, top: slide.top, right: slide.right, bottom: slide.bottom, width: slide.width, height: slide.height },
+        controls: { left: controls.left, top: controls.top, right: controls.right, bottom: controls.bottom },
+        viewport_fits: fits(viewport),
+        slide_fits: fits(slide),
+        controls_fit: fits(controls),
+      };
+    });
+    mobileViewports.push({ ...device, ...result });
+  }
+  await page.setViewportSize({ width: 1600, height: 900 });
+  await page.waitForTimeout(50);
+  await page.evaluate(() => window.showSlide(0));
+
   // Navigation is tested above. Hide viewer-only UI before visual inspection so
   // it cannot obscure slide content in screenshots or the contact sheet.
   await page.addStyleTag({ content: ".controls,.draft-banner{display:none!important}" });
@@ -257,6 +285,11 @@ async function main() {
   const failures = [];
   if (!fontCheck.loaded || fontCheck.status !== "loaded" || !fontCheck.family.includes("Slide Noto Sans JP")) failures.push({ code: "FONT_LOAD", message: "Bundled Slide Noto Sans JP did not load", details: fontCheck });
   if (!navigationPass) failures.push({ code: "NAVIGATION", message: "Navigation did not clamp or update correctly" });
+  for (const viewport of mobileViewports) {
+    if (!viewport.viewport_fits || !viewport.slide_fits || !viewport.controls_fit) {
+      failures.push({ code: "MOBILE_VIEWPORT", message: `${viewport.name} layout extends outside its viewport`, details: viewport });
+    }
+  }
   if (consoleErrors.length) failures.push({ code: "CONSOLE", message: "Browser console errors occurred", details: consoleErrors });
   for (const slide of slides) {
     if (slide.overflow.length) failures.push({ code: "OVERFLOW", slide: slide.number, details: slide.overflow });
@@ -282,6 +315,7 @@ async function main() {
     individual_pdf_bytes: individualPdfBytes,
     navigation,
     navigation_pass: navigationPass,
+    mobile_viewports: mobileViewports,
     font: fontCheck,
     contact_sheet: contactSheet,
     slides,
