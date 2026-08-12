@@ -37,6 +37,7 @@ def main() -> int:
     tests = [
         "test_harness_phase0.py", "test_harness_phase1.py", "test_harness_phase2.py", "test_harness_phase3.py",
         "test_harness_phase4.py", "test_harness_phase5.py", "test_harness_phase6.py", "test_harness_phase7.py",
+        "test_content_contract.py",
         "test_build_deck_validation.py", "test_artifact_recovery.py", "test_fast_pdf_export.py", "test_free_turn_gate_contract.py",
         "test_cross_platform_mobile_case.py", "test_high_stakes_conversion.py", "test_single_message_visual_qa.py",
     ]

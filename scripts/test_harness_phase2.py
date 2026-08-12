@@ -187,7 +187,7 @@ def main() -> int:
         assert rendered["pdf"].stat().st_size > 4000
         qa_report = json.loads(rendered["report"].read_text(encoding="utf-8"))
         assert qa_report["result"] == "PASS", qa_report
-        assert qa_report["gates"] == {"static": "PASS", "visual": "PASS", "pdf_parity": "PASS", "theme": "PASS"}
+        assert qa_report["gates"] == {"content": "PASS", "static": "PASS", "visual": "PASS", "pdf_parity": "PASS", "theme": "PASS"}
         visual_report = json.loads((Path(rendered["report"]).parent / "visual-qa-legacy.json").read_text(encoding="utf-8"))
         assert visual_report["slide_count"] == 3
         assert (rendered["renders"] / "contact-sheet.png").is_file()

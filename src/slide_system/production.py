@@ -10,6 +10,7 @@ from typing import Any
 
 from . import __version__
 from .attempts import finish_step, start_step
+from .content_contract import evaluate_content_contract
 from .designs import DesignPack, load_design_pack
 from .hashing import sha256_files
 from .legacy import convert_deck_to_legacy
@@ -137,6 +138,27 @@ def build_html(
     deck = validate_file(project_root, "deck", deck_path)
     design_id = str(run.get("design", {}).get("pack") or config.get("defaults", {}).get("design_pack", "warm_clean"))
     pack = load_design_pack(project_root, design_id)
+    brief = read_json(run_dir / "brief" / "approved-brief.json")
+    content_report = evaluate_content_contract(brief, deck, config)
+    atomic_write_json(attempt_dir / "content-qa.json", content_report)
+    if content_report["status"] != "PASS":
+        qa_report = create_qa_report(project_root, run_id=run_id, attempt=attempt_number, attempt_dir=attempt_dir, design_pack=pack)
+        _update_attempt_and_run(
+            project_root,
+            config,
+            run_id,
+            owner=owner,
+            event="content_qa_failed",
+            attempt_status="needs_revision",
+            run_status="needs_revision",
+            artifacts={"content_qa": "content-qa.json", "qa_report": "qa-report.json"},
+            last_action="内容QAで必須論点の不足が見つかりました",
+            next_action="内容契約と掲載先を確認し、新しいAttemptで修正してください",
+            qa_result=qa_report["result"],
+            design_pack=pack,
+        )
+        messages = "; ".join(str(item.get("message")) for item in content_report.get("issues", []))
+        raise ProductionError(messages or "内容QAに失敗しました")
     legacy = convert_deck_to_legacy(deck, pack, asset_base=deck_path.parent)
     build_dir = attempt_dir / "build"
     build_dir.mkdir(parents=True, exist_ok=True)
@@ -222,6 +244,7 @@ def build_html(
         run_status="qa",
         artifacts={
             "html": "deck.html",
+            "content_qa": "content-qa.json",
             "legacy_deck": "build/legacy-deck.json",
             "work_state": "build/work-state.json",
             "static_qa": "static-qa-legacy.json",
@@ -249,6 +272,15 @@ def _browser_path() -> str | None:
         r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe",
     ]
     return next((candidate for candidate in candidates if candidate and Path(candidate).is_file()), None)
+
+
+def _node_environment(project_root: Path) -> dict[str, str]:
+    environment = os.environ.copy()
+    runtime_root = Path(__file__).resolve().parents[2]
+    module_paths = [path for path in (project_root / "node_modules", runtime_root / "node_modules") if path.is_dir()]
+    existing = environment.get("NODE_PATH", "")
+    environment["NODE_PATH"] = os.pathsep.join([*(str(path) for path in module_paths), *([existing] if existing else [])])
+    return environment
 
 
 def render_pdf(
@@ -298,7 +330,7 @@ def render_pdf(
     browser = _browser_path()
     if browser:
         command.extend(["--browser", browser])
-    completed = subprocess.run(command, capture_output=True, text=True, check=False)
+    completed = subprocess.run(command, capture_output=True, text=True, check=False, env=_node_environment(project_root))
     success = completed.returncode == 0
     design_id = str(run.get("design", {}).get("pack") or config.get("defaults", {}).get("design_pack", "warm_clean"))
     pack = load_design_pack(project_root, design_id)

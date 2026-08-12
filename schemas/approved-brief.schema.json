@@ -23,11 +23,60 @@
       "additionalProperties": false
     },
     "outline": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "content_contract": {
+      "type": "object",
+      "required": ["status", "kind", "decision_or_learning_outcome", "research_required", "research_topics", "coverage_items"],
+      "properties": {
+        "status": { "const": "approved" },
+        "kind": { "enum": ["explain", "proposal", "report", "how_to", "training", "comparison", "decision", "reference"] },
+        "decision_or_learning_outcome": { "type": "string", "minLength": 1 },
+        "research_required": { "type": "boolean" },
+        "research_topics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "question", "status", "source_ids"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "question": { "type": "string", "minLength": 1 },
+              "status": { "enum": ["verified", "user_supplied", "not_applicable", "unresolved"] },
+              "source_ids": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+            },
+            "additionalProperties": false
+          }
+        },
+        "comparison_subjects": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true },
+        "comparison_axes": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/coverageItem" }
+        },
+        "coverage_items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/coverageItem" }
+        }
+      },
+      "additionalProperties": false
+    },
     "required_materials": { "type": "array", "items": { "type": "string" } },
     "constraints": { "type": "array", "items": { "type": "string" } },
     "output": { "type": "object" },
     "approved_at": { "type": "string", "format": "date-time" },
     "approval_message": { "type": "string" }
   },
-  "additionalProperties": true
+  "additionalProperties": true,
+  "$defs": {
+    "coverageItem": {
+      "type": "object",
+      "required": ["id", "label", "requirement", "planned_section", "evidence_terms", "source_ids"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "requirement": { "enum": ["MUST", "SHOULD"] },
+        "planned_section": { "type": "string", "minLength": 1 },
+        "evidence_terms": { "type": "array", "items": { "type": "string", "minLength": 1 }, "minItems": 1, "uniqueItems": true },
+        "source_ids": { "type": "array", "items": { "type": "string", "minLength": 1 }, "uniqueItems": true }
+      },
+      "additionalProperties": false
+    }
+  }
 }

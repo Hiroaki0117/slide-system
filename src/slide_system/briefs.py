@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from .content_contract import validate_brief_content_contract
 from .runs import STATUS_LABELS, find_run
 from .state import ALLOWED_TRANSITIONS, InvalidTransitionError, mutate_run
 from .storage import atomic_write_json
@@ -18,6 +19,7 @@ def approve_brief(
     owner: str,
 ) -> dict[str, Any]:
     brief = validate_file(project_root, "approved-brief", brief_source.resolve())
+    validate_brief_content_contract(brief, config)
     if brief.get("run_id") != run_id:
         raise ValueError(f"Briefのrun_idが一致しません: {brief.get('run_id')} != {run_id}")
     selected = find_run(project_root, config, run_id)
