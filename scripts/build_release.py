@@ -10,9 +10,9 @@ from build_skill_package import package
 
 
 ROOT = Path(__file__).resolve().parents[1]
-FREE_VERSION = "0.2.15"
-PAID_VERSION = "0.1.2"
-CHATGPT_PROJECT_VERSION = "0.1.0"
+FREE_VERSION = "0.2.16"
+PAID_VERSION = "0.1.3"
+CHATGPT_PROJECT_VERSION = "0.1.1"
 
 
 def sha256(path: Path) -> str:

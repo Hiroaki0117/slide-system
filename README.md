@@ -10,9 +10,9 @@
 
 | 利用方法 | 向いている人 | 現在の状態 |
 |---|---|---|
-| ChatGPT Project | PCを使わず、ChatGPT Free／PlusのProjectで作りたい | `v0.1.0`、モバイル実機検証待ち |
-| Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.15` |
-| Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.2`、実機検証待ち |
+| ChatGPT Project | PCを使わず、ChatGPT Free／PlusのProjectで作りたい | `v0.1.1`、モバイル表示QA対応 |
+| Claude無料版スキル | 無料版Claudeの利用枠を節約しながら段階的に作りたい | `v0.2.16` |
+| Claude有料版スキル | 00〜60を忠実に使い、全ページQAまで実行したい | `v0.1.3`、実機検証待ち |
 | ローカルハーネス | CodexまたはClaude Codeで履歴、再開、比較、生成を管理したい | Phase 0〜8完了 |
 
 ChatGPT／Claude向けZIPとローカルハーネスは併存します。AIのWeb／モバイル画面だけで完結したい場合は配布ZIPを使い、制作結果を継続的に保存・比較したい場合はハーネスを使います。
@@ -21,7 +21,7 @@ ChatGPT／Claude向けZIPとローカルハーネスは併存します。AIのWe
 
 ### 配布ファイル
 
-`dist/slide-system-chatgpt-project-v0.1.0.zip`をChatGPT Free／Plusで共通利用します。パッケージには、Projectへ登録する5ファイル、Project Instructionsへ貼り付ける文章、iPad／iPhone向け説明書が入っています。
+`dist/slide-system-chatgpt-project-v0.1.1.zip`をChatGPT Free／Plusで共通利用します。パッケージには、Projectへ登録する5ファイル、Project Instructionsへ貼り付ける文章、iPad／iPhone向け説明書が入っています。
 
 ### iPadでの登録
 
@@ -39,8 +39,8 @@ Free／Plusの比較では同じProjectパッケージと段階納品を使用�
 
 | ファイル | 内容 |
 |---|---|
-| `dist/slide-system-free-v0.2.15.zip` | 無料版向け。質問、構成確認、HTML先行納品、利用枠を意識した段階制作 |
-| `dist/slide-system-paid-v0.1.2.zip` | 有料版向け。00〜60正本、全ページ検査、HTML/PDFの一括制作 |
+| `dist/slide-system-free-v0.2.16.zip` | 無料版向け。質問、構成確認、HTML先行納品、利用枠を意識した段階制作 |
+| `dist/slide-system-paid-v0.1.3.zip` | 有料版向け。00〜60正本、全ページ検査、HTML/PDFの一括制作 |
 
 過去のZIPも`dist/`に残していますが、通常は上記の最新版を使用してください。
 
@@ -455,9 +455,9 @@ python scripts/test_build_deck_validation.py
 python scripts/test_artifact_recovery.py
 python scripts/test_fast_pdf_export.py
 python scripts/test_free_turn_gate_contract.py
-python scripts/test_free_package_generic.py dist/slide-system-free-v0.2.15.zip
-python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.2.zip
-python scripts/test_chatgpt_project_package.py dist/slide-system-chatgpt-project-v0.1.0.zip
+python scripts/test_free_package_generic.py dist/slide-system-free-v0.2.16.zip
+python scripts/test_paid_package_contract.py dist/slide-system-paid-v0.1.3.zip
+python scripts/test_chatgpt_project_package.py dist/slide-system-chatgpt-project-v0.1.1.zip
 python scripts/test_harness_phase0.py
 python scripts/test_harness_phase1.py
 python scripts/test_harness_phase2.py
