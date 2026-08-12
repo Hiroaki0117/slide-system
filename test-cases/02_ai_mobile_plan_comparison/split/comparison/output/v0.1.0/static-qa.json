@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "slide_count": 1,
+  "warning_count": 1,
+  "issues": [
+    {
+      "level": "WARN",
+      "code": "SHORT_DECK",
+      "message": "A deck normally needs at least three slides"
+    }
+  ]
+}

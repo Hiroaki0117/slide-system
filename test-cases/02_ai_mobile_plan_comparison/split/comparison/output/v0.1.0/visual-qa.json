@@ -1,0 +1,108 @@
+{
+  "status": "PASS",
+  "browser": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "workflow": {
+    "path": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\split\\comparison\\work-state.json",
+    "phase": "pdf_requested",
+    "delivery_profile": "staged",
+    "approval_status": "approved"
+  },
+  "html": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\split\\comparison\\output\\v0.1.0\\comparison-mobile-guide.html",
+  "pdf": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\split\\comparison\\output\\v0.1.0\\comparison-mobile-guide.pdf",
+  "slide_count": 1,
+  "detected_pdf_pages": 1,
+  "individual_pdf_bytes": [
+    319378
+  ],
+  "navigation": {
+    "initial": "1 / 1",
+    "second": "1 / 1",
+    "clampedEnd": "1 / 1",
+    "clampedStart": "1 / 1"
+  },
+  "navigation_pass": true,
+  "mobile_viewports": [
+    {
+      "name": "ipad",
+      "width": 1024,
+      "height": 1366,
+      "indicator": "1 / 1",
+      "viewport": {
+        "left": 0,
+        "top": 395,
+        "right": 1024,
+        "bottom": 971,
+        "width": 1024,
+        "height": 576
+      },
+      "slide": {
+        "left": 0,
+        "top": 395,
+        "right": 1024,
+        "bottom": 971,
+        "width": 1024,
+        "height": 576
+      },
+      "controls": {
+        "left": 377.4921875,
+        "top": 1302,
+        "right": 646.5078125,
+        "bottom": 1348
+      },
+      "viewport_fits": true,
+      "slide_fits": true,
+      "controls_fit": true
+    },
+    {
+      "name": "iphone",
+      "width": 390,
+      "height": 844,
+      "indicator": "1 / 1",
+      "viewport": {
+        "left": 0,
+        "top": 312.3125,
+        "right": 390,
+        "bottom": 531.6875,
+        "width": 390,
+        "height": 219.375
+      },
+      "slide": {
+        "left": 0,
+        "top": 312.3125,
+        "right": 390,
+        "bottom": 531.6875,
+        "width": 390,
+        "height": 219.375
+      },
+      "controls": {
+        "left": 97.5,
+        "top": 768,
+        "right": 292.5,
+        "bottom": 826
+      },
+      "viewport_fits": true,
+      "slide_fits": true,
+      "controls_fit": true
+    }
+  ],
+  "font": {
+    "loaded": true,
+    "family": "\"Slide Noto Sans JP\"",
+    "status": "loaded"
+  },
+  "contact_sheet": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\split\\comparison\\output\\v0.1.0\\screenshots\\contact-sheet.png",
+  "slides": [
+    {
+      "number": 1,
+      "image": "C:\\Users\\Hiroaki Nishimura\\Documents\\slide-system\\test-cases\\02_ai_mobile_plan_comparison\\split\\comparison\\output\\v0.1.0\\screenshots\\slide-01.png",
+      "overflow": [],
+      "titleWrap": false,
+      "messageWrapLines": 0,
+      "coverTitleOrphan": false,
+      "fontFailures": [],
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "failures": []
+}
