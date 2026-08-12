@@ -1,0 +1,6 @@
+{
+  "phase": "pdf_requested",
+  "delivery_profile": "staged",
+  "approval": { "status": "approved", "user_reply": "1枚の比較表を作る" },
+  "pdf_request": { "user_reply": "それでお願いします" }
+}

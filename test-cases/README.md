@@ -77,3 +77,11 @@
 仕様と入力は共通にし、成果物と実行記録を環境別に分離します。最初のケースは`cross-platform/01_mobile_internal_training/`です。
 
 なお、4環境で同じスライドを生成して品質を競うテストと、4プランの違いを説明するスライドは別物です。後者の成果物は`02_ai_mobile_plan_comparison/`へ保存します。
+
+プラン比較の成果物は、利用者が自分の候補だけを読みやすいように次の3資料へ分けています。
+
+- `split/chatgpt/`: ChatGPT Free・Plusの詳細ガイド
+- `split/claude/`: Claude Free・Proの詳細ガイド
+- `split/comparison/`: ChatGPTとClaudeを選ぶための1枚比較表
+
+元の統合版は、全体を一度に確認する共通資料として`output/v0.1.0/`に残します。

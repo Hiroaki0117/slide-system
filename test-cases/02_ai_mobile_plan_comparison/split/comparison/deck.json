@@ -1,0 +1,23 @@
+{
+  "deck_title": "ChatGPTとClaude モバイル1枚比較",
+  "audience": "iPadとiPhoneで使う生成AIを選びたいAI初心者",
+  "purpose": "ChatGPTとClaudeのどちらから試すかを1枚で判断できるようにする",
+  "mode": "standalone",
+  "slides": [
+    {
+      "layout": "table",
+      "job": "compare",
+      "visual_role": "evidence",
+      "title": "やりたいことから最初のAIを選ぶ",
+      "lead": "どちらもiPad・iPhoneで使えます。無料から始め、繰り返す仕事だけ有料化します。",
+      "headers": ["使い方", "ChatGPT", "Claude"],
+      "rows": [
+        ["まず無料で試す", "Free｜検索・画像・資料を幅広く試す", "Free｜Skillsを使う手順型制作を試す"],
+        ["資料を何度も作る", "Plus｜調査・分析・画像・反復修正", "Pro｜長文・複数資料・文脈の継続"],
+        ["仕組み化する", "Projectへ指示と最大5資料から開始", "Skillで作業手順、Projectで背景を保持"],
+        ["向いている人", "機能の幅を重視する", "長い制作手順の再現性を重視する"]
+      ],
+      "note": "2026年8月12日時点の公式情報に基づく運用提案。詳細な料金・上限・出典はChatGPT編とClaude編を参照してください。"
+    }
+  ]
+}

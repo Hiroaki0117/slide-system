@@ -1,0 +1,6 @@
+{
+  "phase": "pdf_requested",
+  "delivery_profile": "staged",
+  "approval": { "status": "approved", "user_reply": "ChatGPTとClaude用の資料を分ける" },
+  "pdf_request": { "user_reply": "それでお願いします" }
+}

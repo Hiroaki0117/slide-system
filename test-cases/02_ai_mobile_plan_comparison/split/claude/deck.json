@@ -1,0 +1,122 @@
+{
+  "deck_title": "iPad・iPhoneで使うClaude Free・Pro比較",
+  "audience": "PCを持たず、iPadとiPhoneでClaudeを使いたいAI初心者",
+  "purpose": "FreeとProの差、ProjectsとSkillsの役割を理解し、自分の制作量に合うプランを選べるようにする",
+  "mode": "standalone",
+  "slides": [
+    {
+      "layout": "cover",
+      "eyebrow": "CLAUDE × MOBILE GUIDE",
+      "title": "iPad・iPhoneで使う\nClaude Free・Pro比較",
+      "subtitle": "Skillsを試す入口と、長い制作を続ける余裕を整理する",
+      "date": "2026.8.12"
+    },
+    {
+      "layout": "single_message",
+      "job": "claim",
+      "visual_role": "explain",
+      "title": "SkillsはFreeでも使える",
+      "headline": "SKILLS",
+      "body": "FreeとProのどちらでも、コード実行を有効にすればSkillsを利用できます。Proの主な差は、長い制作を続ける利用量とProject知識の余裕です。",
+      "source": "出典: Claude Skills、Pricing、Projects [S1][S3][S4]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "table",
+      "job": "compare",
+      "visual_role": "evidence",
+      "title": "Proは利用量と長い資料への対応を広げる",
+      "lead": "Freeでも機能を試せますが、Proは継続制作へ向いた余裕があります。",
+      "headers": ["比較軸", "Free", "Pro"],
+      "rows": [
+        ["料金", "$0", "$20／月・$200／年"],
+        ["5時間枠", "限定", "Freeの少なくとも5倍"],
+        ["Projects", "最大5件", "無制限"],
+        ["Project知識", "通常コンテキスト", "RAGで最大10倍へ拡張"],
+        ["利用機能", "Skills・検索等", "モデル・Research等を拡張"]
+      ],
+      "note": "Proにも5時間枠と週次上限があります。添付の長さ、会話の長さ、選ぶモデルや機能で消費量が変わります。",
+      "source": "出典: Claude Pricing、Pro、Projects、Skills [S1][S2][S3][S4]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "comparison",
+      "job": "explain",
+      "visual_role": "explain",
+      "title": "Projectsは背景、Skillsは作業手順を持たせる",
+      "lead": "同じ資料制作でも、2つは別の役割を担います。",
+      "columns": [
+        { "title": "Projects｜背景", "tone": "mint", "body": "資料とチャットを整理\nプロジェクト指示を保持\nFreeは最大5件、Proは無制限" },
+        { "title": "Skills｜手順", "tone": "coral", "body": "作業方法をZIPで登録\n必要なときに動的に使用\nFree・Proとも利用可能" }
+      ],
+      "source": "出典: Claude Projects、Skills [S3][S4]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "process",
+      "job": "explain",
+      "visual_role": "explain",
+      "title": "長いスライド制作は利用枠を消費する",
+      "lead": "以下は公式の上限説明から導いた、制作時の見立てです。",
+      "steps": [
+        { "label": "1", "title": "Skillを読む", "body": "仕様と制作手順を読み込む" },
+        { "label": "2", "title": "内容を調べる", "body": "検索と出典確認を重ねる" },
+        { "label": "3", "title": "HTMLを作る", "body": "コード生成と全ページ修正を行う" },
+        { "label": "4", "title": "PDFを確認", "body": "変換と再検査で追加枠を使う" }
+      ],
+      "source": "推論: Claude Proの利用上限説明を制作工程へ当てはめた整理 [S2]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "comparison",
+      "job": "instruction",
+      "visual_role": "explain",
+      "title": "Freeは分割、Proは文脈を保って進める",
+      "lead": "無料版でも品質を下げず、工程の切り方を変えます。",
+      "columns": [
+        { "title": "Freeの進め方", "tone": "neutral", "body": "質問と構成を先に確定\nまずHTMLだけ取得\n次の返信でPDF\n再開情報を残す" },
+        { "title": "Proの進め方", "tone": "coral", "body": "複数資料をまとめて参照\n調査と制作を連続実行\n修正とQAを継続\n週次上限も確認" }
+      ],
+      "source": "推論: 公式の利用量・Project知識差を制作手順へ当てはめた提案 [S2][S3]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "decision_flow",
+      "job": "instruction",
+      "visual_role": "explain",
+      "title": "長い制作を繰り返すかで選ぶ",
+      "question": "Skillと複数資料を使う制作を、月に何度も行うか？",
+      "yes_label": "YES — 繰り返す",
+      "yes_action": "Proで利用量とProject知識の余裕を増やし、中断を減らす",
+      "no_label": "NO — まず試す",
+      "no_action": "FreeへSkillを登録し、HTMLまで段階的に試す",
+      "footer": "Proも無制限ではありません。Settings > Usageで次のリセットを確認します。",
+      "source": "推論: Claude公式の利用枠・Project・Skills差に基づく判断 [S2][S3][S4]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "summary_action",
+      "job": "summary",
+      "visual_role": "none",
+      "visual_reason": "Claudeのプラン判断を3つの実行項目へ絞るため",
+      "title": "迷うならFreeでSkillを1回試す",
+      "headline": "Proは、文脈を保って完成まで進めたい人向け",
+      "actions": [
+        "FreeでSkillを有効にし、短い資料をHTMLまで作る",
+        "PDF前・修正中のどこで利用上限に当たったか記録する",
+        "繰り返すならProで中断回数と完成率を比較する"
+      ],
+      "note": "2026年8月12日時点。価格・モデル・機能・利用枠は変更されます。"
+    },
+    {
+      "layout": "sources_appendix",
+      "title": "出典",
+      "sources": [
+        { "id": "S1", "title": "Plans & Pricing", "publisher": "Anthropic", "url": "https://claude.com/pricing", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S2", "title": "What is the Pro plan?", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/8325606-what-is-the-pro-plan", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S3", "title": "What are projects?", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/9517075-what-are-projects", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S4", "title": "Use skills in Claude", "publisher": "Claude Help Center", "url": "https://support.claude.com/en/articles/12512180-use-skills-in-claude", "checked": "2026-08-12", "source_class": "official" }
+      ]
+    }
+  ]
+}

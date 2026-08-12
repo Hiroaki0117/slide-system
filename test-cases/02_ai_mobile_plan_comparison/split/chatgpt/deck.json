@@ -1,0 +1,109 @@
+{
+  "deck_title": "iPad・iPhoneで使うChatGPT Free・Plus比較",
+  "audience": "PCを持たず、iPadとiPhoneでChatGPTを使いたいAI初心者",
+  "purpose": "FreeとPlusの差を理解し、自分の資料量と利用頻度に合うプランを選べるようにする",
+  "mode": "standalone",
+  "slides": [
+    {
+      "layout": "cover",
+      "eyebrow": "CHATGPT × MOBILE GUIDE",
+      "title": "iPad・iPhoneで使う\nChatGPT Free・Plus比較",
+      "subtitle": "無料で足りる場面と、Plusが効く場面を整理する",
+      "date": "2026.8.12"
+    },
+    {
+      "layout": "single_message",
+      "job": "claim",
+      "visual_role": "explain",
+      "title": "Plusの価値は、作業を止めない余裕",
+      "headline": "FREE → PLUS",
+      "body": "FreeでもProject、検索、ファイル、画像などを試せます。Plusは、複数資料を読み、調査と修正を繰り返すときの利用枠と機能を広げます。",
+      "source": "出典: ChatGPT公式プラン・Projects [S1][S2]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "table",
+      "job": "compare",
+      "visual_role": "evidence",
+      "title": "Freeは入口、Plusは反復制作へ広がる",
+      "lead": "どちらもiOSで使えます。違いは主に入力できる量と高度機能です。",
+      "headers": ["比較軸", "Free", "Plus"],
+      "rows": [
+        ["料金", "$0", "$20／月"],
+        ["入力の目安", "約12ページ", "約40ページ"],
+        ["Project資料", "5ファイル", "20〜25ファイル※"],
+        ["ファイル投入", "3件／日", "上限を拡大"],
+        ["高度機能", "検索・分析・画像等は限定", "推論・調査・分析等を拡張"]
+      ],
+      "note": "※公式ヘルプ内でPlusのProject上限に20件と25件の表記差があります。実際のアプリ表示を優先してください。",
+      "source": "出典: ChatGPT Pricing、Projects、File Uploads、Plus [S1][S2][S3][S4]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "process",
+      "job": "explain",
+      "visual_role": "explain",
+      "title": "Projectを使えば端末をまたいで続けられる",
+      "lead": "Free・Plusとも、資料・指示・会話をProjectへまとめられます。",
+      "steps": [
+        { "label": "1", "title": "iPadで準備", "body": "Projectを作り、指示と資料を登録する" },
+        { "label": "2", "title": "制作を開始", "body": "質問と構成確認を経てHTMLを作る" },
+        { "label": "3", "title": "内容を確認", "body": "iPadの広い画面で全ページを見る" },
+        { "label": "4", "title": "iPhoneで再開", "body": "短い修正や成果物確認を続ける" }
+      ],
+      "source": "出典: Projects in ChatGPT [S2]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "comparison",
+      "job": "instruction",
+      "visual_role": "explain",
+      "title": "iPadを制作、iPhoneを確認に使う",
+      "lead": "端末の役割を分けると、プランに関係なく操作しやすくなります。",
+      "columns": [
+        { "title": "iPad｜主制作", "tone": "coral", "body": "資料と指示を登録\n長い依頼を入力\nHTML/PDFを全ページ確認" },
+        { "title": "iPhone｜再開", "tone": "mint", "body": "会話の続きを確認\n短い修正を伝える\n完成ファイルを見返す" }
+      ],
+      "source": "出典: ChatGPT Projectsの端末間利用 [S2]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "decision_flow",
+      "job": "instruction",
+      "visual_role": "explain",
+      "title": "月に何度も長い制作をするかで選ぶ",
+      "question": "複数資料を使う制作を、月に何度も繰り返すか？",
+      "yes_label": "YES — 繰り返す",
+      "yes_action": "Plusで、入力枠・調査・分析・反復修正の余裕を増やす",
+      "no_label": "NO — まず試す",
+      "no_action": "Freeで1本作り、どの工程で上限に当たるか記録する",
+      "footer": "Plusにも利用上限があります。契約前にアプリの現在表示を確認します。",
+      "source": "推論: 公式の利用枠・機能差を制作頻度へ当てはめた判断 [S1][S3][S4]",
+      "source_requirement": "authoritative"
+    },
+    {
+      "layout": "summary_action",
+      "job": "summary",
+      "visual_role": "none",
+      "visual_reason": "ChatGPTのプラン判断を3つの実行項目へ絞るため",
+      "title": "迷うならFreeで1本完成させる",
+      "headline": "Plusは、中断時間を減らしたい人向け",
+      "actions": [
+        "5ファイル以内の資料で、質問からHTMLまでFreeで試す",
+        "PDF化や修正の前に上限へ当たったか記録する",
+        "月に繰り返すならPlusで同じ作業を比較する"
+      ],
+      "note": "2026年8月12日時点。価格・モデル・機能・利用枠は変更されます。"
+    },
+    {
+      "layout": "sources_appendix",
+      "title": "出典",
+      "sources": [
+        { "id": "S1", "title": "ChatGPT Plans", "publisher": "OpenAI", "url": "https://chatgpt.com/pricing/", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S2", "title": "Projects in ChatGPT", "publisher": "OpenAI Help Center", "url": "https://help.openai.com/en/articles/10169521-projects-in-chatgpt", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S3", "title": "File Uploads FAQ", "publisher": "OpenAI Help Center", "url": "https://help.openai.com/en/articles/8555545-file-uploads-faq", "checked": "2026-08-12", "source_class": "official" },
+        { "id": "S4", "title": "What is ChatGPT Plus?", "publisher": "OpenAI Help Center", "url": "https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus", "checked": "2026-08-12", "source_class": "official" }
+      ]
+    }
+  ]
+}
