@@ -11,8 +11,7 @@
   "common_inputs": {
     "request": "common/REQUEST.md",
     "source": "common/SOURCE_NOTES.md",
-    "acceptance": "common/ACCEPTANCE_CRITERIA.md",
-    "clarification_answers": "common/CLARIFICATION_ANSWERS.md"
+    "acceptance": "common/ACCEPTANCE_CRITERIA.md"
   },
   "profiles": [
     {
@@ -56,3 +55,4 @@
   "evaluation": "EVALUATION.md",
   "result_template": "results/RESULT_TEMPLATE.md"
 }
+
